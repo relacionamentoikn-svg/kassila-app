@@ -50,6 +50,52 @@ header.topo .marca-img{width:34px;height:34px;flex:none;display:block}
 #busca-campo{width:100%;padding:11px 13px;border:1px solid var(--linha);border-radius:9px;font-family:inherit;font-size:15px;background:#fff;color:var(--tinta)}
 #busca-campo:focus{outline:none;border-color:var(--vinho)}
 #busca-info{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:rgba(36,30,28,.55);margin:9px 0 3px;letter-spacing:.03em}
+#termo-tela{max-width:760px;margin:0 auto;background:var(--papel);min-height:100vh}
+.t-passos{display:flex;background:var(--vinho-2,#7A2739)}
+.t-passos div{flex:1;padding:9px 4px;text-align:center;font:600 9px/1.3 Inter,sans-serif;
+  letter-spacing:.07em;text-transform:uppercase;color:rgba(250,247,243,.55);border-bottom:2px solid transparent}
+.t-passos div[data-on="1"]{color:#fff;border-bottom-color:var(--ouro)}
+.t-passos div[data-ok="1"]{color:#C8DCC9}
+.t-corpo{padding:18px 16px 28px}
+.t-corpo h2{font-family:Fraunces,Georgia,serif;font-size:21px;margin:0 0 6px;color:var(--vinho)}
+.t-corpo .olho{font:600 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(36,30,28,.55);margin:0 0 8px}
+.t-corpo .sub2{font-size:13px;color:rgba(36,30,28,.6);line-height:1.55;margin:0 0 16px}
+.t-campo{margin-bottom:13px}
+.t-campo label{display:block;font:600 11px/1 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(36,30,28,.55);margin-bottom:6px}
+.t-campo input,.t-campo select{width:100%;padding:11px 12px;border:1px solid var(--linha);border-radius:8px;
+  font:400 14px/1.2 Inter,sans-serif;background:#fff;color:var(--tinta)}
+.t-campo .dica{font-size:11.5px;color:rgba(36,30,28,.55);margin-top:5px;line-height:1.45}
+.t-erro{background:#F7E9E4;border:1px solid #E8C4B6;color:#7E2E17;border-radius:8px;padding:10px 12px;
+  font-size:12.5px;line-height:1.5;margin-bottom:13px}
+.t-cartao{background:#fff;border:1px solid var(--linha);border-left:3px solid var(--ouro);border-radius:12px;
+  padding:15px 16px;margin-bottom:14px;font-size:12.5px;line-height:1.62}
+.t-cartao h3{font-family:Fraunces,Georgia,serif;font-size:13.5px;margin:16px 0 5px;color:var(--vinho)}
+.t-cartao h3:first-child{margin-top:0}
+.t-doc{background:#fff;border:1px solid var(--linha);border-radius:12px;height:290px;overflow:auto;
+  padding:16px 16px 26px;font-size:12.5px;line-height:1.62}
+.t-doc h3{font-family:Fraunces,Georgia,serif;font-size:13.5px;margin:18px 0 6px;color:var(--vinho)}
+.t-doc h3:first-child{margin-top:0}
+.t-doc ul{margin:0 0 9px;padding-left:18px}
+.t-rol{font-size:11.5px;margin:8px 0 14px;color:rgba(36,30,28,.55)}
+.t-rol b{color:#A8442F}
+.t-rol[data-ok="1"] b{color:#3F6B52}
+.t-check{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--linha);
+  border-radius:8px;padding:11px 12px;margin-bottom:8px;cursor:pointer}
+.t-check input{margin:2px 0 0;width:18px;height:18px;accent-color:var(--vinho);flex:0 0 auto}
+.t-check span{font-size:12.5px;line-height:1.5}
+.t-check[data-on="1"]{border-color:#BFD3C0;background:#F1F7F1}
+.t-ass{background:#fff;border:1px solid var(--linha);border-radius:12px;padding:12px;margin-bottom:8px}
+.t-ass canvas{width:100%;height:150px;display:block;border:1px dashed var(--linha);border-radius:6px;
+  background:#FEFDFB;touch-action:none;cursor:crosshair}
+.t-bt{width:100%;border:0;border-radius:9px;padding:14px 12px;cursor:pointer;margin-top:14px;
+  font:600 14px/1.2 Inter,sans-serif;background:var(--vinho);color:#fff}
+.t-bt[disabled]{background:#DDD3CB;color:#9C8F87;cursor:not-allowed}
+.t-bt2{background:#fff;color:var(--tinta);border:1px solid var(--linha)}
+.t-pend{font-size:11.5px;color:rgba(36,30,28,.55);margin-top:9px;padding-left:18px;line-height:1.5}
+.t-ok{display:inline-flex;align-items:center;gap:7px;background:#EAF2EA;color:#3F6B52;border-radius:99px;
+  padding:6px 12px;font:600 11.5px/1 Inter,sans-serif}
 header.topo .hdr-dir{display:flex;align-items:center;gap:9px}
 header.topo .atz{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:rgba(250,247,243,.72);line-height:1.3;text-align:right}
 header.topo .atz .auto{display:flex;align-items:center;gap:4px;cursor:pointer;user-select:none}
@@ -229,6 +275,24 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 </head>
 <body>
 
+<div id="termo-tela" style="display:none">
+  <header class="topo">
+    <div class="marca-bloco">
+      <div>
+        <div class="marca">Kássila Nasser</div>
+        <div class="sub" id="t-sub">Acesso restrito</div>
+      </div>
+    </div>
+  </header>
+  <div class="t-passos" id="t-passos">
+    <div data-p="1">1 · Identificação</div>
+    <div data-p="2">2 · Aviso</div>
+    <div data-p="3">3 · Termo</div>
+    <div data-p="4">4 · Assinatura</div>
+  </div>
+  <main class="t-corpo" id="t-corpo"></main>
+</div>
+
 <div id="config">
   <h1>Fluxo de Caixa — Kássila Nasser</h1>
   <p>Cole a URL do App da Web publicado no Apps Script (termina em <b>/exec</b>). Fica salva neste navegador.</p>
@@ -370,7 +434,7 @@ let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
 let MES = null, DIA = null, R = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V5.5';
+const VERSAO_ESPERADA = 'V5.6';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -412,6 +476,363 @@ async function api(acao, params){
   if(j.erro) throw new Error(j.erro);
   if(j.dados && j.dados.erro) throw new Error(j.dados.erro);
   return j.dados;
+}
+
+
+/* ==================== TERMO LGPD ====================
+   A conferência do código acontece no SERVIDOR (ação "aceitar"). Aqui a tela
+   só coleta: se a senha morasse neste arquivo, qualquer um a leria no
+   código-fonte da página. */
+const VERSAO_TERMO = '1.0';
+const CRIADOR = 'Decisão Consultoria';
+const TERMO_TXT = `
+<h3>Termo de Confidencialidade, Sigilo e Ciência sobre Tratamento de Dados</h3>
+<p>Este termo rege o acesso ao painel de gestão comercial do <b>Instituto Kássila Nasser</b>,
+doravante denominado Instituto, na qualidade de controlador dos dados nos termos do artigo 5º,
+inciso VI, da Lei nº 13.709/2018.</p>
+
+<h3>1. Objeto e natureza da informação</h3>
+<p>O painel dá acesso a: nome de pacientes, procedimentos estéticos e clínicos contratados,
+valores, descontos concedidos, cortesias, formas e prazos de pagamento, histórico de compras e
+data do último atendimento.</p>
+<p>Esse conjunto tem <b>dupla natureza</b>, e ambas obrigam:</p>
+<ul>
+  <li><b>informação sensível de saúde</b> — a associação entre uma pessoa identificada e o
+      procedimento a que ela se submeteu é dado pessoal sensível na forma do artigo 5º,
+      inciso II, da LGPD;</li>
+  <li><b>informação comercial estratégica</b> do Instituto — política de preços, margens,
+      descontos e desempenho de vendas.</li>
+</ul>
+
+<h3>2. Sigilo profissional</h3>
+<p>O vínculo com um serviço de saúde impõe dever de sigilo que <b>não depende deste termo para existir</b>
+e alcança todas as pessoas que, em razão da função, tomam conhecimento de informação de paciente,
+sejam elas profissionais de saúde ou não.</p>
+<p>A revelação de segredo obtido em razão de função, ministério, ofício ou profissão, sem justa causa,
+é conduta tipificada no artigo 154 do Código Penal.</p>
+
+<h3>3. Dados pessoais do próprio usuário</h3>
+<p>Para operar o painel, o Instituto trata os seguintes dados de quem acessa:</p>
+<ul>
+  <li>nome completo e função exercida;</li>
+  <li>endereço de e-mail;</li>
+  <li>registro de data, hora e identificação de cada acesso e de cada consulta realizada;</li>
+  <li>assinatura eletrônica coletada neste termo.</li>
+</ul>
+<p>Finalidade: controlar o acesso, atribuir responsabilidade e manter trilha de auditoria interna.
+Base legal: artigo 7º, incisos II, V e IX, da LGPD.</p>
+
+<h3>4. Base legal do acesso a dados de pacientes</h3>
+<p>O tratamento de dados de pacientes pelo Instituto fundamenta-se no artigo 11, inciso II,
+alíneas "a" e "f", da LGPD — cumprimento de obrigação legal pelo controlador e tutela da saúde
+em procedimento realizado por profissionais de saúde e serviços de saúde.</p>
+<p>O acesso concedido por este termo observa o <b>princípio da necessidade</b> (artigo 6º, inciso III):
+limita-se ao mínimo indispensável à gestão comercial, <b>não abrange prontuário, evolução clínica,
+imagem clínica ou qualquer registro assistencial</b>, e não autoriza consulta a dados de paciente
+sem finalidade de trabalho.</p>
+
+<h3>5. Deveres do usuário</h3>
+<p>Ao aceitar este termo, o usuário compromete-se a:</p>
+<ul>
+  <li>manter sigilo absoluto sobre toda informação de paciente acessada, durante e após o vínculo
+      com o Instituto;</li>
+  <li>não compartilhar seu código de acesso, o link do painel ou credenciais com qualquer pessoa,
+      inclusive colegas;</li>
+  <li>não fotografar, gravar, imprimir, copiar ou transmitir telas, listas ou relatórios —
+      <b>inclusive a tela projetada em reuniões</b>;</li>
+  <li>não comentar informação de paciente fora do ambiente de trabalho, nem em grupos de mensagens,
+      redes sociais ou com familiares;</li>
+  <li>não consultar dados de paciente por curiosidade pessoal ou por qualquer motivo estranho
+      à sua função;</li>
+  <li>acessar o painel apenas em dispositivo sob seu controle, com bloqueio de tela ativo,
+      encerrando a sessão em equipamento compartilhado;</li>
+  <li>comunicar imediatamente à direção qualquer suspeita de acesso indevido, perda de dispositivo
+      ou vazamento.</li>
+</ul>
+
+<h3>6. Registro de auditoria</h3>
+<p>O usuário declara ciência de que <b>todos os acessos e consultas realizados no painel são registrados</b>,
+com data, hora e sua identificação, e de que esses registros podem ser utilizados pelo Instituto em
+apuração interna e para responder a solicitação de titular ou de autoridade.</p>
+
+<h3>7. Direitos do titular</h3>
+<p>Nos termos do artigo 18 da LGPD, o usuário pode solicitar confirmação do tratamento dos seus
+próprios dados, acesso, correção de dados incompletos ou desatualizados, portabilidade e informação
+sobre compartilhamento. Pedidos devem ser dirigidos ao encarregado indicado pelo Instituto.</p>
+<p>A eliminação dos registros de auditoria fica ressalvada pelo artigo 16, inciso I, da LGPD, que
+autoriza a conservação para cumprimento de obrigação legal e regulatória.</p>
+
+<h3>8. Incidente de segurança</h3>
+<p>O usuário compromete-se a comunicar à direção, <b>imediatamente e por escrito</b>, qualquer evento
+que possa acarretar risco ou dano a titular, para que o Instituto avalie a comunicação à Autoridade
+Nacional de Proteção de Dados e aos titulares afetados, na forma do artigo 48 da LGPD.</p>
+
+<h3>9. Prazo</h3>
+<p>As obrigações relativas a <b>informação de paciente vigoram por prazo indeterminado</b>, permanecendo
+íntegras após o encerramento do vínculo, por decorrerem do dever de sigilo em saúde.</p>
+<p>As obrigações relativas a informação comercial do Instituto vigoram durante o acesso e por
+<b>5 (cinco) anos</b> após seu encerramento.</p>
+
+<h3>10. Responsabilidade</h3>
+<p>O descumprimento deste termo sujeita o usuário às medidas disciplinares cabíveis e à
+responsabilização nas esferas cível, administrativa e criminal, sem prejuízo da reparação integral
+de perdas e danos, observado o artigo 42 da LGPD.</p>
+
+<h3>11. Declaração</h3>
+<p>Declaro que li integralmente este documento, compreendi seu conteúdo, tive oportunidade de
+esclarecer dúvidas e concordo com todos os seus termos, assinando eletronicamente abaixo.</p>
+
+<div class="fim">— fim do documento — versão ${VERSAO_TERMO} —</div>
+`;
+const CIENCIAS = [
+  "Li o documento por inteiro e compreendi o seu conteúdo.",
+  "Comprometo-me a manter sigilo por prazo indeterminado sobre nome de pacientes, procedimentos e valores acessados no painel.",
+  "Comprometo-me a não fotografar, gravar nem compartilhar telas, listas ou relatórios, inclusive a tela projetada em reuniões.",
+  "Estou ciente de que todos os meus acessos e consultas ficam registrados com data, hora e identificação.",
+  "Autorizo o tratamento dos meus dados pessoais para controle de acesso e trilha de auditoria, nos termos acima."
+];
+
+let tPasso=1, tUsuarios=[], tSel="", tPessoa=null, tErro="", tCiAviso=false;
+let tCiencias=CIENCIAS.map(()=>false), tLeu=false, tAssinou=false, tCpf="", tCpfOk=false, tRecibo=null;
+
+const tEsc=v=>String(v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function cpfValidoCliente(n){
+  if(!/^\d{11}$/.test(n)) return false;
+  if(/^(\d)\1{10}$/.test(n)) return false;
+  for(let t=9;t<11;t++){ let s=0;
+    for(let i=0;i<t;i++) s+=parseInt(n[i],10)*((t+1)-i);
+    let d=(s*10)%11; if(d===10)d=0;
+    if(d!==parseInt(n[t],10)) return false; }
+  return true;
+}
+
+async function abrirTermo(){
+  document.getElementById('config').style.display='none';
+  document.getElementById('app').style.display='none';
+  document.getElementById('termo-tela').style.display='block';
+  try{
+    const d = await api('usuarios');
+    tUsuarios = d.usuarios || [];
+    if(!tUsuarios.length) throw new Error('nenhum usuário ativo na aba Usuarios');
+  }catch(err){
+    document.getElementById('t-corpo').innerHTML =
+      `<div class="t-erro"><b>Não consegui carregar os usuários.</b><br>${tEsc(err.message)}
+       <br><br>No Apps Script, rode <b>prepararTermo()</b> e republique a implantação.</div>`;
+    return;
+  }
+  tPintar();
+}
+
+function tPintar(){
+  document.querySelectorAll('#t-passos div').forEach(d=>{
+    const p=+d.dataset.p; d.dataset.on = p===tPasso?'1':'0'; d.dataset.ok = p<tPasso?'1':'0';
+  });
+  const c=document.getElementById('t-corpo');
+  c.innerHTML = tPasso===1?tTela1():tPasso===2?tTela2():tPasso===3?tTela3():tPasso===4?tTela4():tTela5();
+  window.scrollTo(0,0);
+  if(tPasso===3) tLigarDoc();
+  if(tPasso===4) tLigarCanvas();
+}
+
+function tTela1(){
+  return `<p class="olho">Acesso restrito</p><h2>Identifique-se</h2>
+  <p class="sub2">Este painel é de uso exclusivo das pessoas autorizadas pela direção clínica.</p>
+  ${tErro?`<div class="t-erro">${tEsc(tErro)}</div>`:''}
+  <div class="t-campo"><label for="t-quem">Quem está acessando</label>
+    <select id="t-quem"><option value="">— selecione —</option>
+    ${tUsuarios.map(u=>`<option value="${tEsc(u.id)}" ${u.id===tSel?'selected':''}>${tEsc(u.nome)} · ${tEsc(u.papel)}</option>`).join('')}
+    </select></div>
+  <div class="t-campo"><label for="t-cod">Código de acesso</label>
+    <input id="t-cod" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="0000">
+    <div class="dica">Quatro dígitos, entregues pessoalmente pela direção. Não compartilhe —
+      as consultas ficam registradas em seu nome.</div></div>
+  <button class="t-bt" onclick="tIr2()">Continuar</button>`;
+}
+
+function tTela2(){
+  return `<p class="olho">Leia antes de continuar</p><h2>Sobre este aplicativo</h2>
+  <div class="t-cartao">
+    <h3>Software dedicado</h3>
+    <p>Este aplicativo foi desenvolvido por <b>${tEsc(CRIADOR)}</b> sob medida para o
+       <b>Instituto Kássila Nasser</b>. A lógica, os scripts, a estrutura de dados e as telas
+       são obra própria, criada especificamente para a operação deste Instituto.</p>
+    <h3>Direitos reservados</h3>
+    <p>Todos os direitos são reservados a ${tEsc(CRIADOR)}, nos termos da Lei nº 9.610/1998 e da
+       Lei nº 9.609/1998. É <b>proibida a reprodução, cópia, engenharia reversa, redistribuição,
+       cessão a terceiros ou uso fora do Instituto</b>, no todo ou em parte, sem autorização
+       expressa e por escrito.</p>
+    <h3>Nenhuma conexão com inteligência artificial</h3>
+    <p>O aplicativo <b>não se conecta a nenhum serviço de inteligência artificial</b>. Os dados de
+       pacientes, valores e orçamentos <b>não são enviados, processados, treinados nem armazenados
+       por sistemas de IA</b>. Todo o tratamento é feito por scripts próprios, executados dentro da
+       conta Google do próprio Instituto.</p>
+    <h3>Onde os dados ficam</h3>
+    <p>A base permanece na planilha e nas pastas do <b>Google Drive do próprio Instituto</b>, sob
+       controle da direção clínica. O aplicativo apenas lê e apresenta — não copia para nenhum
+       servidor externo.</p>
+  </div>
+  <label class="t-check" data-on="${tCiAviso?1:0}">
+    <input type="checkbox" id="t-ci-aviso" ${tCiAviso?'checked':''}>
+    <span>Li e estou ciente de que o aplicativo é software dedicado de ${tEsc(CRIADOR)}, com
+      direitos reservados e reprodução proibida, e de que os dados não têm vínculo com nenhum
+      sistema de inteligência artificial.</span></label>
+  <button class="t-bt" onclick="tPasso=3;tPintar()" ${tCiAviso?'':'disabled'}>Continuar</button>
+  ${!tCiAviso?'<ul class="t-pend"><li>Marque a ciência acima para continuar.</li></ul>':''}`;
+}
+
+function tTela3(){
+  return `<p class="olho">Primeiro acesso · obrigatório</p><h2>Termo de Confidencialidade e LGPD</h2>
+  <p class="sub2">Role o documento até o fim para liberar as declarações.</p>
+  <div class="t-doc" id="t-doc">${TERMO_TXT}</div>
+  <div class="t-rol" data-ok="${tLeu?1:0}"><b>${tLeu?'Documento lido até o fim.':'Role até o fim do documento.'}</b></div>
+  ${CIENCIAS.map((t,i)=>`<label class="t-check" data-on="${tCiencias[i]?1:0}">
+    <input type="checkbox" data-tci="${i}" ${tCiencias[i]?'checked':''} ${tLeu?'':'disabled'}>
+    <span>${tEsc(t)}</span></label>`).join('')}
+  <button class="t-bt" onclick="tPasso=4;tPintar()" ${(tLeu&&tCiencias.every(Boolean))?'':'disabled'}>Ir para a assinatura</button>
+  ${(!tLeu||!tCiencias.every(Boolean))?`<ul class="t-pend">
+    ${!tLeu?'<li>Falta rolar o documento até o fim.</li>':''}
+    ${tLeu&&!tCiencias.every(Boolean)?`<li>Falta marcar ${tCiencias.filter(x=>!x).length} declaração(ões).</li>`:''}</ul>`:''}`;
+}
+
+function tTela4(){
+  return `<p class="olho">Última etapa</p><h2>Assine para concluir</h2>
+  <p class="sub2">Assine com o dedo no celular ou com o mouse no computador.</p>
+  ${tErro?`<div class="t-erro">${tEsc(tErro)}</div>`:''}
+  <div class="t-ass"><canvas id="t-ass" width="900" height="300"></canvas>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:9px">
+      <small style="flex:1;font-size:11.5px;color:rgba(36,30,28,.55)">Assinatura de <b>${tEsc(tPessoa.nome)}</b></small>
+      <button class="t-bt t-bt2" style="width:auto;margin:0;padding:7px 12px;font-size:11.5px" onclick="tLimpar()">Limpar</button>
+    </div></div>
+  <div class="t-campo"><label for="t-fun">Função no Instituto</label>
+    <input id="t-fun" value="${tEsc(tPessoa.papel)}"></div>
+  <div class="t-campo"><label for="t-cpf">CPF</label>
+    <input id="t-cpf" inputmode="numeric" maxlength="14" placeholder="000.000.000-00"
+           value="${tEsc(tCpf)}" oninput="tDigitarCpf(this.value)">
+    <div class="dica" id="t-cpf-aviso">Obrigatório — identifica quem assinou o termo.</div></div>
+  <button class="t-bt" id="t-fim" onclick="tEnviar()" ${(tAssinou&&tCpfOk)?'':'disabled'}>Aceitar e entrar no painel</button>
+  ${(!tAssinou||!tCpfOk)?`<ul class="t-pend">
+    ${!tAssinou?'<li>Falta assinar no quadro acima.</li>':''}
+    ${!tCpfOk?'<li>Falta informar um CPF válido.</li>':''}</ul>`:''}`;
+}
+
+function tTela5(){
+  return `<p class="olho">Registrado</p><h2>Aceite concluído</h2>
+  <p class="sub2">O termo foi assinado e arquivado na planilha do Instituto.</p>
+  <div class="t-cartao"><span class="t-ok">✓ Termo aceito</span>
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:7px 14px;font-size:12.5px;margin-top:12px">
+      <div style="color:rgba(36,30,28,.55)">Nome</div><div style="text-align:right;font-weight:500">${tEsc(tRecibo.nome)}</div>
+      <div style="color:rgba(36,30,28,.55)">Função</div><div style="text-align:right;font-weight:500">${tEsc(tRecibo.papel)}</div>
+      <div style="color:rgba(36,30,28,.55)">Versão</div><div style="text-align:right;font-weight:500">${tEsc(tRecibo.versao_termo)}</div>
+      <div style="color:rgba(36,30,28,.55)">Data e hora</div><div style="text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11.5px">${tEsc(tRecibo.quando)}</div>
+      <div style="color:rgba(36,30,28,.55)">Código</div><div style="text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11.5px">${tEsc(tRecibo.id_aceite)}</div>
+    </div></div>
+  <button class="t-bt" onclick="tEntrar()">Entrar no painel</button>`;
+}
+
+function tIr2(){
+  const id=document.getElementById('t-quem').value;
+  const cod=document.getElementById('t-cod').value.trim();
+  tSel=id;
+  if(!id){ tErro='Selecione o seu nome na lista.'; tPintar(); return; }
+  if(!/^\d{4}$/.test(cod)){ tErro='Informe os 4 dígitos do código.'; tPintar(); return; }
+  tPessoa = tUsuarios.filter(u=>u.id===id)[0];
+  tPessoa.codigo = cod;          // conferido no servidor, na hora de gravar
+  tErro=''; tPasso=2; tPintar();
+}
+
+function tLigarDoc(){
+  const d=document.getElementById('t-doc');
+  const ver=()=>{ if(d.scrollTop+d.clientHeight >= d.scrollHeight-8 && !tLeu){ tLeu=true; tPintar();
+    const n=document.getElementById('t-doc'); if(n) n.scrollTop=99999; } };
+  d.addEventListener('scroll',ver); ver();
+}
+
+function tLigarCanvas(){
+  const cv=document.getElementById('t-ass'), ctx=cv.getContext('2d');
+  ctx.lineWidth=3.2; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#241E1C';
+  let d=false;
+  const pt=e=>{const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;
+    return {x:(t.clientX-r.left)*(cv.width/r.width),y:(t.clientY-r.top)*(cv.height/r.height)};};
+  const ini=e=>{e.preventDefault();d=true;const p=pt(e);ctx.beginPath();ctx.moveTo(p.x,p.y);};
+  const mov=e=>{if(!d)return;e.preventDefault();const p=pt(e);ctx.lineTo(p.x,p.y);ctx.stroke();
+    if(!tAssinou){tAssinou=true;tAtualizarBotao();}};
+  const fim=()=>{d=false;};
+  ['mousedown','touchstart'].forEach(ev=>cv.addEventListener(ev,ini,{passive:false}));
+  ['mousemove','touchmove'].forEach(ev=>cv.addEventListener(ev,mov,{passive:false}));
+  ['mouseup','mouseleave','touchend','touchcancel'].forEach(ev=>cv.addEventListener(ev,fim));
+}
+
+function tLimpar(){
+  const cv=document.getElementById('t-ass');
+  cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+  tAssinou=false; tAtualizarBotao();
+}
+
+function tAtualizarBotao(){
+  const b=document.getElementById('t-fim'); if(b) b.disabled=!(tAssinou&&tCpfOk);
+  const pend=document.querySelector('.t-pend');
+  const html=(!tAssinou||!tCpfOk)?`<ul class="t-pend">${!tAssinou?'<li>Falta assinar no quadro acima.</li>':''}${!tCpfOk?'<li>Falta informar um CPF válido.</li>':''}</ul>`:'';
+  if(pend) pend.outerHTML=html;
+  else if(html && b) b.insertAdjacentHTML('afterend', html);
+}
+
+function tDigitarCpf(v){
+  const n=String(v).replace(/\D/g,'').slice(0,11);
+  let m=n;
+  if(n.length>9) m=n.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/,'$1.$2.$3-$4');
+  else if(n.length>6) m=n.replace(/(\d{3})(\d{3})(\d{1,3})/,'$1.$2.$3');
+  else if(n.length>3) m=n.replace(/(\d{3})(\d{1,3})/,'$1.$2');
+  tCpf=m; tCpfOk=cpfValidoCliente(n);
+  const el=document.getElementById('t-cpf');
+  if(el){ el.value=m; el.setSelectionRange(m.length,m.length); }
+  const av=document.getElementById('t-cpf-aviso');
+  if(av){
+    if(!n.length){ av.textContent='Obrigatório — identifica quem assinou o termo.'; av.style.color=''; }
+    else if(n.length<11){ av.textContent='Faltam '+(11-n.length)+' dígito(s).'; av.style.color=''; }
+    else if(!tCpfOk){ av.textContent='CPF inválido — confira os números.'; av.style.color='#A8442F'; }
+    else { av.textContent='CPF válido.'; av.style.color='#3F6B52'; }
+  }
+  tAtualizarBotao();
+}
+
+async function tEnviar(){
+  const b=document.getElementById('t-fim');
+  if(b){ b.disabled=true; b.textContent='Registrando...'; }
+  try{
+    const d = await api('aceitar', {
+      id: tPessoa.id, codigo: tPessoa.codigo,
+      cpf: tCpf, funcao: document.getElementById('t-fun').value || tPessoa.papel,
+      assinatura: document.getElementById('t-ass').toDataURL('image/png')
+    });
+    tRecibo=d; tErro='';
+    localStorage.setItem('kassila_aceite', JSON.stringify({id:tPessoa.id, versao:VERSAO_TERMO, quando:d.quando}));
+    tPasso=5; tPintar();
+  }catch(err){
+    // erro de código volta o usuário à identificação; os demais ficam aqui
+    tErro = err.message;
+    if(/codigo/i.test(err.message)){ tPasso=1; tAssinou=false; }
+    tPintar();
+  }
+}
+
+function tEntrar(){
+  document.getElementById('termo-tela').style.display='none';
+  iniciar();
+}
+
+/* Já assinou a versão vigente? Guarda no aparelho e confirma no servidor. */
+async function verificarAceite(){
+  let local=null;
+  try{ local=JSON.parse(localStorage.getItem('kassila_aceite')||'null'); }catch(e){ local=null; }
+  if(local && local.versao===VERSAO_TERMO){
+    try{
+      const st = await api('aceite_status', {id: local.id});
+      if(st.aceitou && st.versao_termo===VERSAO_TERMO) return true;
+    }catch(e){ return true; }   // sem rede não trava quem já assinou
+    localStorage.removeItem('kassila_aceite');
+  }
+  return false;
 }
 
 async function iniciar(){
@@ -902,7 +1323,22 @@ async function verAuditoria(id){
 }
 
 document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') fecharModal(); });
-if(API_URL){ document.getElementById('inp-url').value=API_URL; iniciar(); }
+/* Arranque: sem URL, pede a URL. Com URL, o termo vem ANTES do painel —
+   quem não assinou a versão vigente não vê número nenhum. */
+async function arrancar(){
+  if(!API_URL) return;
+  document.getElementById('inp-url').value = API_URL;
+  let jaAceitou = false;
+  try{ jaAceitou = await verificarAceite(); }catch(e){ jaAceitou = false; }
+  if(jaAceitou) iniciar(); else abrirTermo();
+}
+arrancar();
+
+document.addEventListener('change', function(e){
+  if(e.target.id==='t-ci-aviso'){ tCiAviso=e.target.checked; tPintar(); return; }
+  const ci=e.target.closest('[data-tci]');
+  if(ci){ tCiencias[+ci.dataset.tci]=ci.checked; tPintar(); }
+});
 
 /* service worker: existe para o Chrome oferecer "Instalar app".
    Falhar aqui nao pode derrubar o painel — por isso o catch vazio. */
