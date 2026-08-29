@@ -364,7 +364,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 /* Cole aqui a URL /exec do Apps Script e ninguém mais precisa configurar nada:
    quem abrir o link já entra direto no painel. Deixe como está para continuar
    pedindo a URL na primeira abertura de cada aparelho. */
-const API_FIXA = 'COLE_AQUI_A_URL_EXEC';
+const API_FIXA = 'https://script.google.com/macros/s/AKfycbzsnpBwDmrOsNlYmEOZFUKjClq7hNwOX-owsNCpiM326fU27pYNhlZFAfCRbTu2OVG4/exec';
 
 let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
@@ -424,9 +424,20 @@ async function iniciar(){
     MES = meses[meses.length-1]; sel.value = MES; DIA = null;
     await carregar();
   }catch(e){
+    // Com a URL cravada no arquivo, cair aqui não é "falta configurar" — é a
+    // API não respondendo. Sem esta distinção a tela pedia a URL de novo e
+    // parecia que o endereço estava errado, quando o problema é outro.
     document.getElementById('config').style.display='block';
     document.getElementById('app').style.display='none';
-    const el=document.getElementById('config-erro'); el.style.display='block'; el.textContent='Erro: '+e.message;
+    const el=document.getElementById('config-erro'); el.style.display='block';
+    const fixa = API_FIXA.indexOf('COLE_AQUI') < 0;
+    el.innerHTML = fixa
+      ? '<b>A API não respondeu.</b><br>' + e.message
+        + '<br><br>Confira, nesta ordem:<br>'
+        + '1. A implantação foi republicada com <b>Nova versão</b>?<br>'
+        + '2. Em Gerenciar implantações, <b>Quem pode acessar</b> está como <b>Qualquer pessoa</b>?<br>'
+        + '3. Sem internet no aparelho?'
+      : 'Erro: ' + e.message;
   }
 }
 
