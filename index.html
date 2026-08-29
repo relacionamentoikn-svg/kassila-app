@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gestão Comercial Vendas</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Comercial KN">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="Painel comercial de vendas e recebimentos — Instituto Kássila Nasser">
+<meta name="theme-color" content="#5C1A2B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gestão Comercial Vendas">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Gestão Comercial Vendas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --vinho:#5C1A2B; --vinho-2:#8A3A4C; --papel:#F3EDE6; --papel-2:#FAF7F3;
+  --tinta:#241E1C; --latao:#B8894A; --salvia:#4F6B58; --roxo:#7A5C99;
+  --linha:rgba(36,30,28,.14); --linha-forte:rgba(36,30,28,.28);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100%}
+body{background:var(--papel);color:var(--tinta);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.num{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* ---------- configuração ---------- */
+#config{max-width:520px;margin:60px auto;padding:28px;background:var(--papel-2);border-radius:12px;box-shadow:0 12px 32px -16px rgba(36,30,28,.4)}
+#config h1{font-family:'Fraunces',Georgia,serif;font-size:22px;margin:0 0 6px;color:var(--vinho)}
+#config p{font-size:13.5px;color:rgba(36,30,28,.7);line-height:1.6;margin:0 0 16px}
+#config input{width:100%;padding:11px 12px;border:1px solid var(--linha-forte);border-radius:6px;font-size:13px;font-family:'IBM Plex Mono',monospace}
+#config button{margin-top:12px;width:100%;padding:12px;background:var(--vinho);color:#fff;border:0;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer}
+#config .erro{color:var(--vinho-2);font-size:12.5px;margin-top:10px;display:none}
+
+/* ---------- estrutura ---------- */
+#app{display:none}
+header.topo{background:var(--vinho);color:#fff;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:20}
+header.topo .marca{font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:500;line-height:1.1}
+header.topo .marca-bloco{display:flex;align-items:center;gap:11px}
+header.topo .marca-img{width:34px;height:34px;flex:none;display:block}
+#busca-campo{width:100%;padding:11px 13px;border:1px solid var(--linha);border-radius:9px;font-family:inherit;font-size:15px;background:#fff;color:var(--tinta)}
+#busca-campo:focus{outline:none;border-color:var(--vinho)}
+#busca-info{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:rgba(36,30,28,.55);margin:9px 0 3px;letter-spacing:.03em}
+header.topo .hdr-dir{display:flex;align-items:center;gap:9px}
+header.topo .atz{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:rgba(250,247,243,.72);line-height:1.3;text-align:right}
+header.topo .atz .auto{display:flex;align-items:center;gap:4px;cursor:pointer;user-select:none}
+header.topo .atz input{width:11px;height:11px;accent-color:var(--ouro);margin:0;cursor:pointer}
+header.topo .btn-atz{background:rgba(250,247,243,.12);border:1px solid rgba(250,247,243,.28);color:var(--creme);width:32px;height:32px;border-radius:8px;font-size:15px;line-height:1;cursor:pointer;flex:none;transition:transform .5s,background .2s}
+header.topo .btn-atz:hover{background:rgba(250,247,243,.22)}
+header.topo .btn-atz.girando{transform:rotate(360deg)}
+header.topo .atz .velho{color:#F0C36A}
+@media(max-width:560px){header.topo .atz{font-size:8.5px}header.topo .atz .auto{display:none}}
+header.topo .sub{font-family:'IBM Plex Mono',monospace;font-size:10px;opacity:.7;letter-spacing:.08em;margin-top:3px}
+select.sel{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;padding:7px 10px;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:12px}
+select.sel option{color:#000}
+
+nav.tabs{display:flex;background:#fff;border-bottom:1px solid var(--linha);overflow-x:auto;position:sticky;top:54px;z-index:19}
+nav.tabs button{flex:none;padding:12px 16px;background:none;border:0;border-bottom:2px solid transparent;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(36,30,28,.5);cursor:pointer;white-space:nowrap}
+nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weight:600}
+
+.tela{display:none;max-width:1580px;margin:0 auto;padding:16px}
+.tela.on{display:block}
+
+/* colunas no PC: dia e mês na mesma tela */
+.grid-dia{display:grid;gap:14px}
+@media(min-width:1000px){.grid-dia{grid-template-columns:minmax(300px,1fr) minmax(340px,1.15fr) minmax(300px,1fr);align-items:start}}
+.grid-mes{display:grid;gap:14px}
+@media(min-width:1000px){.grid-mes{grid-template-columns:1.1fr 1fr;align-items:start}}
+.grid-aud{display:grid;gap:14px}
+@media(min-width:1000px){.grid-aud{grid-template-columns:1fr 1.25fr;align-items:start}
+  .grid-aud .sticky{position:sticky;top:110px}}
+.col{display:grid;gap:14px;align-content:start}
+
+/* ---------- blocos ---------- */
+.hero{background:var(--vinho);color:#fff;border-radius:12px;padding:18px}
+.hero .rot{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;opacity:.72}
+.hero .grande{font-size:38px;font-weight:500;margin:5px 0 3px;line-height:1.02;font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.hero .grande small{font-size:15px;opacity:.7;margin-right:4px}
+.hero .sub{font-size:10.5px;font-family:'IBM Plex Mono',monospace;opacity:.85}
+.cascata{margin-top:15px;border-top:1px solid rgba(255,255,255,.22);padding-top:11px;display:grid;gap:5px}
+.cascata div{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;font-family:'IBM Plex Mono',monospace;opacity:.85}
+.cascata div.menos span:last-child{color:#F0B9C4}
+.cascata div.tot{opacity:1;font-weight:600;border-top:1px solid rgba(255,255,255,.22);padding-top:6px;margin-top:2px;font-size:13px}
+.cascata div.sub2{font-size:10.5px;opacity:.62;padding-left:10px}
+
+.card{background:var(--papel-2);border-radius:12px;padding:16px;border:1px solid var(--linha)}
+.card h3{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(36,30,28,.6);margin:0 0 13px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.card h3 .aux{font-size:9.5px;letter-spacing:.04em;text-transform:none;color:rgba(36,30,28,.45);font-weight:400}
+
+/* navegador de dia */
+.navdia{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.navdia button{background:var(--papel-2);border:1px solid var(--linha-forte);border-radius:8px;width:34px;height:34px;font-size:15px;cursor:pointer;color:var(--vinho);line-height:1}
+.navdia input[type=date]{flex:1;padding:8px 10px;border:1px solid var(--linha-forte);border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:var(--papel-2);color:var(--tinta)}
+.navdia .hoje{width:auto;padding:0 12px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em}
+
+/* split à vista x parcelado */
+.split{height:10px;border-radius:5px;overflow:hidden;background:rgba(36,30,28,.1);display:flex}
+.split i{display:block;height:100%}
+.split .vista{background:var(--salvia)} .split .parc{background:var(--latao)}
+.split-leg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.split-leg .r{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(36,30,28,.55);font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:5px}
+.split-leg .v{font-size:18px;font-weight:500;margin-top:4px}
+.split-leg .n{font-size:10px;color:rgba(36,30,28,.55);margin-top:2px}
+.pip{width:8px;height:8px;border-radius:2px;display:inline-block;flex:none}
+
+/* barras horizontais (formas, ranking) */
+.barras{display:grid;gap:9px}
+.barra .cab{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;margin-bottom:4px}
+.barra .cab b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barra .cab span{font-family:'IBM Plex Mono',monospace;color:rgba(36,30,28,.6);font-size:10.5px;flex:none}
+.barra .t{height:5px;background:rgba(36,30,28,.09);border-radius:3px;overflow:hidden}
+.barra .t i{display:block;height:100%;background:var(--vinho);border-radius:3px}
+
+/* gráfico de 14 dias */
+.spark{display:flex;align-items:flex-end;gap:3px;height:80px}
+.spark .col-d{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;cursor:pointer}
+.spark .col-d i{width:100%;background:rgba(92,26,43,.24);border-radius:2px 2px 0 0;display:block;min-height:2px;transition:background .15s}
+.spark .col-d.fds i{background:rgba(36,30,28,.1)}
+.spark .col-d.sel i{background:var(--vinho)}
+.spark .col-d:hover i{background:var(--vinho-2)}
+.spark-eixo{display:flex;gap:3px;margin-top:5px}
+.spark-eixo span{flex:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:rgba(36,30,28,.4)}
+
+/* cartões de orçamento */
+.orc{padding:12px 0 12px 13px;border-bottom:1px solid var(--linha);position:relative;cursor:pointer}
+.orc:last-child{border-bottom:0}
+.orc::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:2px;background:var(--salvia)}
+.orc.parcial::before{background:var(--latao)}
+.orc.alerta::before{background:var(--vinho-2)}
+.orc .l1{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.orc .pac{font-size:13.5px;font-weight:600}
+.orc .val{font-size:15px;font-weight:600;white-space:nowrap;font-family:'IBM Plex Mono',monospace}
+.orc .l2{display:flex;justify-content:space-between;gap:10px;margin-top:2px}
+.orc .cod{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:rgba(36,30,28,.5)}
+.orc .risco{font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(36,30,28,.42);text-decoration:line-through}
+.orc .procs{font-size:11px;color:rgba(36,30,28,.7);margin-top:6px;line-height:1.4}
+.orc .rec{font-size:10.5px;margin-top:6px;font-family:'IBM Plex Mono',monospace}
+.orc .rec.nova{color:var(--salvia)} .orc .rec.rec2{color:rgba(36,30,28,.6)} .orc .rec.resgate{color:var(--roxo)}
+.orc .tags{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.04em;padding:3px 6px;border:1px solid var(--linha-forte);border-radius:3px;color:rgba(36,30,28,.65)}
+.tag.desc{border-color:var(--vinho-2);color:var(--vinho-2)}
+.tag.flag{background:var(--vinho);border-color:var(--vinho);color:#fff}
+.tag.ok{border-color:var(--salvia);color:var(--salvia)}
+
+/* contas */
+.contas-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+@media(min-width:700px){.contas-grid{grid-template-columns:repeat(3,1fr)}}
+.conta-btn{background:var(--papel-2);border:1px solid var(--linha);border-left-width:4px;border-radius:9px;padding:12px;cursor:pointer;text-align:left;font-family:inherit}
+.conta-btn:active{transform:scale(.98)}
+.conta-btn .nome{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:rgba(36,30,28,.6)}
+.conta-btn .val{font-size:16px;font-weight:600;margin-top:4px;font-family:'IBM Plex Mono',monospace}
+.conta-btn .qtd{font-size:10px;color:rgba(36,30,28,.5);margin-top:2px}
+.c-venda{border-left-color:var(--vinho)} .c-caixa{border-left-color:var(--salvia)}
+.c-receber{border-left-color:var(--latao)} .c-permuta{border-left-color:var(--roxo)}
+.c-duplicata{border-left-color:#6E7B8B} .c-cortesia{border-left-color:var(--vinho-2)}
+
+/* metas */
+.meta{margin-bottom:16px}
+.meta:last-child{margin-bottom:0}
+.meta .cab{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+.meta .cab b{font-size:12.5px;font-weight:600}
+.meta .cab .pc{font-family:'IBM Plex Mono',monospace;font-size:19px;font-weight:600;color:var(--vinho)}
+.meta .t{height:12px;background:rgba(36,30,28,.09);border-radius:3px;overflow:visible;position:relative}
+.meta .t i{display:block;height:100%;background:var(--vinho);border-radius:3px}
+.meta .t i.rc{background:var(--salvia)}
+.meta .t .ritmo{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--tinta)}
+.meta .base{display:flex;justify-content:space-between;margin-top:7px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:rgba(36,30,28,.6)}
+.meta .obs{font-size:11px;margin-top:6px}
+.meta .obs.ok{color:var(--salvia)} .meta .obs.at{color:var(--vinho-2)}
+
+/* recorrência */
+.recbar{height:26px;border-radius:6px;overflow:hidden;display:flex;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#fff}
+.recbar i{display:flex;align-items:center;justify-content:center;height:100%}
+.recbar .nova{background:var(--salvia)} .recbar .rec{background:var(--vinho)}
+
+/* calendário */
+.cal-cab{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px}
+.cal-cab span{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(36,30,28,.45)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.dia{aspect-ratio:1/1;border-radius:5px;padding:4px 3px 0;display:flex;flex-direction:column;background:rgba(36,30,28,.04)}
+.dia.vazio{background:transparent}
+.dia.temdado{cursor:pointer}
+.dia .d{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:rgba(36,30,28,.5)}
+.dia .v{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;margin-top:auto;margin-bottom:3px}
+.dia.rec{background:rgba(79,107,88,.2)} .dia.rec .v{color:#3D5647}
+.dia.prev{background:rgba(184,137,74,.2)} .dia.prev .v{color:#8A6529}
+.dia.forte{background:rgba(184,137,74,.45)}
+.dia.hoje{outline:1.8px solid var(--vinho);outline-offset:-1.8px}
+.leg{display:flex;gap:14px;margin-top:11px;font-size:10.5px;color:rgba(36,30,28,.62);flex-wrap:wrap}
+.leg span{display:flex;align-items:center;gap:5px}
+
+/* listas simples */
+.linha-r{display:grid;grid-template-columns:46px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--linha)}
+.linha-r:last-child{border-bottom:0}
+.linha-r .dt{font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(36,30,28,.55);text-align:center;line-height:1.15}
+.linha-r .dt b{display:block;font-size:14px;color:var(--tinta);font-weight:600}
+.linha-r .de{font-size:11.5px;line-height:1.35}
+.linha-r .de span{display:block;font-size:9.5px;color:rgba(36,30,28,.55);font-family:'IBM Plex Mono',monospace;margin-top:1px}
+.linha-r .vr{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;white-space:nowrap}
+
+/* modal */
+#modal{display:none;position:fixed;inset:0;background:rgba(36,30,28,.55);z-index:60;align-items:flex-end;justify-content:center}
+@media(min-width:700px){#modal{align-items:center}}
+#modal .painel{background:var(--papel-2);width:100%;max-width:560px;max-height:88vh;overflow-y:auto;border-radius:16px 16px 0 0;padding:20px}
+@media(min-width:700px){#modal .painel{border-radius:14px}}
+#modal .fechar{float:right;background:none;border:0;font-size:20px;cursor:pointer;color:rgba(36,30,28,.5)}
+.item-l{display:grid;grid-template-columns:1fr auto;gap:10px;padding:9px 0;border-bottom:1px solid var(--linha);align-items:baseline}
+.item-l:last-child{border-bottom:0}
+.item-l .nm{font-size:12.5px;font-weight:500;line-height:1.3}
+.item-l .qt{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:rgba(36,30,28,.55);margin-top:2px}
+.item-l .vt{font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500;white-space:nowrap}
+.item-l .vt.zero{color:var(--latao)}
+.aviso-box{background:rgba(92,26,43,.07);border-left:3px solid var(--vinho);padding:10px 12px;font-size:11.5px;line-height:1.5;margin-top:10px;border-radius:0 4px 4px 0}
+.sec{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(36,30,28,.6);margin:16px 0 6px;font-weight:600}
+.alerta-versao{background:#8A3A4C;color:#fff;padding:11px 16px;font-size:12.5px;line-height:1.5;display:none}
+.alerta-versao b{font-weight:600}
+.vazio{text-align:center;padding:28px 12px;color:rgba(36,30,28,.42);font-size:12.5px}
+.carregando{text-align:center;padding:28px;color:rgba(36,30,28,.45);font-size:12.5px}
+</style>
+</head>
+<body>
+
+<div id="config">
+  <h1>Fluxo de Caixa — Kássila Nasser</h1>
+  <p>Cole a URL do App da Web publicado no Apps Script (termina em <b>/exec</b>). Fica salva neste navegador.</p>
+  <input id="inp-url" type="text" placeholder="https://script.google.com/macros/s/.../exec">
+  <button onclick="salvarUrl()">Entrar</button>
+  <div class="erro" id="config-erro"></div>
+</div>
+
+<div id="app">
+  <header class="topo">
+    <div class="marca-bloco">
+      <img class="marca-img" alt="" src="data:image/png;base64,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">
+      <div>
+        <div class="marca">Kássila Nasser</div>
+        <div class="sub" id="hdr-sub">—</div>
+      </div>
+    </div>
+    <div class="hdr-dir">
+      <div class="atz">
+        <span id="atz-txt">—</span>
+        <label class="auto"><input type="checkbox" id="chk-auto" onchange="ligarAuto(this.checked)"> auto 5 min</label>
+      </div>
+      <button class="btn-atz" id="btn-busca" onclick="abrirBusca()" title="Buscar paciente ou orçamento">⌕</button>
+      <button class="btn-atz" id="btn-atz" onclick="atualizarAgora()" title="Atualizar dados">↻</button>
+      <select class="sel" id="sel-mes" onchange="trocarMes(this.value)"></select>
+    </div>
+  </header>
+
+  <div class="alerta-versao" id="alerta-versao"></div>
+  <nav class="tabs">
+    <button data-tela="dia" class="on" onclick="irPara('dia')">Dia</button>
+    <button data-tela="mes" onclick="irPara('mes')">Mês</button>
+    <button data-tela="recebimentos" onclick="irPara('recebimentos')">Recebimentos</button>
+    <button data-tela="auditoria" onclick="irPara('auditoria')">Auditoria</button>
+  </nav>
+
+  <!-- ================= DIA ================= -->
+  <section class="tela on" id="tela-dia">
+    <div class="navdia">
+      <button onclick="andarDia(-1)" title="dia anterior">‹</button>
+      <input type="date" id="inp-dia" onchange="escolherDia(this.value)">
+      <button onclick="andarDia(1)" title="próximo dia">›</button>
+      <button class="hoje" onclick="irHoje()">HOJE</button>
+    </div>
+
+    <div class="grid-dia">
+      <div class="col">
+        <div class="hero" id="hero-dia"><div class="carregando" style="color:rgba(255,255,255,.7)">Carregando…</div></div>
+        <div class="card" id="card-split"></div>
+        <div class="card" id="card-formas"></div>
+      </div>
+
+      <div class="col">
+        <div class="card">
+          <h3>Últimos 14 dias <span class="aux">toque para abrir o dia</span></h3>
+          <div class="spark" id="spark"></div>
+          <div class="spark-eixo" id="spark-eixo"></div>
+        </div>
+        <div class="card">
+          <h3>Orçamentos do dia</h3>
+          <div id="lista-dia"><div class="carregando">Carregando…</div></div>
+        </div>
+      </div>
+
+      <div class="col" id="col-mes-resumo"></div>
+    </div>
+  </section>
+
+  <!-- ================= MÊS ================= -->
+  <section class="tela" id="tela-mes">
+    <div class="grid-mes">
+      <div class="col">
+        <div class="hero" id="hero-mes"><div class="carregando" style="color:rgba(255,255,255,.7)">Carregando…</div></div>
+        <div class="card">
+          <h3>Contas do mês <span class="aux">toque para ver os pacientes</span></h3>
+          <div class="contas-grid" id="contas-grid"></div>
+          <p style="font-size:10.5px;color:rgba(36,30,28,.55);line-height:1.5;margin:12px 0 0">
+            <b>Caixa recebido no mês</b> são as parcelas que caem neste mês, venham de qual venda vierem.
+            Na cascata, <b>caixa das vendas do mês</b> é só o que as vendas deste mês geraram.
+            <b>A receber</b> é a carteira inteira, inclusive meses seguintes.
+          </p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card"><h3>Metas do mês</h3><div id="metas-box"></div></div>
+        <div class="card"><h3>Ranking de procedimentos <span class="aux">no mês</span></h3><div class="barras" id="ranking"></div></div>
+        <div class="card"><h3>Pacientes do mês</h3><div id="recorrencia-box"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RECEBIMENTOS ================= -->
+  <section class="tela" id="tela-recebimentos">
+    <div class="grid-mes">
+      <div class="col">
+        <div class="hero" id="hero-receb"></div>
+        <div class="card">
+          <h3>Calendário</h3>
+          <div class="cal-cab"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div>
+          <div class="cal" id="cal-grid"><div class="carregando">Carregando…</div></div>
+          <div class="leg">
+            <span><i class="pip" style="background:rgba(79,107,88,.6)"></i>Recebido</span>
+            <span><i class="pip" style="background:rgba(184,137,74,.6)"></i>Previsto</span>
+            <span><i class="pip" style="background:rgba(184,137,74,.95)"></i>Dia forte</span>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card"><h3 id="tit-prox">Próximos recebimentos</h3><div id="lista-prox"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= AUDITORIA ================= -->
+  <section class="tela" id="tela-auditoria">
+    <div class="grid-aud">
+      <div class="col">
+        <div class="card">
+          <h3>Orçamentos do mês <span class="aux" id="aud-qtd"></span></h3>
+          <div id="lista-auditoria"><div class="carregando">Carregando…</div></div>
+        </div>
+      </div>
+      <div class="col sticky">
+        <div class="card" id="aud-detalhe"><div class="vazio">Selecione um orçamento à esquerda.</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="modal"><div class="painel"><button class="fechar" onclick="fecharModal()">✕</button><div id="modal-conteudo"></div></div></div>
+
+<script>
+/* Cole aqui a URL /exec do Apps Script e ninguém mais precisa configurar nada:
+   quem abrir o link já entra direto no painel. Deixe como está para continuar
+   pedindo a URL na primeira abertura de cada aparelho. */
+const API_FIXA = 'COLE_AQUI_A_URL_EXEC';
+
+let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
+           || localStorage.getItem('kassila_api_url') || '';
+let MES = null, DIA = null, R = null;
+let VERSAO_API = null;
+const VERSAO_ESPERADA = 'V5.5';
+
+const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
+const pct  = v => (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';
+const NOMES_MES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const rotuloMes = m => NOMES_MES[Number(m.split('-')[1])-1] + '/' + m.split('-')[0];
+const brParaIso = d => { const p=String(d).split('/'); return p.length===3? `${p[2]}-${p[1]}-${p[0]}` : ''; };
+const isoParaBr = d => { const p=String(d).split('-'); return p.length===3? `${p[2]}/${p[1]}/${p[0]}` : ''; };
+
+function salvarUrl(){
+  const v = document.getElementById('inp-url').value.trim();
+  if(!v) return;
+  localStorage.setItem('kassila_api_url', v); API_URL = v; iniciar();
+}
+
+/* Ponte com o servidor. Esta página roda fora do Google, então a chamada é
+   POST com corpo text/plain — de propósito: com application/json o navegador
+   dispara uma verificação prévia (preflight OPTIONS) que o Apps Script não
+   sabe responder, e a chamada morre antes de sair. Mantém GET como reserva. */
+async function api(acao, params){
+  const corpo = Object.assign({acao: acao}, params || {});
+  let j;
+  try{
+    const r = await fetch(API_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify(corpo),
+      redirect: 'follow'
+    });
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    j = await r.json();
+  }catch(err){
+    const qs = new URLSearchParams(corpo);
+    const r2 = await fetch(API_URL + '?' + qs.toString());
+    if(!r2.ok) throw new Error('HTTP ' + r2.status);
+    j = await r2.json();
+  }
+  if(j.versao) VERSAO_API = j.versao;
+  if(j.erro) throw new Error(j.erro);
+  if(j.dados && j.dados.erro) throw new Error(j.dados.erro);
+  return j.dados;
+}
+
+async function iniciar(){
+  document.getElementById('config').style.display='none';
+  document.getElementById('app').style.display='block';
+  try{
+    const meses = await api('meses');
+    const sel = document.getElementById('sel-mes');
+    sel.innerHTML = meses.map(m=>`<option value="${m}">${rotuloMes(m)}</option>`).join('');
+    MES = meses[meses.length-1]; sel.value = MES; DIA = null;
+    await carregar();
+  }catch(e){
+    document.getElementById('config').style.display='block';
+    document.getElementById('app').style.display='none';
+    const el=document.getElementById('config-erro'); el.style.display='block'; el.textContent='Erro: '+e.message;
+  }
+}
+
+function irPara(t){
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.tela===t));
+  document.querySelectorAll('.tela').forEach(s=>s.classList.toggle('on', s.id==='tela-'+t));
+}
+
+async function trocarMes(m){ MES=m; DIA=null; await carregar(); }
+async function escolherDia(iso){ if(!iso) return; DIA = isoParaBr(iso); await carregar(); }
+async function irHoje(){ DIA=null; await carregar(); }
+async function andarDia(n){
+  const base = DIA ? new Date(brParaIso(DIA)+'T12:00:00') : new Date(brParaIso(R.hoje)+'T12:00:00');
+  base.setDate(base.getDate()+n);
+  DIA = `${String(base.getDate()).padStart(2,'0')}/${String(base.getMonth()+1).padStart(2,'0')}/${base.getFullYear()}`;
+  await carregar();
+}
+
+async function carregar(){
+  const p = {mes: MES}; if(DIA) p.dia = DIA;
+  R = await api('resumo', p);
+  ULTIMA = new Date();
+  document.getElementById('hdr-sub').textContent = R.hoje + '  ·  ' + rotuloMes(R.mes);
+  conferirVersao();
+  document.getElementById('inp-dia').value = brParaIso(R.hoje);
+  renderDia(); renderMes(); renderResumoMesLateral();
+  carregarListaDia(); carregarCalendario(); carregarAuditoria();
+  pintarAtualizacao();
+}
+
+/* ============ atualização dos dados ============
+   Auto-refresh nasce DESLIGADO de propósito: numa reunião projetada, a tela
+   trocando sozinha no meio de uma frase corta o raciocínio de quem fala.
+   Quem decide a hora de atualizar é quem está conduzindo, pelo botão. */
+let ULTIMA = null, TIMER_AUTO = null, RELOGIO = null;
+
+function pintarAtualizacao(){
+  const el = document.getElementById('atz-txt');
+  if(!el) return;
+  if(!ULTIMA){ el.textContent = '—'; return; }
+  const hh = String(ULTIMA.getHours()).padStart(2,'0') + ':' + String(ULTIMA.getMinutes()).padStart(2,'0');
+  const min = Math.floor((Date.now() - ULTIMA.getTime()) / 60000);
+  let idade = min < 1 ? 'agora' : (min === 1 ? 'há 1 min' : 'há ' + min + ' min');
+  el.innerHTML = 'atualizado ' + hh + ' · <span class="' + (min >= 15 ? 'velho' : '') + '">' + idade + '</span>';
+}
+
+async function atualizarAgora(){
+  const b = document.getElementById('btn-atz');
+  if(b){ b.classList.add('girando'); b.disabled = true; }
+  try{ await carregar(); }
+  catch(err){ console.error(err); }
+  finally{ if(b){ b.disabled = false; setTimeout(function(){ b.classList.remove('girando'); }, 500); } }
+}
+
+function ligarAuto(ativo){
+  if(TIMER_AUTO){ clearInterval(TIMER_AUTO); TIMER_AUTO = null; }
+  if(ativo) TIMER_AUTO = setInterval(atualizarAgora, 5 * 60 * 1000);
+}
+
+/* só reescreve o "há N min"; não bate na API */
+if(!RELOGIO) RELOGIO = setInterval(pintarAtualizacao, 30000);
+
+/**
+ * Os gráficos e o ranking dependem de campos que só existem a partir da
+ * V4.1 da API. Se a implantação publicada estiver velha, eles viriam
+ * vazios sem explicação — então avisamos em vez de mostrar nada.
+ */
+function conferirVersao(){
+  const el = document.getElementById('alerta-versao');
+  const faltam = [];
+  if(!R.serie_14) faltam.push('gráfico dos 14 dias');
+  if(!R.ranking_procedimentos) faltam.push('ranking de procedimentos');
+  if(!R.split_dia) faltam.push('à vista x parcelado');
+  if(!R.recorrencia) faltam.push('novas x recorrentes');
+  if(!faltam.length){ el.style.display='none'; return; }
+  el.style.display='block';
+  el.innerHTML = '<b>A implantação publicada está desatualizada'
+    + (VERSAO_API ? ' (' + VERSAO_API + ', esperado ' + VERSAO_ESPERADA + ')' : '')
+    + '.</b> Por isso não aparecem: ' + faltam.join(', ')
+    + '. No editor do Apps Script: Implantar → Gerenciar implantações → lápis → Versão: Nova versão → Implantar.';
+}
+
+/* ---------------- DIA ---------------- */
+function renderDia(){
+  const d = R.dia;
+  document.getElementById('hero-dia').innerHTML = `
+    <div class="rot">Vendido em ${R.hoje}</div>
+    <div class="grande"><small>R$</small>${brl0(d.venda_comercial)}${(d.venda_comercial%1?','+String((d.venda_comercial%1).toFixed(2)).slice(2):',00')}</div>
+    <div class="sub">${d.qtd_orcamentos} orçamento(s)</div>
+    <div class="cascata">
+      <div><span>Total dos procedimentos</span><span>${brl(d.total_procedimentos)}</span></div>
+      <div class="menos"><span>Descontos</span><span>−${brl(d.desconto)}</span></div>
+      <div><span>Total dos orçamentos</span><span>${brl(d.total)}</span></div>
+      <div class="tot"><span>Venda do comercial</span><span>${brl(d.venda_comercial)}</span></div>
+    </div>`;
+
+  const s = R.split_dia || {a_vista:0,parcelado:0};
+  const tot = s.a_vista + s.parcelado;
+  document.getElementById('card-split').innerHTML = tot ? `
+    <h3>Como foi pago</h3>
+    <div class="split"><i class="vista" style="width:${tot?s.a_vista/tot*100:0}%"></i><i class="parc" style="width:${tot?s.parcelado/tot*100:0}%"></i></div>
+    <div class="split-leg">
+      <div><div class="r"><i class="pip" style="background:var(--salvia)"></i>Caixa na hora</div>
+        <div class="v num">${brl(s.a_vista)}</div><div class="n">dinheiro, pix e débito · ${tot?Math.round(s.a_vista/tot*100):0}%</div></div>
+      <div><div class="r"><i class="pip" style="background:var(--latao)"></i>Parcelado</div>
+        <div class="v num">${brl(s.parcelado)}</div><div class="n">entra em D+30 · ${tot?Math.round(s.parcelado/tot*100):0}%</div></div>
+    </div>` : `<h3>Como foi pago</h3><div class="vazio">Sem pagamento neste dia.</div>`;
+
+  const f = R.formas_pagamento_dia||[];
+  const maxF = f.length? Math.max(...f.map(x=>x.valor)) : 0;
+  document.getElementById('card-formas').innerHTML = f.length ? `
+    <h3>Formas de pagamento</h3>
+    <div class="barras">${f.map(x=>`
+      <div class="barra"><div class="cab"><b>${x.forma}</b><span>${brl(x.valor)}</span></div>
+      <div class="t"><i style="width:${maxF?x.valor/maxF*100:0}%"></i></div></div>`).join('')}</div>`
+    : `<h3>Formas de pagamento</h3><div class="vazio">Nada lançado neste dia.</div>`;
+
+  const serie = R.serie_14||[];
+  const maxS = Math.max(1, ...serie.map(x=>x.valor));
+  document.getElementById('spark').innerHTML = serie.map(x=>{
+    const fds = (x.dow===0||x.dow===6) ? ' fds':'';
+    const sel = x.data===R.hoje ? ' sel':'';
+    return `<div class="col-d${fds}${sel}" onclick="escolherDia('${brParaIso(x.data)}')" title="${x.data} · ${brl(x.valor)}">
+      <i style="height:${Math.max(2, x.valor/maxS*100)}%"></i></div>`;
+  }).join('');
+  document.getElementById('spark-eixo').innerHTML = serie.map(x=>`<span>${x.dia}</span>`).join('');
+}
+
+async function carregarListaDia(){
+  const lista = await api('lista',{conta:'venda',periodo:'dia',mes:MES,dia:DIA||R.hoje});
+  const el = document.getElementById('lista-dia');
+  if(!lista.length){ el.innerHTML='<div class="vazio">Nenhum orçamento fechado neste dia.</div>'; return; }
+  el.innerHTML = lista.map(cartaoOrc).join('');
+}
+
+function cartaoOrc(o){
+  let cls='orc';
+  if(o.tem_duplicata==='SIM') cls+=' parcial';
+  if(o.faixa==='AUTORIZAR'||o.faixa==='VERMELHO'||o.tem_cortesia==='SIM') cls+=' alerta';
+  let rec='';
+  if(o.classificacao==='NOVA') rec=`<div class="rec nova">◆ Paciente nova</div>`;
+  else if(o.dias_desde_anterior!=null){
+    const c = o.dias_desde_anterior>194?'resgate':'rec2';
+    const txt = o.dias_desde_anterior>194?'◆ Resgate — não vinha há ':'◆ Última compra há ';
+    rec=`<div class="rec ${c}">${txt}${o.dias_desde_anterior} dias · ${o.orc_anterior_data}</div>`;
+  }
+  const tags=[];
+  if(Number(o.desconto)>0) tags.push(`<span class="tag desc">desconto ${o.desconto_pct}%</span>`);
+  if(o.tem_cortesia==='SIM') tags.push(`<span class="tag flag">cortesia</span>`);
+  if(o.tem_duplicata==='SIM') tags.push(`<span class="tag">abatimento de crédito</span>`);
+  if(Number(o.caixa)>0) tags.push(`<span class="tag ok">caixa ${brl0(o.caixa)}</span>`);
+  if(Number(o.a_receber)>0) tags.push(`<span class="tag">a receber ${brl0(o.a_receber)}</span>`);
+  return `<div class="${cls}" onclick="abrirOrcamento('${o.id}')">
+    <div class="l1"><span class="pac">${o.paciente}</span><span class="val">${brl(o.valor)}</span></div>
+    <div class="l2"><span class="cod">ORÇ ${o.num} · ${o.descricao||''}</span>
+      ${Number(o.desconto)>0?`<span class="risco">${brl(o.total_procedimentos)}</span>`:''}</div>
+    ${o.procedimentos?`<div class="procs">${o.procedimentos}</div>`:''}
+    ${rec}
+    ${tags.length?`<div class="tags">${tags.join('')}</div>`:''}
+  </div>`;
+}
+
+/* ---------------- MÊS ---------------- */
+function renderMes(){
+  const c = R.mes_cascata;
+  document.getElementById('hero-mes').innerHTML = `
+    <div class="rot">Vendido no mês — ${rotuloMes(R.mes)}</div>
+    <div class="grande"><small>R$</small>${brl0(c.venda_comercial)}</div>
+    <div class="cascata">
+      <div><span>Total dos procedimentos</span><span>${brl(c.total_procedimentos)}</span></div>
+      <div class="menos"><span>Descontos</span><span>−${brl(c.desconto)}</span></div>
+      <div><span>Total dos orçamentos</span><span>${brl(c.total)}</span></div>
+      <div class="menos"><span>Abatimento por crédito</span><span>−${brl(c.valor_duplicata)}</span></div>
+      <div class="menos"><span>Permuta</span><span>−${brl(c.valor_permuta)}</span></div>
+      <div class="tot"><span>Venda do comercial</span><span>${brl(c.venda_comercial)}</span></div>
+      <div class="sub2"><span>caixa das vendas do mês</span><span>${brl(c.caixa_imediato)}</span></div>
+      <div class="sub2"><span>a receber gerado pelas vendas do mês</span><span>${brl(c.a_receber)}</span></div>
+    </div>`;
+
+  const nomes={venda:'Venda',caixa:'Caixa recebido',a_receber:'A receber (carteira)',permuta:'Permuta',duplicata:'Duplicata',cortesia:'Cortesia'};
+  const cls={venda:'c-venda',caixa:'c-caixa',a_receber:'c-receber',permuta:'c-permuta',duplicata:'c-duplicata',cortesia:'c-cortesia'};
+  document.getElementById('contas-grid').innerHTML = Object.keys(R.contas).map(k=>{
+    const x=R.contas[k];
+    return `<button class="conta-btn ${cls[k]}" onclick="abrirConta('${k}')">
+      <div class="nome">${nomes[k]}</div><div class="val">${brl(x.valor)}</div><div class="qtd">${x.qtd} registro(s)</div></button>`;
+  }).join('');
+
+  const m=R.meta, box=document.getElementById('metas-box');
+  if(m){
+    const dvVenda=m.pct_venda-m.ritmo_pct;
+    box.innerHTML=`
+      <div class="meta">
+        <div class="cab"><b>Meta de venda</b><span class="pc">${pct(m.pct_venda)}</span></div>
+        <div class="t"><i style="width:${Math.min(m.pct_venda,100)}%"></i><span class="ritmo" style="left:${Math.min(m.ritmo_pct,100)}%"></span></div>
+        <div class="base"><span>realizado ${brl(m.venda_realizada)}</span><span>meta ${brl(m.meta_venda)}</span></div>
+        <div class="obs ${dvVenda>=0?'ok':'at'}">${dvVenda>=0?'Acima':'Abaixo'} do ritmo em ${pct(Math.abs(dvVenda))}</div>
+      </div>
+      <div class="obs" style="color:rgba(36,30,28,.6);font-size:10.5px;border-top:1px solid var(--linha);padding-top:8px">
+        O traço preto marca onde a meta estaria em dia: ${m.dias_uteis_decorridos} de ${m.dias_uteis} dias úteis (${pct(m.ritmo_pct)}).
+      </div>`;
+  } else box.innerHTML='<div class="vazio">Sem meta cadastrada para este mês.<br>Preencha a linha '+R.mes+' na aba Metas.</div>';
+
+  const rk=R.ranking_procedimentos||[];
+  const maxR=rk.length?Math.max(...rk.map(x=>x.valor)):0;
+  document.getElementById('ranking').innerHTML = rk.length ? rk.map(x=>`
+    <div class="barra"><div class="cab"><b>${x.procedimento}</b><span>${brl0(x.valor)} · ${x.qtd}x</span></div>
+    <div class="t"><i style="width:${maxR?x.valor/maxR*100:0}%"></i></div></div>`).join('')
+    : '<div class="vazio">Sem procedimentos no mês.</div>';
+
+  const rc=R.recorrencia||{novas:0,recorrentes:0};
+  const t=rc.novas+rc.recorrentes;
+  const boxRec=document.getElementById('recorrencia-box');
+  if(!R.recorrencia){
+    boxRec.innerHTML = `<div class="vazio" style="text-align:left;line-height:1.6">
+      <b>A API publicada não envia este dado.</b><br>
+      Veja a faixa vinho no topo da tela: a implantação precisa ser republicada.</div>`;
+    return;
+  }
+  // sem isto, "mes sem vendas" e "coluna nao calculada" davam exatamente a
+  // mesma tela vazia, e nao dava pra saber qual dos dois era
+  if(!t && rc.total_orcamentos>0){
+    boxRec.innerHTML = `<div class="vazio" style="text-align:left;line-height:1.6">
+      <b>${rc.total_orcamentos} orçamento(s) no mês, nenhum classificado.</b><br>
+      A coluna <i>classificacao_paciente</i> da aba Orcamentos está vazia.<br>
+      No editor do Apps Script, rode <b>recalcularRecorrencia()</b> e recarregue esta tela.<br>
+      Se já rodou, rode <b>diagnosticoRecorrencia('${R.mes}')</b> — ele diz qual elo está faltando.</div>`;
+    return;
+  }
+  boxRec.innerHTML = t ? `
+    <div class="recbar">
+      <i class="nova" style="width:${rc.novas/t*100}%;cursor:pointer" onclick="abrirPacientes('novas')">${rc.novas?rc.novas:''}</i>
+      <i class="rec" style="width:${rc.recorrentes/t*100}%;cursor:pointer" onclick="abrirPacientes('recorrentes')">${rc.recorrentes?rc.recorrentes:''}</i>
+    </div>
+    <div class="leg">
+      <span style="cursor:pointer" onclick="abrirPacientes('novas')"><i class="pip" style="background:var(--salvia)"></i>Novas: ${rc.novas}</span>
+      <span style="cursor:pointer" onclick="abrirPacientes('recorrentes')"><i class="pip" style="background:var(--vinho)"></i>Recorrentes: ${rc.recorrentes}</span>
+    </div>
+    <div class="aux" style="font-size:10px;color:rgba(36,30,28,.5);margin-top:8px">toque em Novas ou Recorrentes para ver os nomes</div>`
+    : '<div class="vazio">Sem orçamentos fechados neste mês.</div>';
+
+}
+
+async function abrirPacientes(tipo){
+  const lista = await api('lista', {conta: 'pacientes_' + tipo, mes: MES});
+  const titulo = tipo === 'novas' ? 'Pacientes novas' : 'Pacientes recorrentes';
+  let html = `<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 4px;color:var(--vinho)">${titulo}</h2>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(36,30,28,.5);margin-bottom:14px">${rotuloMes(MES)} · ${lista.length} paciente(s)</div>`;
+  html += lista.length ? lista.map(p => `<div class="orc" style="cursor:default"><div class="l1"><span class="pac">${p.paciente}</span></div></div>`).join('')
+    : '<div class="vazio">Nenhuma paciente nesta categoria.</div>';
+  abrirModal(html);
+}
+
+/* resumo do mês na coluna direita da tela Dia (PC) */
+function renderResumoMesLateral(){
+  const c=R.mes_cascata, m=R.meta;
+  let metaHtml = m ? `
+    <div class="meta">
+      <div class="cab"><b>Meta de venda</b><span class="pc">${pct(m.pct_venda)}</span></div>
+      <div class="t"><i style="width:${Math.min(m.pct_venda,100)}%"></i><span class="ritmo" style="left:${Math.min(m.ritmo_pct,100)}%"></span></div>
+    </div>` : '<div class="vazio">Sem meta cadastrada.</div>';
+
+  document.getElementById('col-mes-resumo').innerHTML = `
+    <div class="hero">
+      <div class="rot">Acumulado de ${rotuloMes(R.mes)}</div>
+      <div class="grande"><small>R$</small>${brl0(c.venda_comercial)}</div>
+      <div class="cascata">
+        <div><span>Caixa recebido</span><span>${brl(R.contas.caixa.valor)}</span></div>
+        <div><span>A receber</span><span>${brl(R.contas.a_receber.valor)}</span></div>
+        <div class="menos"><span>Cortesia concedida</span><span>${brl(c.valor_cortesia)}</span></div>
+      </div>
+    </div>
+    <div class="card"><h3>Metas</h3>${metaHtml}</div>
+    <div class="card"><h3>Contas do mês</h3><div class="contas-grid">${
+      Object.keys(R.contas).map(k=>{
+        const nomes={venda:'Venda',caixa:'Caixa',a_receber:'A receber',permuta:'Permuta',duplicata:'Duplicata',cortesia:'Cortesia'};
+        const cls={venda:'c-venda',caixa:'c-caixa',a_receber:'c-receber',permuta:'c-permuta',duplicata:'c-duplicata',cortesia:'c-cortesia'};
+        const x=R.contas[k];
+        return `<button class="conta-btn ${cls[k]}" onclick="abrirConta('${k}')">
+          <div class="nome">${nomes[k]}</div><div class="val" style="font-size:14px">${brl0(x.valor)}</div>
+          <div class="qtd">${x.qtd}</div></button>`;
+      }).join('')}</div></div>`;
+}
+
+/* ---------------- CONTAS ---------------- */
+async function abrirConta(conta){
+  const lista = await api('lista',{conta,periodo:'mes',mes:MES});
+  const nomes={venda:'Venda do comercial',caixa:'Caixa recebido no mês',a_receber:'A receber — carteira futura',permuta:'Permuta',duplicata:'Abatimento por crédito',cortesia:'Cortesia concedida'};
+  let html=`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 4px;color:var(--vinho)">${nomes[conta]}</h2>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(36,30,28,.5);margin-bottom:14px">${rotuloMes(MES)} · ${lista.length} registro(s)</div>`;
+  if(!lista.length) html+='<div class="vazio">Nenhum registro neste mês.</div>';
+  else html += lista.map(i=>{
+    const v = i.valor!==undefined ? i.valor : i.valor_estimado;
+    const sub = conta==='cortesia' ? i.descricao
+              : conta==='caixa'||conta==='a_receber' ? `${i.forma} · parcela ${i.parcela}`
+              : (i.procedimentos||i.descricao||i.forma_original||'');
+    const idOrc = i.id.split('-')[0];
+    return `<div class="orc" onclick="abrirOrcamento('${idOrc}')">
+      <div class="l1"><span class="pac">${i.paciente}</span><span class="val">${brl(v)}</span></div>
+      <div class="l2"><span class="cod">ORÇ ${i.num} · ${i.data}</span></div>
+      ${sub?`<div class="procs">${sub}</div>`:''}</div>`;
+  }).join('');
+  abrirModal(html);
+}
+
+/* ---------------- ORÇAMENTO ---------------- */
+function htmlOrcamento(d, compacto){
+  const o=d.orcamento;
+  const itens=d.itens.map(i=>`<div class="item-l">
+      <div><div class="nm">${i.descricao}</div><div class="qt">${i.qtde} × ${brl(i.preco_unit)}${i.obs_item?' · '+i.obs_item:''}</div></div>
+      <div class="vt ${i.is_cortesia==='SIM'?'zero':''}">${i.is_cortesia==='SIM'?'cortesia':brl(i.valor_total)}</div></div>`).join('');
+  const parcelas=(d.parcelas||[]).map(p=>`<div class="item-l">
+      <div><div class="nm">${p.forma_original}</div><div class="qt">vencimento ${p.data_parcela}</div></div>
+      <div class="vt">${brl(p.valor_parcela)}</div></div>`).join('');
+  const recs=(d.recebimentos||[]).map(r=>`<div class="linha-r">
+      <div class="dt"><b>${String(r.data_prevista).slice(0,2)}</b>${String(r.data_prevista).slice(3,5)}/${String(r.data_prevista).slice(8,10)}</div>
+      <div class="de">${r.forma_normalizada}<span>parcela ${r.parcela_n} de ${r.de_n} · ${r.classe==='CAIXA'?'caixa':'a receber'}</span></div>
+      <div class="vr">${brl(r.valor)}</div></div>`).join('');
+  let avisos='';
+  if(o.tem_cortesia==='SIM') avisos+=`<div class="aviso-box"><b>Cortesia.</b> Item a zero — fora da venda e fora da meta.</div>`;
+  if(o.tem_duplicata==='SIM') avisos+=`<div class="aviso-box"><b>Abatimento de crédito.</b> Não entra na venda do comercial nem no caixa.</div>`;
+  if(o.conferido!=='OK-AUTO') avisos+=`<div class="aviso-box"><b>A revisar:</b> ${o.motivo_revisao}</div>`;
+
+  let recorrencia='';
+  if(o.classificacao_paciente==='NOVA') recorrencia=`<span style="color:var(--salvia)">◆ Paciente nova</span>`;
+  else if(o.dias_desde_anterior!=='') recorrencia=`<span>◆ Última compra há ${o.dias_desde_anterior} dias · ${o.orc_anterior_data} · ${o.qtd_anteriores} anterior(es)</span>`;
+
+  return `
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--vinho-2);letter-spacing:.1em">ORÇ ${o.num_orcamento} · ${o.descricao_orcamento||''}</div>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:${compacto?18:21}px;margin:6px 0 4px;line-height:1.15">${o.paciente}</h2>
+    <div style="font-size:11px;color:rgba(36,30,28,.6)">${o.data_venda} · ${o.responsavel||''}</div>
+    <div style="font-size:11px;margin-top:5px;font-family:'IBM Plex Mono',monospace">${recorrencia}</div>
+    <div class="sec">Procedimentos</div>${itens}
+    <div class="item-l" style="border-top:1px solid var(--linha-forte);font-weight:600">
+      <div class="nm">Total dos procedimentos</div><div class="vt">${brl(o.total_procedimentos)}</div></div>
+    ${Number(o.desconto)>0?`<div class="item-l"><div class="nm">Descontos (${o.desconto_pct}%)</div><div class="vt" style="color:var(--vinho-2)">−${brl(o.desconto)}</div></div>`:''}
+    <div class="item-l" style="font-weight:600"><div class="nm">Venda do comercial</div><div class="vt" style="color:var(--vinho)">${brl(o.venda_comercial)}</div></div>
+    <div class="sec">Como foi pago</div>${parcelas||'<div class="vazio">Sem parcelas.</div>'}
+    <div class="sec">Quando entra no caixa</div>${recs||'<div class="vazio">Nenhum recebimento previsto (abatimento de crédito).</div>'}
+    ${avisos}`;
+}
+
+async function abrirOrcamento(id){ abrirModal(htmlOrcamento(await api('orcamento',{id}), false)); }
+
+/* ============ busca em toda a base ============
+   Sem filtro de mês de propósito: a pergunta "quando essa paciente comprou?"
+   não tem como ser respondida se a busca só olhar o mês na tela. */
+let BUSCA_TIMER = null;
+
+function abrirBusca(){
+  abrirModal(`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 12px;color:var(--vinho)">Buscar</h2>
+    <input id="busca-campo" type="search" autocomplete="off"
+           placeholder="nome da paciente ou nº do orçamento"
+           oninput="agendarBusca(this.value)">
+    <div id="busca-info"></div>
+    <div id="busca-res"></div>`);
+  const c = document.getElementById('busca-campo');
+  if(c) c.focus();
+}
+
+/* espera a digitação parar: sem isto, "patricia" dispararia 8 chamadas */
+function agendarBusca(q){
+  if(BUSCA_TIMER) clearTimeout(BUSCA_TIMER);
+  BUSCA_TIMER = setTimeout(function(){ rodarBusca(q); }, 350);
+}
+
+async function rodarBusca(q){
+  const info = document.getElementById('busca-info');
+  const res  = document.getElementById('busca-res');
+  if(!info || !res) return;
+  q = (q||'').trim();
+  if(q.length < 2){ info.textContent = 'digite ao menos 2 caracteres'; res.innerHTML=''; return; }
+  info.textContent = 'buscando...'; res.innerHTML = '';
+  try{
+    const d = await api('busca', {q: q});
+    if(d.erro){ info.textContent = d.erro; return; }
+    if(!d.total){ info.textContent = 'nenhum resultado para "' + q + '"'; return; }
+    info.textContent = d.total + ' resultado(s)' + (d.cortou ? ' — mostrando os 60 mais recentes' : '');
+    res.innerHTML = d.itens.map(cartaoOrc).join('');
+  }catch(err){
+    info.textContent = 'erro: ' + err.message;
+  }
+}
+
+function abrirModal(h){ document.getElementById('modal-conteudo').innerHTML=h; document.getElementById('modal').style.display='flex'; }
+function fecharModal(){ document.getElementById('modal').style.display='none'; }
+
+/* ---------------- CALENDÁRIO ---------------- */
+async function carregarCalendario(){
+  const c = await api('calendario',{mes:MES});
+  const [ano,mes]=MES.split('-').map(Number);
+  const ini=new Date(ano,mes-1,1).getDay();
+  const n=new Date(ano,mes,0).getDate();
+  const porData={}; c.dias.forEach(d=>porData[d.data]=d);
+  const valores=c.dias.map(d=>d.previsto);
+  const maxV=valores.length?Math.max(...valores):0;
+
+  let totalPrev=0, totalRec=0;
+  c.dias.forEach(d=>{ totalPrev+=d.previsto; totalRec+=d.recebido; });
+
+  document.getElementById('hero-receb').innerHTML=`
+    <div class="rot">Previsto em ${rotuloMes(MES)}</div>
+    <div class="grande"><small>R$</small>${brl0(totalPrev)}</div>
+    <div class="cascata">
+      <div><span>Já recebido</span><span>${brl(totalRec)}</span></div>
+      <div><span>Ainda a receber no mês</span><span>${brl(totalPrev-totalRec)}</span></div>
+    </div>`;
+
+  let html='';
+  for(let i=0;i<ini;i++) html+='<div class="dia vazio"></div>';
+  for(let d=1;d<=n;d++){
+    const chave=`${String(d).padStart(2,'0')}/${String(mes).padStart(2,'0')}/${ano}`;
+    const info=porData[chave];
+    let cls='dia', v='';
+    if(info){
+      cls+=' temdado';
+      cls+= info.recebido>0 ? ' rec' : ' prev';
+      if(maxV && info.previsto>=maxV*0.75) cls+=' forte';
+      if(info.hoje) cls+=' hoje';
+      v=brl0(info.previsto);
+    }
+    html+=`<div class="${cls}" ${info?`onclick="detalheDiaCal('${chave}')"`:''}><span class="d">${d}</span><span class="v">${v}</span></div>`;
+  }
+  document.getElementById('cal-grid').innerHTML=html;
+  window.__CAL__=c.dias;
+
+  const futuros=c.dias.filter(d=>!d.passado);
+  document.getElementById('lista-prox').innerHTML = futuros.length ? futuros.map(d=>`
+    <div class="linha-r">
+      <div class="dt"><b>${d.data.slice(0,2)}</b>${d.data.slice(3,5)}</div>
+      <div class="de">${d.qtd} parcela(s)<span>${d.recebido>0?'parcialmente recebido':'previsto'}</span></div>
+      <div class="vr">${brl(d.previsto)}</div></div>`).join('')
+    : '<div class="vazio">Nada previsto para o restante do mês.</div>';
+}
+
+async function detalheDiaCal(data){
+  const lista = await api('lista',{conta:'a_receber',mes:MES});
+  const doDia = lista.filter(x=>x.data===data);
+  const caixa = await api('lista',{conta:'caixa',periodo:'mes',mes:MES});
+  const caixaDia = caixa.filter(x=>x.data===data);
+  const tudo = caixaDia.concat(doDia);
+  let html=`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 12px;color:var(--vinho)">Recebimentos de ${data}</h2>`;
+  html += tudo.length ? tudo.map(x=>`<div class="orc" onclick="abrirOrcamento('${x.id.split('-')[0]}')">
+      <div class="l1"><span class="pac">${x.paciente}</span><span class="val">${brl(x.valor)}</span></div>
+      <div class="l2"><span class="cod">ORÇ ${x.num} · ${x.forma} · parcela ${x.parcela}</span></div></div>`).join('')
+    : '<div class="vazio">Sem recebimentos neste dia.</div>';
+  abrirModal(html);
+}
+
+/* ---------------- AUDITORIA ---------------- */
+async function carregarAuditoria(){
+  const lista = await api('lista',{conta:'venda',periodo:'mes',mes:MES});
+  document.getElementById('aud-qtd').textContent = lista.length + ' orçamento(s)';
+  const el=document.getElementById('lista-auditoria');
+  if(!lista.length){ el.innerHTML='<div class="vazio">Nenhum orçamento neste mês.</div>'; return; }
+  el.innerHTML = lista.map(cartaoOrc).join('').replace(/onclick="abrirOrcamento\(/g,'onclick="verAuditoria(');
+}
+
+async function verAuditoria(id){
+  const d = await api('orcamento',{id});
+  document.getElementById('aud-detalhe').innerHTML = htmlOrcamento(d, true);
+  if(window.innerWidth < 1000) document.getElementById('aud-detalhe').scrollIntoView({behavior:'smooth'});
+}
+
+document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') fecharModal(); });
+if(API_URL){ document.getElementById('inp-url').value=API_URL; iniciar(); }
+
+/* service worker: existe para o Chrome oferecer "Instalar app".
+   Falhar aqui nao pode derrubar o painel — por isso o catch vazio. */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+</script>
+</body>
+</html>
