@@ -456,6 +456,28 @@ function salvarUrl(){
    sabe responder, e a chamada morre antes de sair. Mantém GET como reserva. */
 async function api(acao, params){
   const corpo = Object.assign({acao: acao}, params || {});
+
+  /* Dentro do Apps Script a página roda num quadro isolado do Google e o
+     fetch NÃO alcança o /exec — ele volta o HTML da própria página, o que dava
+     "Unexpected token '<'". A ponte oficial para esse caso é google.script.run. */
+  if(typeof google !== 'undefined' && google.script && google.script.run){
+    const j = await new Promise(function(ok, falha){
+      google.script.run
+        .withSuccessHandler(function(txt){
+          try{ ok(JSON.parse(txt)); }catch(e){ falha(new Error('resposta inválida do servidor')); }
+        })
+        .withFailureHandler(function(err){ falha(new Error(err && err.message ? err.message : String(err))); })
+        .apiWeb(acao, params || {});
+    });
+    if(j.versao) VERSAO_API = j.versao;
+    if(j.erro) throw new Error(j.erro);
+    if(j.dados && j.dados.erro) throw new Error(j.dados.erro);
+    return j.dados;
+  }
+
+  /* Fora do Google (GitHub Pages, Netlify): POST com corpo text/plain — com
+     application/json o navegador dispara verificação prévia que o Apps Script
+     não responde. GET fica de reserva. */
   let j;
   try{
     const r = await fetch(API_URL, {
@@ -637,7 +659,7 @@ function tPintar(){
 
 function tTela1(){
   return `<p class="olho">Acesso restrito</p><h2>Identifique-se</h2>
-  <p class="sub2">Este painel é de uso exclusivo das pessoas autorizadas pela direção clínica.</p>
+  <p class="sub2">Este painel é de uso exclusivo das pessoas autorizadas pela direção clínica.<br>Quem já assinou o termo entra direto.</p>
   ${tErro?`<div class="t-erro">${tEsc(tErro)}</div>`:''}
   <div class="t-campo"><label for="t-quem">Quem está acessando</label>
     <select id="t-quem"><option value="">— selecione —</option>
@@ -730,7 +752,7 @@ function tTela5(){
   <button class="t-bt" onclick="tEntrar()">Entrar no painel</button>`;
 }
 
-function tIr2(){
+async function tIr2(){
   const id=document.getElementById('t-quem').value;
   const cod=document.getElementById('t-cod').value.trim();
   tSel=id;
@@ -738,7 +760,24 @@ function tIr2(){
   if(!/^\d{4}$/.test(cod)){ tErro='Informe os 4 dígitos do código.'; tPintar(); return; }
   tPessoa = tUsuarios.filter(u=>u.id===id)[0];
   tPessoa.codigo = cod;          // conferido no servidor, na hora de gravar
-  tErro=''; tPasso=2; tPintar();
+  tErro='';
+
+  /* Quem já assinou não reassina. A resposta vem do SERVIDOR, não da memória
+     do navegador: dentro do iframe do Apps Script essa memória é descartada a
+     cada abertura, e o termo reaparecia toda vez. */
+  const bt=document.querySelector('#t-corpo button.t-bt');
+  if(bt){ bt.disabled=true; bt.textContent='Verificando...'; }
+  try{
+    const st = await api('aceite_status', {id: id});
+    if(st.aceitou){
+      try{ localStorage.setItem('kassila_aceite', JSON.stringify({id:id, versao:VERSAO_TERMO, quando:st.quando})); }catch(e){}
+      document.getElementById('termo-tela').style.display='none';
+      iniciar();
+      return;
+    }
+  }catch(err){ /* sem resposta: segue pelo termo, que é o lado seguro */ }
+  if(bt){ bt.disabled=false; bt.textContent='Continuar'; }
+  tPasso=2; tPintar();
 }
 
 function tLigarDoc(){
@@ -1325,9 +1364,11 @@ async function verAuditoria(id){
 document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') fecharModal(); });
 /* Arranque: sem URL, pede a URL. Com URL, o termo vem ANTES do painel —
    quem não assinou a versão vigente não vê número nenhum. */
+const DENTRO_APPS_SCRIPT = (typeof google !== 'undefined' && google.script && google.script.run);
+
 async function arrancar(){
-  if(!API_URL) return;
-  document.getElementById('inp-url').value = API_URL;
+  if(!API_URL && !DENTRO_APPS_SCRIPT) return;   // servido pelo Apps Script: não há URL a pedir
+  if(API_URL) document.getElementById('inp-url').value = API_URL;
   let jaAceitou = false;
   try{ jaAceitou = await verificarAceite(); }catch(e){ jaAceitou = false; }
   if(jaAceitou) iniciar(); else abrirTermo();
