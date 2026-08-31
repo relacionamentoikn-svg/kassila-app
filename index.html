@@ -434,7 +434,7 @@ let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
 let MES = null, DIA = null, R = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V5.6';
+const VERSAO_ESPERADA = 'V5.7';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -615,6 +615,7 @@ const CIENCIAS = [
 ];
 
 let tPasso=1, tUsuarios=[], tSel="", tPessoa=null, tErro="", tCiAviso=false;
+let tUltimoPasso=0;
 let tCiencias=CIENCIAS.map(()=>false), tLeu=false, tAssinou=false, tCpf="", tCpfOk=false, tRecibo=null;
 
 const tEsc=v=>String(v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -651,8 +652,10 @@ function tPintar(){
     const p=+d.dataset.p; d.dataset.on = p===tPasso?'1':'0'; d.dataset.ok = p<tPasso?'1':'0';
   });
   const c=document.getElementById('t-corpo');
+  const mudouPasso = (tUltimoPasso !== tPasso);
+  tUltimoPasso = tPasso;
   c.innerHTML = tPasso===1?tTela1():tPasso===2?tTela2():tPasso===3?tTela3():tPasso===4?tTela4():tTela5();
-  window.scrollTo(0,0);
+  if(mudouPasso) window.scrollTo(0,0);
   if(tPasso===3) tLigarDoc();
   if(tPasso===4) tLigarCanvas();
 }
@@ -740,7 +743,7 @@ function tTela4(){
 
 function tTela5(){
   return `<p class="olho">Registrado</p><h2>Aceite concluído</h2>
-  <p class="sub2">O termo foi assinado e arquivado na planilha do Instituto.</p>
+  <p class="sub2">O termo foi assinado e arquivado. Uma cópia em PDF, com o texto que você aceitou e a sua assinatura, foi guardada na pasta <b>Termos Assinados</b> do Drive.</p>
   <div class="t-cartao"><span class="t-ok">✓ Termo aceito</span>
     <div style="display:grid;grid-template-columns:auto 1fr;gap:7px 14px;font-size:12.5px;margin-top:12px">
       <div style="color:rgba(36,30,28,.55)">Nome</div><div style="text-align:right;font-weight:500">${tEsc(tRecibo.nome)}</div>
@@ -749,6 +752,10 @@ function tTela5(){
       <div style="color:rgba(36,30,28,.55)">Data e hora</div><div style="text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11.5px">${tEsc(tRecibo.quando)}</div>
       <div style="color:rgba(36,30,28,.55)">Código</div><div style="text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11.5px">${tEsc(tRecibo.id_aceite)}</div>
     </div></div>
+  ${tRecibo.pdf_url
+    ? `<a class="t-bt t-bt2" href="${tEsc(tRecibo.pdf_url)}" target="_blank" rel="noopener"
+         style="display:block;text-align:center;text-decoration:none;box-sizing:border-box">Baixar meu comprovante (PDF)</a>`
+    : `<div class="t-pend" style="padding-left:0"><li style="list-style:none">O comprovante em PDF está sendo arquivado. Ele fica na pasta <b>Termos Assinados</b> do Drive.</li></div>`}
   <button class="t-bt" onclick="tEntrar()">Entrar no painel</button>`;
 }
 
@@ -782,8 +789,16 @@ async function tIr2(){
 
 function tLigarDoc(){
   const d=document.getElementById('t-doc');
-  const ver=()=>{ if(d.scrollTop+d.clientHeight >= d.scrollHeight-8 && !tLeu){ tLeu=true; tPintar();
-    const n=document.getElementById('t-doc'); if(n) n.scrollTop=99999; } };
+  const ver=()=>{
+    if(d.scrollTop+d.clientHeight >= d.scrollHeight-8 && !tLeu){
+      tLeu=true;
+      // libera os flags no lugar, sem redesenhar: redesenhar rolava ao topo
+      document.querySelectorAll('#t-corpo [data-tci]').forEach(i=>{ i.disabled=false; });
+      const rol=document.querySelector('#t-corpo .t-rol');
+      if(rol){ rol.dataset.ok='1'; rol.innerHTML='<b>Documento lido até o fim.</b>'; }
+      tAtualizarCiencias();
+    }
+  };
   d.addEventListener('scroll',ver); ver();
 }
 
@@ -1376,10 +1391,40 @@ async function arrancar(){
 arrancar();
 
 document.addEventListener('change', function(e){
-  if(e.target.id==='t-ci-aviso'){ tCiAviso=e.target.checked; tPintar(); return; }
+  if(e.target.id==='t-ci-aviso'){ tCiAviso=e.target.checked; tAtualizarAviso(); return; }
   const ci=e.target.closest('[data-tci]');
-  if(ci){ tCiencias[+ci.dataset.tci]=ci.checked; tPintar(); }
+  if(ci){ tCiencias[+ci.dataset.tci]=ci.checked; tAtualizarCiencias(); }
 });
+
+/* Marcar um flag NÃO redesenha a tela: tPintar() rola tudo de volta ao topo e
+   a pessoa tinha que descer de novo a cada clique. Aqui só o que muda muda. */
+function tAtualizarCiencias(){
+  document.querySelectorAll('#t-corpo [data-tci]').forEach(function(inp){
+    const cx = inp.closest('.t-check');
+    if(cx) cx.dataset.on = tCiencias[+inp.dataset.tci] ? '1' : '0';
+  });
+  const pronto = tLeu && tCiencias.every(Boolean);
+  const bt = document.querySelector('#t-corpo button.t-bt');
+  if(bt) bt.disabled = !pronto;
+  const faltam = tCiencias.filter(function(x){ return !x; }).length;
+  const html = pronto ? '' : `<ul class="t-pend">
+      ${!tLeu?'<li>Falta rolar o documento até o fim.</li>':''}
+      ${tLeu&&faltam?`<li>Falta marcar ${faltam} declaração(ões).</li>`:''}</ul>`;
+  const pend = document.querySelector('#t-corpo .t-pend');
+  if(pend) pend.outerHTML = html;
+  else if(html && bt) bt.insertAdjacentHTML('afterend', html);
+}
+
+function tAtualizarAviso(){
+  const cx = document.querySelector('#t-corpo .t-check');
+  if(cx) cx.dataset.on = tCiAviso ? '1' : '0';
+  const bt = document.querySelector('#t-corpo button.t-bt');
+  if(bt) bt.disabled = !tCiAviso;
+  const html = tCiAviso ? '' : '<ul class="t-pend"><li>Marque a ciência acima para continuar.</li></ul>';
+  const pend = document.querySelector('#t-corpo .t-pend');
+  if(pend) pend.outerHTML = html;
+  else if(html && bt) bt.insertAdjacentHTML('afterend', html);
+}
 
 /* service worker: existe para o Chrome oferecer "Instalar app".
    Falhar aqui nao pode derrubar o painel — por isso o catch vazio. */
