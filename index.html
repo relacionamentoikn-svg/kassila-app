@@ -3,20 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gestão Comercial Vendas</title>
+<title>KN Vendas</title>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Comercial KN">
+<meta name="apple-mobile-web-app-title" content="KN Vendas">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="description" content="Painel comercial de vendas e recebimentos — Instituto Kássila Nasser">
 <meta name="theme-color" content="#5C1A2B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Gestão Comercial Vendas">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="application-name" content="Gestão Comercial Vendas">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -293,7 +292,11 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
   <main class="t-corpo" id="t-corpo"></main>
 </div>
 
-<div id="config">
+<div id="carregando" style="display:flex;align-items:center;justify-content:center;
+     min-height:60vh;font-family:'IBM Plex Mono',monospace;font-size:11px;
+     letter-spacing:.12em;text-transform:uppercase;color:rgba(36,30,28,.45)">carregando...</div>
+
+<div id="config" style="display:none">
   <h1>Fluxo de Caixa — Kássila Nasser</h1>
   <p>Cole a URL do App da Web publicado no Apps Script (termina em <b>/exec</b>). Fica salva neste navegador.</p>
   <input id="inp-url" type="text" placeholder="https://script.google.com/macros/s/.../exec">
@@ -633,17 +636,20 @@ function cpfValidoCliente(n){
 async function abrirTermo(){
   document.getElementById('config').style.display='none';
   document.getElementById('app').style.display='none';
-  document.getElementById('termo-tela').style.display='block';
   try{
     const d = await api('usuarios');
     tUsuarios = d.usuarios || [];
     if(!tUsuarios.length) throw new Error('nenhum usuário ativo na aba Usuarios');
   }catch(err){
+    const c0=document.getElementById('carregando'); if(c0) c0.style.display='none';
+    document.getElementById('termo-tela').style.display='block';
     document.getElementById('t-corpo').innerHTML =
       `<div class="t-erro"><b>Não consegui carregar os usuários.</b><br>${tEsc(err.message)}
        <br><br>No Apps Script, rode <b>prepararTermo()</b> e republique a implantação.</div>`;
     return;
   }
+  const car=document.getElementById('carregando'); if(car) car.style.display='none';
+  document.getElementById('termo-tela').style.display='block';
   tPintar();
 }
 
@@ -777,7 +783,6 @@ async function tIr2(){
   try{
     const st = await api('aceite_status', {id: id});
     if(st.aceitou){
-      try{ localStorage.setItem('kassila_aceite', JSON.stringify({id:id, versao:VERSAO_TERMO, quando:st.quando})); }catch(e){}
       document.getElementById('termo-tela').style.display='none';
       iniciar();
       return;
@@ -860,7 +865,6 @@ async function tEnviar(){
       assinatura: document.getElementById('t-ass').toDataURL('image/png')
     });
     tRecibo=d; tErro='';
-    localStorage.setItem('kassila_aceite', JSON.stringify({id:tPessoa.id, versao:VERSAO_TERMO, quando:d.quando}));
     tPasso=5; tPintar();
   }catch(err){
     // erro de código volta o usuário à identificação; os demais ficam aqui
@@ -875,21 +879,11 @@ function tEntrar(){
   iniciar();
 }
 
-/* Já assinou a versão vigente? Guarda no aparelho e confirma no servidor. */
-async function verificarAceite(){
-  let local=null;
-  try{ local=JSON.parse(localStorage.getItem('kassila_aceite')||'null'); }catch(e){ local=null; }
-  if(local && local.versao===VERSAO_TERMO){
-    try{
-      const st = await api('aceite_status', {id: local.id});
-      if(st.aceitou && st.versao_termo===VERSAO_TERMO) return true;
-    }catch(e){ return true; }   // sem rede não trava quem já assinou
-    localStorage.removeItem('kassila_aceite');
-  }
-  return false;
-}
+/* verificarAceite() foi removida: a entrada passa sempre pela identificação. */
+
 
 async function iniciar(){
+  const car=document.getElementById('carregando'); if(car) car.style.display='none';
   document.getElementById('config').style.display='none';
   document.getElementById('app').style.display='block';
   try{
@@ -1382,11 +1376,21 @@ document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==
 const DENTRO_APPS_SCRIPT = (typeof google !== 'undefined' && google.script && google.script.run);
 
 async function arrancar(){
-  if(!API_URL && !DENTRO_APPS_SCRIPT) return;   // servido pelo Apps Script: não há URL a pedir
+  const car = document.getElementById('carregando');
+  if(!API_URL && !DENTRO_APPS_SCRIPT){
+    if(car) car.style.display='none';
+    document.getElementById('config').style.display='block';
+    return;
+  }
   if(API_URL) document.getElementById('inp-url').value = API_URL;
-  let jaAceitou = false;
-  try{ jaAceitou = await verificarAceite(); }catch(e){ jaAceitou = false; }
-  if(jaAceitou) iniciar(); else abrirTermo();
+
+  /* SEMPRE pede identificação, mesmo que este navegador já tenha sido usado.
+     O painel abre em tela projetada e em computador compartilhado: se o
+     navegador lembrasse quem é, quem pegasse o aparelho veria dado de
+     paciente sem se identificar. Quem já assinou não reassina o termo —
+     digita o código e entra direto. */
+  await abrirTermo();
+  if(car) car.style.display='none';
 }
 arrancar();
 
