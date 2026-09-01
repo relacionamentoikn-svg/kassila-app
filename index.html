@@ -109,6 +109,26 @@ header.topo .marca-img{width:34px;height:34px;flex:none;display:block}
 .lanc-bt{width:100%;border:0;border-radius:9px;padding:13px;cursor:pointer;margin-top:6px;
   font:600 14px/1.2 Inter,sans-serif;background:var(--vinho);color:#fff}
 .lanc-bt[disabled]{background:#DDD3CB;color:#9C8F87;cursor:not-allowed}
+.ind-bloco{margin-bottom:22px}
+.ind-tit{font-family:Fraunces,Georgia,serif;font-size:16px;color:var(--vinho);margin:0 0 3px}
+.ind-sub{font-size:11.5px;color:rgba(36,30,28,.55);margin:0 0 12px;line-height:1.5}
+.ind-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.ind-card{background:#fff;border:1px solid var(--linha);border-radius:10px;padding:12px 13px}
+.ind-card .r{font:600 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;text-transform:uppercase;color:rgba(36,30,28,.5)}
+.ind-card .v{font-family:Fraunces,Georgia,serif;font-size:22px;color:var(--vinho);margin-top:5px;line-height:1.1}
+.ind-card .d{font-size:11px;color:rgba(36,30,28,.55);margin-top:3px}
+.ind-card .d.up{color:#3F6B52} .ind-card .d.dn{color:#A8442F}
+.ind-graf{background:#fff;border:1px solid var(--linha);border-radius:10px;padding:14px 12px 8px;margin-bottom:12px}
+.ind-graf h4{font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;text-transform:uppercase;
+  color:rgba(36,30,28,.5);margin:0 0 12px}
+.ind-aviso{background:#FBF3E7;border:1px solid #E8D2AE;border-left:3px solid var(--ouro);border-radius:8px;
+  padding:10px 12px;font-size:12px;line-height:1.55;margin-bottom:14px;color:#5E4A28}
+.ind-tab{width:100%;border-collapse:collapse;font-size:12px}
+.ind-tab th{text-align:right;font:600 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;
+  text-transform:uppercase;color:rgba(36,30,28,.5);padding:6px 5px;border-bottom:1px solid var(--linha)}
+.ind-tab th:first-child,.ind-tab td:first-child{text-align:left}
+.ind-tab td{padding:7px 5px;border-bottom:1px solid #F0EAE4;text-align:right}
+.ind-tab tr:last-child td{border-bottom:0}
 header.topo .hdr-dir{display:flex;align-items:center;gap:9px}
 header.topo .atz{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:rgba(250,247,243,.72);line-height:1.3;text-align:right}
 header.topo .atz .auto{display:flex;align-items:center;gap:4px;cursor:pointer;user-select:none}
@@ -332,6 +352,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
         <span id="atz-txt">—</span>
         <label class="auto"><input type="checkbox" id="chk-auto" onchange="ligarAuto(this.checked)"> auto 5 min</label>
       </div>
+      <button class="btn-atz" id="btn-prod" onclick="abrirVendaProduto()" title="Lançar venda de produto">+</button>
       <button class="btn-atz" id="btn-busca" onclick="abrirBusca()" title="Buscar paciente ou orçamento">⌕</button>
       <button class="btn-atz" id="btn-atz" onclick="atualizarAgora()" title="Atualizar dados">↻</button>
       <select class="sel" id="sel-mes" onchange="trocarMes(this.value)"></select>
@@ -343,6 +364,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
     <button data-tela="dia" class="on" onclick="irPara('dia')">Dia</button>
     <button data-tela="mes" onclick="irPara('mes')">Mês</button>
     <button data-tela="recebimentos" onclick="irPara('recebimentos')">Recebimentos</button>
+    <button data-tela="indicadores" onclick="irParaIndicadores()">Indicadores</button>
     <button data-tela="auditoria" onclick="irPara('auditoria')">Auditoria</button>
   </nav>
 
@@ -424,7 +446,11 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
   </section>
 
   <!-- ================= AUDITORIA ================= -->
-  <section class="tela" id="tela-auditoria">
+  <section class="tela" id="tela-indicadores">
+  <div id="ind-corpo"><div class="vazio">Carregando indicadores...</div></div>
+</section>
+
+<section class="tela" id="tela-auditoria">
     <div class="grid-aud">
       <div class="col">
         <div class="card">
@@ -451,7 +477,7 @@ let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
 let MES = null, DIA = null, R = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V6.1';
+const VERSAO_ESPERADA = 'V6.2';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -943,6 +969,7 @@ async function andarDia(n){
 async function carregar(){
   const p = {mes: MES}; if(DIA) p.dia = DIA;
   R = await api('resumo', p);
+  IND = null;   // dados mudaram: força recarregar os indicadores na próxima visita
   ULTIMA = new Date();
   document.getElementById('hdr-sub').textContent = R.hoje + '  ·  ' + rotuloMes(R.mes);
   conferirVersao();
@@ -1592,6 +1619,319 @@ async function salvarDivisao(){
 /* O modal fica no fim da pagina: sem trazer a rolagem de volta, quem abre um
    orcamento da Auditoria com a lista rolada nao ve nada — o painel abre fora
    da area visivel. */
+
+/* ============ VENDA DE PRODUTOS ============
+   O ERP não emite orçamento para produto, então o comercial lança aqui. A
+   venda é gravada como um orçamento próprio (número PROD-n): assim ela entra
+   sozinha na cascata, no caixa e na régua de recorrência, sem cálculo
+   paralelo que um dia ficaria para trás. */
+let PROD = [];
+
+async function abrirVendaProduto(){
+  if(!USUARIO_ID){ abrirModal('<div class="vazio">Sessão sem identificação. Recarregue e entre de novo.</div>'); return; }
+  if(!DESTINOS){
+    abrirModalCarregando('carregando destinos');
+    try{ DESTINOS = await api('destinos'); }catch(e){ DESTINOS = []; }
+  }
+  if(DESTINOS && DESTINOS.erro){
+    abrirModal(`<div class="lanc-antes"><b>Destinos não configurados.</b><br>${tEsc(DESTINOS.erro)}</div>`);
+    return;
+  }
+  PROD = [{descricao:'', qtde:1, valor_unit:''}];
+  pintarVendaProduto();
+}
+
+function pintarVendaProduto(){
+  const hoje = new Date();
+  const iso = hoje.getFullYear()+'-'+String(hoje.getMonth()+1).padStart(2,'0')+'-'+String(hoje.getDate()).padStart(2,'0');
+  const total = PROD.reduce((t,x)=> t + ((Number(x.qtde)||0) * (Number(String(x.valor_unit).replace(',','.'))||0)), 0);
+  const desc = Number(String(document.getElementById('vp-desc')?document.getElementById('vp-desc').value:'0').replace(',','.'))||0;
+
+  abrirModal(`
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--vinho-2);letter-spacing:.1em">LANÇAMENTO MANUAL</div>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:6px 0 4px;color:var(--vinho)">Venda de produtos</h2>
+    <div class="lanc-antes">O ERP não emite orçamento para produto. O que você lançar aqui entra na venda do mês como qualquer outra.</div>
+
+    <div class="lanc-campo"><label for="vp-pac">Paciente</label>
+      <input id="vp-pac" placeholder="nome completo" value="${tEsc(window.__vpPac||'')}" oninput="window.__vpPac=this.value"></div>
+
+    ${PROD.map((x,i)=>`
+      <div style="border:1px solid var(--linha);border-radius:10px;padding:11px;margin-bottom:9px;background:#fff">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font:600 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:var(--vinho-2)">PRODUTO ${i+1}</span>
+          ${PROD.length>1?`<button onclick="removerProduto(${i})" style="border:0;background:none;color:#A8442F;cursor:pointer;font-size:11.5px">remover</button>`:''}
+        </div>
+        <div class="lanc-campo" style="margin-bottom:8px">
+          <input placeholder="nome do produto" value="${tEsc(x.descricao)}" oninput="mudarProduto(${i},'descricao',this.value)"></div>
+        <div style="display:flex;gap:8px">
+          <div class="lanc-campo" style="width:90px;margin-bottom:0">
+            <input type="number" min="1" step="1" placeholder="qtd" value="${x.qtde}" oninput="mudarProduto(${i},'qtde',this.value)"></div>
+          <div class="lanc-campo" style="flex:1;margin-bottom:0">
+            <input type="number" min="0" step="0.01" placeholder="valor unitário" value="${x.valor_unit}" oninput="mudarProduto(${i},'valor_unit',this.value)"></div>
+        </div>
+      </div>`).join('')}
+
+    ${PROD.length<20?`<button onclick="adicionarProduto()" style="width:100%;border:1px dashed var(--linha);background:none;border-radius:9px;padding:10px;cursor:pointer;font:600 12px Inter,sans-serif;color:var(--tinta-2);margin-bottom:12px">+ mais um produto</button>`:''}
+
+    <div class="lanc-campo"><label for="vp-desc">Desconto (R$)</label>
+      <input id="vp-desc" type="number" min="0" step="0.01" value="${desc||''}" oninput="atualizarTotalProduto()"></div>
+
+    <div class="lanc-antes" id="vp-total" style="border-left:3px solid var(--ouro)">
+      Total dos produtos: <b>${brl(total)}</b><br>Venda: <b>${brl(Math.max(0,total-desc))}</b></div>
+
+    <div class="lanc-campo"><label for="vp-forma">Como foi pago</label>
+      <select id="vp-forma" onchange="sugerirDestinoProduto()">
+        ${FORMAS_LANC.map(([v,r])=>`<option value="${v}">${r}</option>`).join('')}
+      </select></div>
+
+    <div class="lanc-campo" id="vp-vezes-box" style="display:none">
+      <label for="vp-vezes">Em quantas vezes</label>
+      <input id="vp-vezes" type="number" min="1" max="24" value="1"></div>
+
+    <div class="lanc-campo"><label for="vp-data">Data da venda</label>
+      <input id="vp-data" type="date" value="${iso}"></div>
+
+    <div class="lanc-campo"><label for="vp-dest">Para onde o dinheiro foi</label>
+      <select id="vp-dest">
+        <option value="">— selecione —</option>
+        ${(DESTINOS||[]).map(dd=>`<option value="${tEsc(dd.nome)}">${tEsc(dd.nome)}</option>`).join('')}
+      </select></div>
+
+    <div class="lanc-campo"><label for="vp-cod">Seu código de acesso</label>
+      <input id="vp-cod" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="off"></div>
+
+    <div id="vp-erro"></div>
+    <button class="lanc-bt" id="vp-salvar" onclick="salvarVendaProduto()">Lançar venda</button>`);
+  sugerirDestinoProduto();
+}
+
+function mudarProduto(i, campo, v){
+  PROD[i][campo] = v;
+  if(campo === 'descricao') return;      // redesenhar tiraria o foco do campo
+  atualizarTotalProduto();
+}
+
+function atualizarTotalProduto(){
+  const total = PROD.reduce((t,x)=> t + ((Number(x.qtde)||0) * (Number(String(x.valor_unit).replace(',','.'))||0)), 0);
+  const el = document.getElementById('vp-desc');
+  const desc = Number(String(el?el.value:'0').replace(',','.'))||0;
+  const box = document.getElementById('vp-total');
+  if(box) box.innerHTML = `Total dos produtos: <b>${brl(total)}</b><br>Venda: <b>${brl(Math.max(0,total-desc))}</b>`;
+}
+
+function sugerirDestinoProduto(){
+  const f = document.getElementById('vp-forma');
+  if(!f) return;
+  const box = document.getElementById('vp-vezes-box');
+  if(box) box.style.display = (f.value === 'CARTAO_CREDITO') ? 'block' : 'none';
+  const sel = document.getElementById('vp-dest');
+  const sug = (DESTINOS||[]).filter(x => (x.formas||[]).indexOf(f.value) >= 0)[0];
+  if(sel && sug) sel.value = sug.nome;
+}
+
+function adicionarProduto(){ PROD.push({descricao:'', qtde:1, valor_unit:''}); pintarVendaProduto(); }
+function removerProduto(i){ PROD.splice(i,1); pintarVendaProduto(); }
+
+async function salvarVendaProduto(){
+  const err = document.getElementById('vp-erro');
+  const bt = document.getElementById('vp-salvar');
+  const falhar = m => { err.innerHTML = `<div class="lanc-antes" style="border-left:3px solid #A8442F;color:#7E2E17">${m}</div>`; };
+
+  const pac = document.getElementById('vp-pac').value.trim();
+  const cod = document.getElementById('vp-cod').value.trim();
+  const dest = document.getElementById('vp-dest').value;
+  const iso = document.getElementById('vp-data').value;
+  const forma = document.getElementById('vp-forma').value;
+  const vz = document.getElementById('vp-vezes') ? document.getElementById('vp-vezes').value : 1;
+  const desc = Number(String(document.getElementById('vp-desc').value).replace(',','.'))||0;
+
+  if(pac.length < 3) return falhar('Informe o nome da paciente.');
+  for(let i=0;i<PROD.length;i++){
+    if(!String(PROD[i].descricao).trim()) return falhar('Informe o nome do produto ' + (i+1) + '.');
+    if(!(Number(PROD[i].qtde) > 0)) return falhar('Quantidade inválida no produto ' + (i+1) + '.');
+    if(!(Number(String(PROD[i].valor_unit).replace(',','.')) > 0)) return falhar('Valor inválido no produto ' + (i+1) + '.');
+  }
+  if(!iso) return falhar('Informe a data da venda.');
+  if(!dest) return falhar('Escolha para onde o dinheiro foi.');
+  if(!/^\d{4}$/.test(cod)) return falhar('Informe os 4 dígitos do seu código.');
+
+  err.innerHTML=''; bt.disabled=true; bt.textContent='Lançando...';
+  try{
+    const r = await api('venda_produto', {
+      usuario_id: USUARIO_ID, codigo: cod, paciente: pac, data: isoParaBr(iso),
+      forma: forma, rotulo: rotuloForma(forma), destino: dest, vezes: vz, desconto: desc,
+      itens: JSON.stringify(PROD.map(x=>({descricao:String(x.descricao).trim(), qtde:Number(x.qtde),
+        valor_unit:Number(String(x.valor_unit).replace(',','.'))})))
+    });
+    window.__vpPac = '';
+    carregar().catch(function(){});
+    abrirModal(`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 10px;color:var(--vinho)">Venda lançada</h2>
+      <div class="lanc-antes"><b>${tEsc(r.paciente)}</b> · ${tEsc(r.num_orcamento)}<br>
+        ${brl(r.venda)} · ${tEsc(rotuloForma(r.forma))} em ${tEsc(r.data)}<br>${tEsc(r.destino)}<br>
+        <span style="color:var(--tinta-2)">registrado por ${tEsc(r.lancado_por)}</span></div>
+      <button class="lanc-bt" onclick="fecharModal()">Fechar</button>`);
+  }catch(e){
+    bt.disabled=false; bt.textContent='Lançar venda'; falhar(tEsc(e.message));
+  }
+}
+
+
+/* ============ INDICADORES ============
+   Duas fontes com alcances diferentes. A série longa vem do Histórico, que só
+   tem paciente, data e valor — dá venda, ticket e a régua de recorrência desde
+   2020. Desconto, formas, prazo e % recebido só existem nos meses processados
+   por PDF. A tela avisa isso em vez de fingir que tem o dado. */
+let IND = null;
+
+async function irParaIndicadores(){
+  irPara('indicadores');
+  const box = document.getElementById('ind-corpo');
+  if(IND){ pintarIndicadores(); return; }
+  box.innerHTML = '<div class="vazio">Carregando indicadores...</div>';
+  try{ IND = await api('indicadores'); pintarIndicadores(); }
+  catch(e){ box.innerHTML = `<div class="vazio">Não consegui carregar: ${tEsc(e.message)}</div>`; }
+}
+
+const mesCurto = m => {
+  const N=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const p=String(m).split('-'); return p.length===2 ? N[+p[1]-1]+'/'+p[0].slice(2) : m;
+};
+const kbrl = v => v>=1000000 ? (v/1000000).toFixed(1).replace('.',',')+'M'
+                : v>=1000 ? Math.round(v/1000)+'k' : Math.round(v||0);
+
+/* Barras em SVG: sem biblioteca externa, para o painel não depender de nada
+   que possa estar fora do ar na hora da reunião. */
+function barras(dados, cor, fmt){
+  if(!dados.length) return '<div class="vazio">Sem dados.</div>';
+  const max = Math.max.apply(null, dados.map(d=>d.v||0)) || 1;
+  const L=42, W=Math.max(320, dados.length*46), H=150, base=H-22;
+  const bw = (W-L-8)/dados.length;
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;overflow:visible" preserveAspectRatio="xMinYMid meet">
+    <line x1="${L}" y1="${base}" x2="${W}" y2="${base}" stroke="#E4DAD1"/>
+    ${[0,.5,1].map(f=>`<text x="${L-6}" y="${base-f*(base-14)+3}" text-anchor="end"
+        font-family="IBM Plex Mono,monospace" font-size="8" fill="#9C8F87">${fmt(max*f)}</text>`).join('')}
+    ${dados.map((d,i)=>{
+      const h=Math.max(1,(d.v/max)*(base-14)), x=L+i*bw+bw*0.17, w=bw*0.66;
+      return `<rect x="${x}" y="${base-h}" width="${w}" height="${h}" fill="${cor}" rx="2">
+                <title>${mesCurto(d.m)}: ${fmt(d.v)}</title></rect>
+              <text x="${x+w/2}" y="${base+11}" text-anchor="middle"
+                font-family="IBM Plex Mono,monospace" font-size="8" fill="#9C8F87">${mesCurto(d.m)}</text>`;
+    }).join('')}
+  </svg>`;
+}
+
+function barrasDuplas(dados, c1, c2, r1, r2){
+  if(!dados.length) return '<div class="vazio">Sem dados.</div>';
+  const max = Math.max.apply(null, dados.map(d=>(d.a||0)+(d.b||0))) || 1;
+  const L=30, W=Math.max(320, dados.length*46), H=155, base=H-24;
+  const bw=(W-L-8)/dados.length;
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" preserveAspectRatio="xMinYMid meet">
+    <line x1="${L}" y1="${base}" x2="${W}" y2="${base}" stroke="#E4DAD1"/>
+    ${dados.map((d,i)=>{
+      const ha=((d.a||0)/max)*(base-16), hb=((d.b||0)/max)*(base-16);
+      const x=L+i*bw+bw*0.17, w=bw*0.66;
+      return `<rect x="${x}" y="${base-hb}" width="${w}" height="${hb}" fill="${c2}" rx="2"><title>${r2}: ${d.b}</title></rect>
+              <rect x="${x}" y="${base-hb-ha}" width="${w}" height="${ha}" fill="${c1}" rx="2"><title>${r1}: ${d.a}</title></rect>
+              <text x="${x+w/2}" y="${base+11}" text-anchor="middle"
+                font-family="IBM Plex Mono,monospace" font-size="8" fill="#9C8F87">${mesCurto(d.m)}</text>`;
+    }).join('')}
+  </svg>
+  <div style="display:flex;gap:14px;font-size:11px;color:rgba(36,30,28,.6);margin-top:6px">
+    <span><span style="display:inline-block;width:9px;height:9px;background:${c1};border-radius:2px"></span> ${r1}</span>
+    <span><span style="display:inline-block;width:9px;height:9px;background:${c2};border-radius:2px"></span> ${r2}</span></div>`;
+}
+
+function pintarIndicadores(){
+  const S = IND.serie || [];
+  if(!S.length){ document.getElementById('ind-corpo').innerHTML='<div class="vazio">Sem dados.</div>'; return; }
+  const u = S[S.length-1];
+  const ant = S.length>1 ? S[S.length-2] : null;
+  // mesmo mês do ano anterior, que é a comparação que interessa na sazonalidade
+  const p = String(u.mes).split('-');
+  const anoAnt = S.filter(x => x.mes === (Number(p[0])-1)+'-'+p[1])[0];
+
+  const delta = (a,b,suf) => (b===null||b===undefined||!b) ? ''
+    : `<div class="d ${a>=b?'up':'dn'}">${a>=b?'▲':'▼'} ${Math.abs(Math.round((a/b-1)*100))}% ${suf}</div>`;
+
+  const ult12 = S.slice(-12);
+  const comPdf = S.filter(x=>x.tem_pdf);
+  const fmtR = v => 'R$ '+kbrl(v);
+  const fmtI = v => Math.round(v);
+  const fmtP = v => Math.round(v)+'%';
+
+  const formasTot = {};
+  comPdf.forEach(x=>{ Object.keys(x.formas||{}).forEach(f=>{ formasTot[f]=(formasTot[f]||0)+x.formas[f]; }); });
+  const formasOrd = Object.keys(formasTot).sort((a,b)=>formasTot[b]-formasTot[a]);
+  const totForma = formasOrd.reduce((t,f)=>t+formasTot[f],0)||1;
+
+  document.getElementById('ind-corpo').innerHTML = `
+  <div class="ind-bloco">
+    <h3 class="ind-tit">Evolução</h3>
+    <p class="ind-sub">Série completa desde ${mesCurto(S[0].mes)}. Vem do histórico de orçamentos aprovados.</p>
+    <div class="ind-cards">
+      <div class="ind-card"><div class="r">Venda ${mesCurto(u.mes)}</div><div class="v">${brl(u.venda)}</div>
+        ${delta(u.venda, ant?ant.venda:null,'vs mês anterior')}
+        ${anoAnt?delta(u.venda, anoAnt.venda,'vs '+mesCurto(anoAnt.mes)):''}</div>
+      <div class="ind-card"><div class="r">Ticket médio</div><div class="v">${brl(u.ticket)}</div>
+        ${delta(u.ticket, ant?ant.ticket:null,'vs mês anterior')}</div>
+      <div class="ind-card"><div class="r">Orçamentos</div><div class="v">${u.qtd}</div>
+        ${delta(u.qtd, ant?ant.qtd:null,'vs mês anterior')}</div>
+      <div class="ind-card"><div class="r">Taxa de retenção</div>
+        <div class="v">${u.retencao!==null?Math.round(u.retencao)+'%':'—'}</div>
+        <div class="d">${u.recorrentes} recorrentes de ${u.novas+u.recorrentes}</div></div>
+      ${u.atingimento!==null?`<div class="ind-card"><div class="r">Meta</div>
+        <div class="v">${Math.round(u.atingimento)}%</div><div class="d">de ${brl(u.meta)}</div></div>`:''}
+    </div>
+    <div class="ind-graf"><h4>Venda por mês — últimos 12</h4>${barras(ult12.map(x=>({m:x.mes,v:x.venda})),'#5C1A2B',fmtR)}</div>
+    <div class="ind-graf"><h4>Ticket médio por mês</h4>${barras(ult12.map(x=>({m:x.mes,v:x.ticket})),'#B8894A',fmtR)}</div>
+    <div class="ind-graf"><h4>Pacientes novas x recorrentes</h4>
+      ${barrasDuplas(ult12.map(x=>({m:x.mes,a:x.novas,b:x.recorrentes})),'#B8894A','#5C1A2B','novas','recorrentes')}</div>
+  </div>
+
+  <div class="ind-bloco">
+    <h3 class="ind-tit">Qualidade da venda</h3>
+    <p class="ind-sub">Desconto, formas de pagamento, prazo e recebimento.</p>
+    <div class="ind-aviso"><b>Cobre apenas ${comPdf.length} mês(es):</b> ${comPdf.map(x=>mesCurto(x.mes)).join(', ')}.
+      Esses números só existem para os meses cujos PDFs passaram pelo extrator — o histórico antigo traz paciente,
+      data e valor, e mais nada. A cobertura cresce a cada mês que você processa.</div>
+    ${comPdf.length?`
+    <div class="ind-cards">
+      <div class="ind-card"><div class="r">% recebido no mês</div>
+        <div class="v">${u.recebido_pct!==null?Math.round(u.recebido_pct)+'%':'—'}</div>
+        <div class="d">${brl(u.caixa||0)} de ${brl(u.venda)}</div></div>
+      <div class="ind-card"><div class="r">Desconto global</div>
+        <div class="v">${u.desconto_pct!==null?u.desconto_pct.toFixed(1).replace('.',',')+'%':'—'}</div></div>
+      <div class="ind-card"><div class="r">Prazo médio</div>
+        <div class="v">${u.prazo_medio!==null?u.prazo_medio+' d':'—'}</div>
+        <div class="d">até o recebimento</div></div>
+      <div class="ind-card"><div class="r">A receber</div><div class="v">${brl(u.a_receber||0)}</div></div>
+      <div class="ind-card"><div class="r">Permuta</div><div class="v">${brl(u.permuta||0)}</div></div>
+      <div class="ind-card"><div class="r">Cortesia</div><div class="v">${brl(u.cortesia||0)}</div></div>
+    </div>
+    <div class="ind-graf"><h4>% recebido sobre o vendido</h4>
+      ${barras(comPdf.map(x=>({m:x.mes,v:x.recebido_pct||0})),'#7E8F7C',fmtP)}</div>
+    <div class="ind-graf"><h4>Desconto global %</h4>
+      ${barras(comPdf.map(x=>({m:x.mes,v:x.desconto_pct||0})),'#A8442F',v=>v.toFixed(1)+'%')}</div>
+    <div class="ind-graf"><h4>Formas de pagamento</h4>
+      <table class="ind-tab"><tr><th>Forma</th><th>Valor</th><th>%</th></tr>
+      ${formasOrd.map(f=>`<tr><td>${tEsc(f)}</td><td>${brl(formasTot[f])}</td>
+        <td>${(formasTot[f]/totForma*100).toFixed(1).replace('.',',')}%</td></tr>`).join('')}</table></div>
+    `:'<div class="vazio">Nenhum mês processado por PDF ainda.</div>'}
+  </div>
+
+  <div class="ind-bloco">
+    <h3 class="ind-tit">Série completa</h3>
+    <p class="ind-sub">Todos os meses, do primeiro registro até hoje.</p>
+    <div class="ind-graf" style="overflow-x:auto">
+      <table class="ind-tab">
+        <tr><th>Mês</th><th>Venda</th><th>Orç.</th><th>Ticket</th><th>Novas</th><th>Recor.</th><th>Retenção</th></tr>
+        ${S.slice().reverse().map(x=>`<tr><td>${mesCurto(x.mes)}</td><td>${brl(x.venda)}</td><td>${x.qtd}</td>
+          <td>${brl(x.ticket)}</td><td>${x.novas}</td><td>${x.recorrentes}</td>
+          <td>${x.retencao!==null?Math.round(x.retencao)+'%':'—'}</td></tr>`).join('')}
+      </table></div>
+  </div>`;
+}
+
 function abrirModal(h){
   const c = document.getElementById('modal-conteudo');
   c.innerHTML = h;
