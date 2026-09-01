@@ -155,8 +155,22 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 .grid-mes{display:grid;gap:14px}
 @media(min-width:1000px){.grid-mes{grid-template-columns:1.1fr 1fr;align-items:start}}
 .grid-aud{display:grid;gap:14px}
-@media(min-width:1000px){.grid-aud{grid-template-columns:1fr 1.25fr;align-items:start}
-  .grid-aud .sticky{position:sticky;top:110px}}
+/* No PC as duas colunas rolam SOZINHAS. Antes a página inteira rolava junto:
+   para ver o orçamento aberto à direita era preciso descer a lista toda da
+   esquerda, e ao voltar a lista estava perdida. */
+@media(min-width:1000px){
+  .grid-aud{grid-template-columns:1fr 1.25fr;align-items:start}
+  .grid-aud .sticky{position:sticky;top:110px}
+  #tela-auditoria .grid-aud > .col{
+    max-height:calc(100vh - 190px);
+    overflow-y:auto;
+    padding-right:6px;
+    scrollbar-width:thin;
+  }
+  #tela-auditoria .grid-aud > .col::-webkit-scrollbar{width:7px}
+  #tela-auditoria .grid-aud > .col::-webkit-scrollbar-thumb{background:#DDD3CB;border-radius:4px}
+  #tela-auditoria .grid-aud > .col::-webkit-scrollbar-track{background:transparent}
+}
 .col{display:grid;gap:14px;align-content:start}
 
 /* ---------- blocos ---------- */
@@ -2035,9 +2049,19 @@ async function carregarAuditoria(){
 }
 
 async function verAuditoria(id){
-  const d = await api('orcamento',{id});
-  document.getElementById('aud-detalhe').innerHTML = htmlOrcamento(d, true);
-  if(window.innerWidth < 1000) document.getElementById('aud-detalhe').scrollIntoView({behavior:'smooth'});
+  const alvo = document.getElementById('aud-detalhe');
+  // aviso imediato: a chamada leva alguns segundos e sem isto o toque
+  // parecia não ter funcionado
+  alvo.innerHTML = `<div style="padding:26px 0;text-align:center;font-family:'IBM Plex Mono',monospace;
+    font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(36,30,28,.45)">abrindo orçamento…</div>`;
+  try{
+    const d = await api('orcamento',{id});
+    alvo.innerHTML = htmlOrcamento(d, true);
+    subirColunaDireita();
+    if(window.innerWidth < 1000) alvo.scrollIntoView({behavior:'smooth'});
+  }catch(e){
+    alvo.innerHTML = `<div class="vazio">Não consegui abrir: ${tEsc(e.message)}</div>`;
+  }
 }
 
 document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') fecharModal(); });
