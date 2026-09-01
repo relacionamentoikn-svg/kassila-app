@@ -118,6 +118,11 @@ header.topo .marca-img{width:34px;height:34px;flex:none;display:block}
 .ind-card .v{font-family:Fraunces,Georgia,serif;font-size:22px;color:var(--vinho);margin-top:5px;line-height:1.1}
 .ind-card .d{font-size:11px;color:rgba(36,30,28,.55);margin-top:3px}
 .ind-card .d.up{color:#3F6B52} .ind-card .d.dn{color:#A8442F}
+.ind-svg{width:100%;overflow:hidden}
+.ind-svg .bar rect:first-child{transition:opacity .12s}
+.ind-svg .bar:hover rect:first-child,.ind-svg .bar:focus rect:first-child{opacity:.78}
+.ind-svg .bar:hover .rot,.ind-svg .bar:focus .rot{fill:var(--vinho);font-weight:600}
+.ind-svg .bar{cursor:default;outline:none}
 .ind-graf{background:#fff;border:1px solid var(--linha);border-radius:10px;padding:14px 12px 8px;margin-bottom:12px}
 .ind-graf h4{font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;text-transform:uppercase;
   color:rgba(36,30,28,.5);margin:0 0 12px}
@@ -491,7 +496,7 @@ let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
 let MES = null, DIA = null, R = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V6.2';
+const VERSAO_ESPERADA = 'V6.8';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -1813,44 +1818,92 @@ const mesCurto = m => {
 const kbrl = v => v>=1000000 ? (v/1000000).toFixed(1).replace('.',',')+'M'
                 : v>=1000 ? Math.round(v/1000)+'k' : Math.round(v||0);
 
-/* Barras em SVG: sem biblioteca externa, para o painel não depender de nada
-   que possa estar fora do ar na hora da reunião. */
-function barras(dados, cor, fmt){
+/* Gráficos desenhados no TAMANHO REAL do container.
+   Antes eu desenhava num espaço pequeno e deixava o navegador esticar — a
+   imagem esticava junto com a fonte, e por isso os rótulos saíam enormes no
+   PC e minúsculos no celular. Agora mede-se a largura e desenha-se nela. */
+const GRAFICOS = {};
+
+function regGrafico(id, tipo, dados, cor, fmt, r1, r2){
+  GRAFICOS[id] = {tipo: tipo, dados: dados, cor: cor, fmt: fmt, r1: r1, r2: r2};
+  return `<div class="ind-svg" id="${id}"></div>`;
+}
+
+function desenharGraficos(){
+  Object.keys(GRAFICOS).forEach(function(id){
+    const el = document.getElementById(id);
+    if(!el) return;
+    const g = GRAFICOS[id];
+    const W = Math.max(280, el.clientWidth || 320);
+    el.innerHTML = g.tipo === 'duplas'
+      ? svgDuplas(g.dados, W, g.cor, g.r1, g.r2)
+      : svgBarras(g.dados, W, g.cor, g.fmt);
+  });
+}
+
+let _redesenho = null;
+window.addEventListener('resize', function(){
+  if(_redesenho) clearTimeout(_redesenho);
+  _redesenho = setTimeout(desenharGraficos, 180);
+});
+
+function svgBarras(dados, W, cor, fmt){
   if(!dados.length) return '<div class="vazio">Sem dados.</div>';
   const max = Math.max.apply(null, dados.map(d=>d.v||0)) || 1;
-  const L=42, W=Math.max(320, dados.length*46), H=150, base=H-22;
-  const bw = (W-L-8)/dados.length;
-  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;overflow:visible" preserveAspectRatio="xMinYMid meet">
-    <line x1="${L}" y1="${base}" x2="${W}" y2="${base}" stroke="#E4DAD1"/>
-    ${[0,.5,1].map(f=>`<text x="${L-6}" y="${base-f*(base-14)+3}" text-anchor="end"
-        font-family="IBM Plex Mono,monospace" font-size="8" fill="#9C8F87">${fmt(max*f)}</text>`).join('')}
-    ${dados.map((d,i)=>{
-      const h=Math.max(1,(d.v/max)*(base-14)), x=L+i*bw+bw*0.17, w=bw*0.66;
-      return `<rect x="${x}" y="${base-h}" width="${w}" height="${h}" fill="${cor}" rx="2">
-                <title>${mesCurto(d.m)}: ${fmt(d.v)}</title></rect>
-              <text x="${x+w/2}" y="${base+11}" text-anchor="middle"
-                font-family="IBM Plex Mono,monospace" font-size="8" fill="#9C8F87">${mesCurto(d.m)}</text>`;
+  const F = W < 460 ? 9 : 10.5;                 // fonte fixa em pixels de verdade
+  const L = W < 460 ? 34 : 46, H = W < 460 ? 190 : 230;
+  const topo = 20, base = H - 26;
+  const bw = (W - L - 6) / dados.length;
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:block">
+    ${[0,.5,1].map(f=>{
+      const y = base - f*(base-topo);
+      return `<line x1="${L}" y1="${y}" x2="${W-2}" y2="${y}" stroke="#EFE7E0"/>
+              <text x="${L-6}" y="${y+3}" text-anchor="end" font-family="IBM Plex Mono,monospace"
+                font-size="${F-1.5}" fill="#B0A49C">${fmt(max*f)}</text>`;
     }).join('')}
+    ${dados.map((d,i)=>{
+      const h = Math.max(2, ((d.v||0)/max)*(base-topo)), x = L+i*bw+bw*0.16, w = bw*0.68;
+      return `<g class="bar" tabindex="0">
+        <rect x="${x}" y="${base-h}" width="${w}" height="${h}" fill="${cor}" rx="3"/>
+        <text x="${x+w/2}" y="${base-h-5}" text-anchor="middle" font-family="IBM Plex Mono,monospace"
+          font-size="${F-1.5}" fill="#7A6A61" class="rot">${fmt(d.v||0)}</text>
+        <text x="${x+w/2}" y="${base+14}" text-anchor="middle" font-family="IBM Plex Mono,monospace"
+          font-size="${F-1}" fill="#9C8F87">${mesCurto(d.m)}</text>
+        <rect x="${x-bw*0.16}" y="${topo}" width="${bw}" height="${base-topo}" fill="transparent"/>
+        <title>${mesCurto(d.m)}: ${fmt(d.v||0)}</title></g>`;
+    }).join('')}
+    <line x1="${L}" y1="${base}" x2="${W-2}" y2="${base}" stroke="#DDD3CB"/>
   </svg>`;
 }
 
-function barrasDuplas(dados, c1, c2, r1, r2){
+function svgDuplas(dados, W, cores, r1, r2){
   if(!dados.length) return '<div class="vazio">Sem dados.</div>';
   const max = Math.max.apply(null, dados.map(d=>(d.a||0)+(d.b||0))) || 1;
-  const L=30, W=Math.max(320, dados.length*46), H=155, base=H-24;
-  const bw=(W-L-8)/dados.length;
-  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" preserveAspectRatio="xMinYMid meet">
-    <line x1="${L}" y1="${base}" x2="${W}" y2="${base}" stroke="#E4DAD1"/>
+  const F = W < 460 ? 9 : 10.5;
+  const L = W < 460 ? 22 : 30, H = W < 460 ? 200 : 240;
+  const topo = 20, base = H - 26;
+  const bw = (W - L - 6) / dados.length;
+  const [c1, c2] = cores;
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:block">
     ${dados.map((d,i)=>{
-      const ha=((d.a||0)/max)*(base-16), hb=((d.b||0)/max)*(base-16);
-      const x=L+i*bw+bw*0.17, w=bw*0.66;
-      return `<rect x="${x}" y="${base-hb}" width="${w}" height="${hb}" fill="${c2}" rx="2"><title>${r2}: ${d.b}</title></rect>
-              <rect x="${x}" y="${base-hb-ha}" width="${w}" height="${ha}" fill="${c1}" rx="2"><title>${r1}: ${d.a}</title></rect>
-              <text x="${x+w/2}" y="${base+11}" text-anchor="middle"
-                font-family="IBM Plex Mono,monospace" font-size="8" fill="#9C8F87">${mesCurto(d.m)}</text>`;
+      const ha = ((d.a||0)/max)*(base-topo), hb = ((d.b||0)/max)*(base-topo);
+      const x = L+i*bw+bw*0.16, w = bw*0.68, tot = (d.a||0)+(d.b||0);
+      return `<g class="bar" tabindex="0">
+        <rect x="${x}" y="${base-hb}" width="${w}" height="${hb}" fill="${c2}" rx="3"/>
+        <rect x="${x}" y="${base-hb-ha}" width="${w}" height="${ha}" fill="${c1}" rx="3"/>
+        ${hb>13?`<text x="${x+w/2}" y="${base-hb/2+3}" text-anchor="middle"
+          font-family="IBM Plex Mono,monospace" font-size="${F-2}" fill="#FAF7F3">${d.b}</text>`:''}
+        ${ha>13?`<text x="${x+w/2}" y="${base-hb-ha/2+3}" text-anchor="middle"
+          font-family="IBM Plex Mono,monospace" font-size="${F-2}" fill="#3A2A18">${d.a}</text>`:''}
+        <text x="${x+w/2}" y="${base-hb-ha-5}" text-anchor="middle" font-family="IBM Plex Mono,monospace"
+          font-size="${F-1.5}" fill="#7A6A61" class="rot">${tot}</text>
+        <text x="${x+w/2}" y="${base+14}" text-anchor="middle" font-family="IBM Plex Mono,monospace"
+          font-size="${F-1}" fill="#9C8F87">${mesCurto(d.m)}</text>
+        <title>${mesCurto(d.m)} — ${r1}: ${d.a} · ${r2}: ${d.b}</title></g>`;
     }).join('')}
+    <line x1="${L}" y1="${base}" x2="${W-2}" y2="${base}" stroke="#DDD3CB"/>
   </svg>
-  <div style="display:flex;gap:14px;font-size:11px;color:rgba(36,30,28,.6);margin-top:6px">
+  <div style="display:flex;gap:14px;font-size:11px;color:rgba(36,30,28,.6);margin-top:8px">
     <span><span style="display:inline-block;width:9px;height:9px;background:${c1};border-radius:2px"></span> ${r1}</span>
     <span><span style="display:inline-block;width:9px;height:9px;background:${c2};border-radius:2px"></span> ${r2}</span></div>`;
 }
@@ -1896,10 +1949,10 @@ function pintarIndicadores(){
       ${u.atingimento!==null?`<div class="ind-card"><div class="r">Meta</div>
         <div class="v">${Math.round(u.atingimento)}%</div><div class="d">de ${brl(u.meta)}</div></div>`:''}
     </div>
-    <div class="ind-graf"><h4>Venda por mês — últimos 12</h4>${barras(ult12.map(x=>({m:x.mes,v:x.venda})),'#5C1A2B',fmtR)}</div>
-    <div class="ind-graf"><h4>Ticket médio por mês</h4>${barras(ult12.map(x=>({m:x.mes,v:x.ticket})),'#B8894A',fmtR)}</div>
+    <div class="ind-graf"><h4>Venda por mês — últimos 12</h4>${regGrafico('g-venda','barras',ult12.map(x=>({m:x.mes,v:x.venda})),'#5C1A2B',fmtR)}</div>
+    <div class="ind-graf"><h4>Ticket médio por mês</h4>${regGrafico('g-ticket','barras',ult12.map(x=>({m:x.mes,v:x.ticket})),'#B8894A',fmtR)}</div>
     <div class="ind-graf"><h4>Pacientes novas x recorrentes</h4>
-      ${barrasDuplas(ult12.map(x=>({m:x.mes,a:x.novas,b:x.recorrentes})),'#B8894A','#5C1A2B','novas','recorrentes')}</div>
+      ${regGrafico('g-pac','duplas',ult12.map(x=>({m:x.mes,a:x.novas,b:x.recorrentes})),['#B8894A','#5C1A2B'],null,'novas','recorrentes')}</div>
   </div>
 
   <div class="ind-bloco">
@@ -1923,9 +1976,9 @@ function pintarIndicadores(){
       <div class="ind-card"><div class="r">Cortesia</div><div class="v">${brl(u.cortesia||0)}</div></div>
     </div>
     <div class="ind-graf"><h4>% recebido sobre o vendido</h4>
-      ${barras(comPdf.map(x=>({m:x.mes,v:x.recebido_pct||0})),'#7E8F7C',fmtP)}</div>
+      ${regGrafico('g-receb','barras',comPdf.map(x=>({m:x.mes,v:x.recebido_pct||0})),'#7E8F7C',fmtP)}</div>
     <div class="ind-graf"><h4>Desconto global %</h4>
-      ${barras(comPdf.map(x=>({m:x.mes,v:x.desconto_pct||0})),'#A8442F',v=>v.toFixed(1)+'%')}</div>
+      ${regGrafico('g-desc','barras',comPdf.map(x=>({m:x.mes,v:x.desconto_pct||0})),'#A8442F',v=>v.toFixed(1).replace('.',',')+'%')}</div>
     <div class="ind-graf"><h4>Formas de pagamento</h4>
       <table class="ind-tab"><tr><th>Forma</th><th>Valor</th><th>%</th></tr>
       ${formasOrd.map(f=>`<tr><td>${tEsc(f)}</td><td>${brl(formasTot[f])}</td>
@@ -1944,6 +1997,7 @@ function pintarIndicadores(){
           <td>${x.retencao!==null?Math.round(x.retencao)+'%':'—'}</td></tr>`).join('')}
       </table></div>
   </div>`;
+  desenharGraficos();
 }
 
 function abrirModal(h){
