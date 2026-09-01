@@ -95,6 +95,14 @@ header.topo .marca-img{width:34px;height:34px;flex:none;display:block}
 .t-pend{font-size:11.5px;color:rgba(36,30,28,.55);margin-top:9px;padding-left:18px;line-height:1.5}
 .t-ok{display:inline-flex;align-items:center;gap:7px;background:#EAF2EA;color:#3F6B52;border-radius:99px;
   padding:6px 12px;font:600 11.5px/1 Inter,sans-serif}
+.aud-ok{position:relative}
+.aud-ok .orc{border-left-color:#3F6B52}
+.selo-aud{display:block;margin:-6px 0 10px 14px;background:#EAF2EA;color:#3F6B52;border:1px solid #BFD3C0;
+  border-radius:5px;padding:3px 8px;font:600 9.5px/1.3 'IBM Plex Mono',monospace;letter-spacing:.04em}
+.orc.auditado{border-left-color:#3F6B52}
+.bt-aud{margin-top:10px;width:100%;border:1px solid var(--linha);background:#fff;color:var(--vinho);
+  border-radius:8px;padding:9px;font:600 12px Inter,sans-serif;cursor:pointer}
+.bt-aud:hover{background:var(--vinho);color:#fff}
 .bt-lanc{margin-top:5px;border:1px solid var(--linha);background:#fff;color:var(--vinho);
   border-radius:6px;padding:4px 10px;font:600 10.5px/1 Inter,sans-serif;cursor:pointer;letter-spacing:.04em}
 .bt-lanc:hover{background:var(--vinho);color:#fff}
@@ -507,7 +515,7 @@ let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
 let MES = null, DIA = null, R = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V7.0';
+const VERSAO_ESPERADA = 'V7.1';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -1334,7 +1342,9 @@ function htmlOrcamento(d, compacto){
     <div class="item-l" style="font-weight:600"><div class="nm">Venda do comercial</div><div class="vt" style="color:var(--vinho)">${brl(o.venda_comercial)}</div></div>
     <div class="sec">Como foi pago</div>${parcelas||'<div class="vazio">Sem parcelas.</div>'}
     <div class="sec">Quando entra no caixa</div>${recs||'<div class="vazio">Nenhum recebimento previsto (abatimento de crédito).</div>'}
-    ${avisos}`;
+    ${avisos}
+    ${compacto?`<button class="bt-aud" onclick="abrirEdicao('${o.id_orcamento}')">
+      ${o.auditado_por?'Revisar auditoria':'Auditar e corrigir valores'}</button>`:''}`;
 }
 
 async function abrirOrcamento(id){
@@ -2016,6 +2026,128 @@ function pintarIndicadores(){
   desenharGraficos();
 }
 
+
+/* ============ EDIÇÃO NA AUDITORIA ============
+   O PDF nem sempre reflete o que aconteceu: desconto que virou permuta, valor
+   combinado depois. Apagar e refazer o orçamento com data nova jogaria a venda
+   no mês errado. Aqui o número é corrigido no lugar, com quem corrigiu. */
+let EDIT = null, AUD_MAPA = {};
+
+async function abrirEdicao(idOrc){
+  if(!USUARIO_ID){ abrirModal('<div class="vazio">Sessão sem identificação. Recarregue e entre de novo.</div>'); return; }
+  abrirModalCarregando('abrindo orçamento');
+  const d = await api('orcamento', {id: idOrc});
+  EDIT = d.orcamento;
+  pintarEdicao();
+}
+
+function pintarEdicao(){
+  const o = EDIT;
+  const v = k => (o[k] === '' || o[k] === undefined || o[k] === null) ? 0 : Number(o[k]);
+  abrirModal(`
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--vinho-2);letter-spacing:.1em">AUDITORIA · ORÇ ${tEsc(o.num_orcamento)}</div>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:6px 0 4px;color:var(--vinho)">${tEsc(o.paciente)}</h2>
+    <div class="lanc-antes">Corrija aqui o que o PDF não reflete. A venda é recalculada na hora:
+      <b>total dos procedimentos − duplicata − permuta</b>. O desconto não abate a venda.
+      ${o.auditado_por?`<br><span style="color:var(--ouro)">◆ já auditado por ${tEsc(o.auditado_por)} em ${tEsc(o.auditado_em)}</span>`:''}
+    </div>
+
+    <div class="lanc-campo"><label for="e-tp">Total dos procedimentos</label>
+      <input id="e-tp" type="number" step="0.01" min="0" value="${v('total_procedimentos')}" oninput="previaEdicao()"></div>
+    <div style="display:flex;gap:8px">
+      <div class="lanc-campo" style="flex:1"><label for="e-de">Desconto</label>
+        <input id="e-de" type="number" step="0.01" min="0" value="${v('desconto')}" oninput="previaEdicao()"></div>
+      <div class="lanc-campo" style="flex:1"><label for="e-pe">Permuta</label>
+        <input id="e-pe" type="number" step="0.01" min="0" value="${v('valor_permuta')}" oninput="previaEdicao()"></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <div class="lanc-campo" style="flex:1"><label for="e-du">Duplicata</label>
+        <input id="e-du" type="number" step="0.01" min="0" value="${v('valor_duplicata')}" oninput="previaEdicao()"></div>
+      <div class="lanc-campo" style="flex:1"><label for="e-co">Cortesia</label>
+        <input id="e-co" type="number" step="0.01" min="0" value="${v('valor_cortesia')}" oninput="previaEdicao()"></div>
+    </div>
+
+    <div class="lanc-antes" id="e-previa" style="border-left:3px solid var(--ouro)"></div>
+
+    <div class="lanc-campo"><label for="e-obs">Por que está ajustando</label>
+      <input id="e-obs" placeholder="ex.: desconto virou permuta" value="${tEsc(o.obs_auditoria||'')}"></div>
+    <div class="lanc-campo"><label for="e-cod">Seu código de acesso</label>
+      <input id="e-cod" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="off"></div>
+
+    <div id="e-erro"></div>
+    <button class="lanc-bt" id="e-salvar" onclick="salvarEdicao()">Salvar e marcar como auditado</button>
+    ${o.auditado_por?`<button class="lanc-bt" style="background:#fff;color:#A8442F;border:1px solid var(--linha);margin-top:8px"
+        onclick="desauditar()">Desmarcar auditoria</button>`:''}`);
+  previaEdicao();
+}
+
+function previaEdicao(){
+  const g = id => Number(String(document.getElementById(id).value).replace(',','.')) || 0;
+  const tp = g('e-tp'), de = g('e-de'), pe = g('e-pe'), du = g('e-du');
+  const venda = tp - du - pe;
+  const total = tp - de;
+  const pct = tp ? (de / tp * 100) : 0;
+  const box = document.getElementById('e-previa');
+  const bt = document.getElementById('e-salvar');
+  let erro = '';
+  if(de > tp) erro = 'O desconto não pode passar do total dos procedimentos.';
+  else if(pe + du > tp) erro = 'Permuta + duplicata não pode passar do total dos procedimentos.';
+  if(bt) bt.disabled = !!erro || tp <= 0;
+  if(!box) return;
+  box.style.borderLeft = '3px solid ' + (erro ? '#A8442F' : '#3F6B52');
+  box.innerHTML = erro
+    ? `<span style="color:#A8442F">${erro}</span>`
+    : `Venda do comercial: <b>${brl(venda)}</b><br>
+       Total do orçamento (após desconto): ${brl(total)}<br>
+       Desconto: ${pct.toFixed(2).replace('.',',')}%`;
+}
+
+async function salvarEdicao(){
+  const err = document.getElementById('e-erro');
+  const bt = document.getElementById('e-salvar');
+  const cod = document.getElementById('e-cod').value.trim();
+  const falhar = m => { err.innerHTML = `<div class="lanc-antes" style="border-left:3px solid #A8442F;color:#7E2E17">${m}</div>`; };
+  if(!/^\d{4}$/.test(cod)) return falhar('Informe os 4 dígitos do seu código.');
+  err.innerHTML=''; bt.disabled=true; bt.textContent='Salvando...';
+  try{
+    const r = await api('editar_orc', {
+      usuario_id: USUARIO_ID, codigo: cod, id_orcamento: EDIT.id_orcamento,
+      total_procedimentos: document.getElementById('e-tp').value,
+      desconto: document.getElementById('e-de').value,
+      valor_permuta: document.getElementById('e-pe').value,
+      valor_duplicata: document.getElementById('e-du').value,
+      valor_cortesia: document.getElementById('e-co').value,
+      obs: document.getElementById('e-obs').value || ''
+    });
+    carregar().catch(function(){});
+    carregarAuditoria().catch(function(){});
+    abrirModal(`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 10px;color:var(--vinho)">Orçamento auditado</h2>
+      <div class="lanc-antes"><b>${tEsc(EDIT.paciente)}</b> · ORÇ ${tEsc(EDIT.num_orcamento)}<br>
+        Venda do comercial: <b>${brl(r.venda_comercial)}</b><br>
+        ${r.mudancas.length?r.mudancas.map(tEsc).join('<br>'):'nenhum valor alterado'}
+        <br><span style="color:var(--tinta-2)">por ${tEsc(r.auditado_por)} em ${tEsc(r.auditado_em)}</span></div>
+      <button class="lanc-bt" onclick="fecharModal()">Fechar</button>`);
+  }catch(e){
+    bt.disabled=false; bt.textContent='Salvar e marcar como auditado'; falhar(tEsc(e.message));
+  }
+}
+
+async function desauditar(){
+  const cod = document.getElementById('e-cod').value.trim();
+  if(!/^\d{4}$/.test(cod)){
+    document.getElementById('e-erro').innerHTML =
+      `<div class="lanc-antes" style="border-left:3px solid #A8442F;color:#7E2E17">Informe o código para desmarcar.</div>`;
+    return;
+  }
+  try{
+    await api('desauditar', {usuario_id: USUARIO_ID, codigo: cod, id_orcamento: EDIT.id_orcamento});
+    fecharModal(); carregarAuditoria().catch(function(){});
+  }catch(e){
+    document.getElementById('e-erro').innerHTML =
+      `<div class="lanc-antes" style="border-left:3px solid #A8442F;color:#7E2E17">${tEsc(e.message)}</div>`;
+  }
+}
+
 function abrirModal(h){
   const c = document.getElementById('modal-conteudo');
   c.innerHTML = h;
@@ -2117,10 +2249,20 @@ async function carregarAuditoria(){
   if(!lista.length){ el.innerHTML='<div class="vazio">Nenhum orçamento neste mês.</div>'; return; }
   // ordem alfabética: a lista existe para ACHAR um orçamento, e por valor
   // só se acha o de cima
+  AUD_MAPA = {};
+  lista.forEach(function(x){ AUD_MAPA[x.id] = x; });
   const ord = lista.slice().sort(function(x, y){
     return String(x.paciente||'').localeCompare(String(y.paciente||''), 'pt-BR');
   });
-  el.innerHTML = ord.map(cartaoOrc).join('').replace(/onclick="abrirOrcamento\(/g,'onclick="verAuditoria(');
+  /* Selo do que já foi revisado: o comercial marca um a um e enxerga o que
+     falta. Envolvo o cartão em vez de tentar injetar dentro dele — depender do
+     formato interno do cartão quebra em silêncio quando ele muda. */
+  el.innerHTML = ord.map(function(o){
+    const h = cartaoOrc(o);
+    if(!o.auditado_por) return h;
+    return `<div class="aud-ok">${h}<div class="selo-aud">✓ auditado por ${tEsc(o.auditado_por)}`
+         + ` · ${tEsc(String(o.auditado_em).slice(0,10))}</div></div>`;
+  }).join('').replace(/onclick="abrirOrcamento\(/g,'onclick="verAuditoria(');
 }
 
 /* Devolve a coluna da direita ao topo quando outro orçamento é escolhido:
