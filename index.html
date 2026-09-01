@@ -451,7 +451,7 @@ let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
 let MES = null, DIA = null, R = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V6.0';
+const VERSAO_ESPERADA = 'V6.1';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -1275,7 +1275,11 @@ function htmlOrcamento(d, compacto){
     ${avisos}`;
 }
 
-async function abrirOrcamento(id){ abrirModal(htmlOrcamento(await api('orcamento',{id}), false)); }
+async function abrirOrcamento(id){
+  abrirModalCarregando('abrindo orçamento');
+  try{ abrirModal(htmlOrcamento(await api('orcamento',{id}), false)); }
+  catch(e){ abrirModal(`<div class="vazio">Não consegui abrir: ${tEsc(e.message)}</div>`); }
+}
 
 /* ============ busca em toda a base ============
    Sem filtro de mês de propósito: a pergunta "quando essa paciente comprou?"
@@ -1332,6 +1336,7 @@ const FORMAS_LANC = [
 ];
 
 async function abrirLancamento(idParcela, idOrc){
+  abrirModalCarregando('abrindo parcela');
   const d = await api('orcamento', {id: idOrc});
   const p = (d.parcelas||[]).filter(x => String(x.id_parcela) === String(idParcela))[0];
   if(!p){ abrirModal('<div class="vazio">Parcela não encontrada.</div>'); return; }
@@ -1436,8 +1441,8 @@ async function salvarLancamento(){
       forma: forma, data: isoParaBr(iso), destino: dest, vezes: vezes,
       obs: document.getElementById('l-obs').value || ''
     });
-    fecharModal();
-    await carregar();
+    // recarrega o painel em segundo plano: a confirmação não espera por ele
+    carregar().catch(function(){});
     abrirModal(`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 10px;color:var(--vinho)">Lançamento salvo</h2>
       <div class="lanc-antes"><b>${tEsc(LANC.paciente)}</b><br>
         ${tEsc(rotuloForma(r.forma))} em ${tEsc(r.data)}<br>${tEsc(r.destino)}<br>
@@ -1573,7 +1578,7 @@ async function salvarDivisao(){
         valor:Number(String(x.valor).replace(',','.')),
         data:isoParaBr(x.data), destino:x.destino, vezes:x.vezes||1})))
     });
-    fecharModal(); await carregar();
+    carregar().catch(function(){});
     abrirModal(`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 10px;color:var(--vinho)">Parcela dividida</h2>
       <div class="lanc-antes"><b>${tEsc(LANC.paciente)}</b><br>
         ${r.resumo.map(x=>`${tEsc(rotuloForma(x.forma))} — ${brl(x.valor)} em ${tEsc(x.data)} · ${tEsc(x.destino)}`).join('<br>')}
@@ -1584,8 +1589,39 @@ async function salvarDivisao(){
   }
 }
 
-function abrirModal(h){ document.getElementById('modal-conteudo').innerHTML=h; document.getElementById('modal').style.display='flex'; }
-function fecharModal(){ document.getElementById('modal').style.display='none'; }
+/* O modal fica no fim da pagina: sem trazer a rolagem de volta, quem abre um
+   orcamento da Auditoria com a lista rolada nao ve nada — o painel abre fora
+   da area visivel. */
+function abrirModal(h){
+  const c = document.getElementById('modal-conteudo');
+  c.innerHTML = h;
+  const m = document.getElementById('modal');
+  m.style.display = 'flex';
+  c.scrollTop = 0;
+  const p = m.querySelector('.painel'); if(p) p.scrollTop = 0;
+  document.body.style.overflow = 'hidden';        // trava a rolagem de tras
+  window.scrollTo({top: 0, behavior: 'auto'});
+}
+
+/* Painel imediato com "carregando": a chamada ao servidor leva alguns
+   segundos, e sem isto o toque parecia nao ter funcionado. */
+function abrirModalCarregando(titulo){
+  abrirModal(`<div style="padding:26px 0;text-align:center;font-family:'IBM Plex Mono',monospace;
+    font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(36,30,28,.45)">
+    ${titulo || 'carregando'}<span id="mod-pts">.</span></div>`);
+  let n = 1;
+  if(window.__pts) clearInterval(window.__pts);
+  window.__pts = setInterval(function(){
+    const e = document.getElementById('mod-pts');
+    if(!e){ clearInterval(window.__pts); return; }
+    n = (n % 3) + 1; e.textContent = '.'.repeat(n);
+  }, 350);
+}
+function fecharModal(){
+  document.getElementById('modal').style.display='none';
+  document.body.style.overflow='';
+  if(window.__pts){ clearInterval(window.__pts); window.__pts=null; }
+}
 
 /* ---------------- CALENDÁRIO ---------------- */
 async function carregarCalendario(){
