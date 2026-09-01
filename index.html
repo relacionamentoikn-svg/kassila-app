@@ -451,7 +451,7 @@ let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
 let MES = null, DIA = null, R = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V5.9';
+const VERSAO_ESPERADA = 'V6.0';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -1387,7 +1387,9 @@ function pintarLancamento(){
       <input id="l-cod" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="off"></div>
 
     <div id="l-erro"></div>
-    <button class="lanc-bt" id="l-salvar" onclick="salvarLancamento()">Salvar lançamento</button>`);
+    <button class="lanc-bt" id="l-salvar" onclick="salvarLancamento()">Salvar lançamento</button>
+    <button class="lanc-bt" style="background:#fff;color:var(--tinta);border:1px solid var(--linha);margin-top:8px"
+            onclick="abrirDivisao()">A paciente pagou de mais de uma forma</button>`);
 }
 
 function trocouForma(){
@@ -1444,6 +1446,141 @@ async function salvarLancamento(){
   }catch(e){
     bt.disabled = false; bt.textContent = 'Salvar lançamento';
     falhar(tEsc(e.message));
+  }
+}
+
+
+/* ============ DIVISÃO DE PARCELA ============
+   Uma parcela quitada com pix + permuta + débito no mesmo atendimento não cabe
+   no modelo de uma forma por parcela. Aqui ela é quebrada em várias linhas
+   que somam o mesmo valor, mantendo a numeração no plano de pagamento. */
+let PARTES = [];
+
+function abrirDivisao(){
+  const p = LANC.parcela;
+  PARTES = [
+    {forma:'PIX', valor:'', data:brParaIso(p.data_parcela)||'', destino:'', vezes:1},
+    {forma:'CARTAO_DEBITO', valor:'', data:brParaIso(p.data_parcela)||'', destino:'', vezes:1}
+  ];
+  pintarDivisao();
+}
+
+function pintarDivisao(){
+  const p = LANC.parcela;
+  const alvo = Number(p.valor_parcela) || 0;
+  const soma = PARTES.reduce((t,x)=> t + (Number(String(x.valor).replace(',','.'))||0), 0);
+  const dif = Math.round((alvo - soma) * 100) / 100;
+
+  abrirModal(`
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--vinho-2);letter-spacing:.1em">ORÇ ${tEsc(LANC.num)} · PARCELA ${tEsc(p.seq_parcela)}</div>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:6px 0 4px">${tEsc(LANC.paciente)}</h2>
+    <div class="lanc-antes">Dividir <b>${brl(alvo)}</b> entre as formas que a paciente usou.
+      As partes têm que somar exatamente esse valor.</div>
+
+    ${PARTES.map((x,i)=>`
+      <div style="border:1px solid var(--linha);border-radius:10px;padding:11px;margin-bottom:9px;background:#fff">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font:600 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:var(--vinho-2)">PARTE ${i+1}</span>
+          ${PARTES.length>2?`<button onclick="removerParte(${i})" style="border:0;background:none;color:var(--alerta,#A8442F);cursor:pointer;font-size:11.5px">remover</button>`:''}
+        </div>
+        <div class="lanc-campo" style="margin-bottom:8px">
+          <select onchange="mudarParte(${i},'forma',this.value)">
+            ${FORMAS_LANC.map(([v,r])=>`<option value="${v}" ${v===x.forma?'selected':''}>${r}</option>`).join('')}
+          </select></div>
+        <div style="display:flex;gap:8px">
+          <div class="lanc-campo" style="flex:1;margin-bottom:8px">
+            <input type="number" step="0.01" min="0" placeholder="valor" value="${x.valor}"
+                   oninput="mudarParte(${i},'valor',this.value)"></div>
+          <div class="lanc-campo" style="flex:1;margin-bottom:8px">
+            <input type="date" value="${x.data}" onchange="mudarParte(${i},'data',this.value)"></div>
+        </div>
+        <div class="lanc-campo" style="margin-bottom:0">
+          <select onchange="mudarParte(${i},'destino',this.value)">
+            <option value="">— para onde foi —</option>
+            ${(DESTINOS||[]).map(dd=>`<option value="${tEsc(dd.nome)}" ${dd.nome===x.destino?'selected':''}>${tEsc(dd.nome)}</option>`).join('')}
+          </select></div>
+      </div>`).join('')}
+
+    ${PARTES.length<8?`<button onclick="adicionarParte()" style="width:100%;border:1px dashed var(--linha);background:none;border-radius:9px;padding:10px;cursor:pointer;font:600 12px Inter,sans-serif;color:var(--tinta-2)">+ mais uma forma</button>`:''}
+
+    <div class="lanc-antes" style="margin-top:12px;${Math.abs(dif)<0.01?'border-left:3px solid #3F6B52':'border-left:3px solid #A8442F'}">
+      Soma das partes: <b>${brl(soma)}</b><br>
+      ${Math.abs(dif)<0.01 ? '<span style="color:#3F6B52">Fecha com o valor da parcela.</span>'
+        : `<span style="color:#A8442F">${dif>0?'Faltam':'Sobram'} ${brl(Math.abs(dif))}.</span>`}
+    </div>
+
+    <div class="lanc-campo"><label for="d-cod">Seu código de acesso</label>
+      <input id="d-cod" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="off"></div>
+
+    <div id="d-erro"></div>
+    <button class="lanc-bt" id="d-salvar" onclick="salvarDivisao()" ${Math.abs(dif)<0.01?'':'disabled'}>Salvar divisão</button>
+    <button class="lanc-bt" style="background:#fff;color:var(--tinta);border:1px solid var(--linha);margin-top:8px"
+            onclick="pintarLancamento()">Voltar</button>`);
+}
+
+function mudarParte(i, campo, v){
+  PARTES[i][campo] = v;
+  if(campo === 'forma'){
+    const sug = (DESTINOS||[]).filter(x => (x.formas||[]).indexOf(v) >= 0)[0];
+    PARTES[i].destino = sug ? sug.nome : '';
+  }
+  // só o total precisa ser redesenhado enquanto se digita o valor
+  if(campo === 'valor'){ atualizarTotalDivisao(); return; }
+  pintarDivisao();
+}
+
+function atualizarTotalDivisao(){
+  const alvo = Number(LANC.parcela.valor_parcela) || 0;
+  const soma = PARTES.reduce((t,x)=> t + (Number(String(x.valor).replace(',','.'))||0), 0);
+  const dif = Math.round((alvo - soma) * 100) / 100;
+  const bt = document.getElementById('d-salvar');
+  if(bt) bt.disabled = Math.abs(dif) >= 0.01;
+  const box = document.querySelectorAll('#modal-conteudo .lanc-antes');
+  const tot = box[box.length-1];
+  if(tot){
+    tot.style.borderLeft = '3px solid ' + (Math.abs(dif)<0.01 ? '#3F6B52' : '#A8442F');
+    tot.innerHTML = `Soma das partes: <b>${brl(soma)}</b><br>` +
+      (Math.abs(dif)<0.01 ? '<span style="color:#3F6B52">Fecha com o valor da parcela.</span>'
+        : `<span style="color:#A8442F">${dif>0?'Faltam':'Sobram'} ${brl(Math.abs(dif))}.</span>`);
+  }
+}
+
+function adicionarParte(){
+  PARTES.push({forma:'PIX', valor:'', data:brParaIso(LANC.parcela.data_parcela)||'', destino:'', vezes:1});
+  pintarDivisao();
+}
+function removerParte(i){ PARTES.splice(i,1); pintarDivisao(); }
+
+async function salvarDivisao(){
+  const err = document.getElementById('d-erro');
+  const bt = document.getElementById('d-salvar');
+  const cod = document.getElementById('d-cod').value.trim();
+  const falhar = m => { err.innerHTML = `<div class="aviso-box" style="border-color:#E8C4B6;background:#F7E9E4;color:#7E2E17">${m}</div>`; };
+
+  for(let i=0;i<PARTES.length;i++){
+    if(!PARTES[i].destino) return falhar('Escolha para onde foi a parte ' + (i+1) + '.');
+    if(!PARTES[i].data) return falhar('Informe a data da parte ' + (i+1) + '.');
+  }
+  if(!/^\d{4}$/.test(cod)) return falhar('Informe os 4 dígitos do seu código.');
+  if(!USUARIO_ID) return falhar('Sessão sem identificação. Recarregue e entre de novo.');
+
+  err.innerHTML=''; bt.disabled=true; bt.textContent='Salvando...';
+  try{
+    const r = await api('dividir', {
+      usuario_id: USUARIO_ID, codigo: cod, id_parcela: LANC.parcela.id_parcela,
+      partes: JSON.stringify(PARTES.map(x=>({
+        forma:x.forma, rotulo:rotuloForma(x.forma),
+        valor:Number(String(x.valor).replace(',','.')),
+        data:isoParaBr(x.data), destino:x.destino, vezes:x.vezes||1})))
+    });
+    fecharModal(); await carregar();
+    abrirModal(`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 10px;color:var(--vinho)">Parcela dividida</h2>
+      <div class="lanc-antes"><b>${tEsc(LANC.paciente)}</b><br>
+        ${r.resumo.map(x=>`${tEsc(rotuloForma(x.forma))} — ${brl(x.valor)} em ${tEsc(x.data)} · ${tEsc(x.destino)}`).join('<br>')}
+        <br><span style="color:var(--tinta-2)">${r.recebimentos} recebimento(s) recalculado(s) · registrado por ${tEsc(r.lancado_por)}</span></div>
+      <button class="lanc-bt" onclick="fecharModal()">Fechar</button>`);
+  }catch(e){
+    bt.disabled=false; bt.textContent='Salvar divisão'; falhar(tEsc(e.message));
   }
 }
 
