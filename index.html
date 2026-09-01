@@ -134,6 +134,17 @@ header.topo .marca-img{width:34px;height:34px;flex:none;display:block}
 .ind-tab th:first-child,.ind-tab td:first-child{text-align:left}
 .ind-tab td{padding:7px 5px;border-bottom:1px solid #F0EAE4;text-align:right}
 .ind-tab tr:last-child td{border-bottom:0}
+@media(max-width:560px){
+  header.topo{flex-wrap:wrap;row-gap:8px;padding:10px 12px}
+  header.topo .marca-bloco{flex:1 1 100%}
+  header.topo .hdr-dir{flex:1 1 100%;justify-content:flex-end;gap:7px}
+  header.topo .atz{flex:1;text-align:left;align-items:flex-start}
+  header.topo .btn-atz{width:36px;height:36px}
+  header.topo .sel{max-width:120px}
+  nav.tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  nav.tabs::-webkit-scrollbar{display:none}
+  nav.tabs button{flex:0 0 auto;white-space:nowrap}
+}
 header.topo .hdr-dir{display:flex;align-items:center;gap:9px}
 header.topo .atz{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:rgba(250,247,243,.72);line-height:1.3;text-align:right}
 header.topo .atz .auto{display:flex;align-items:center;gap:4px;cursor:pointer;user-select:none}
@@ -496,7 +507,7 @@ let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
 let MES = null, DIA = null, R = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V6.8';
+const VERSAO_ESPERADA = 'V7.0';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -975,15 +986,20 @@ function irPara(t){
   document.querySelectorAll('.tela').forEach(s=>s.classList.toggle('on', s.id==='tela-'+t));
 }
 
-async function trocarMes(m){ MES=m; DIA=null; await carregar(); }
-async function escolherDia(iso){ if(!iso) return; DIA = isoParaBr(iso); await carregar(); }
-async function irHoje(){ DIA=null; await carregar(); }
-async function andarDia(n){
-  const base = DIA ? new Date(brParaIso(DIA)+'T12:00:00') : new Date(brParaIso(R.hoje)+'T12:00:00');
-  base.setDate(base.getDate()+n);
-  DIA = `${String(base.getDate()).padStart(2,'0')}/${String(base.getMonth()+1).padStart(2,'0')}/${base.getFullYear()}`;
-  await carregar();
+async function trocarMes(m){
+  MES = m; DIA = null;
+  // aviso imediato: sem ele a troca de mês parecia não ter funcionado
+  const c = document.getElementById('carregando');
+  const app = document.getElementById('app');
+  if(c){ c.textContent = 'carregando ' + rotuloMes(m) + '...'; c.style.display = 'flex'; }
+  if(app) app.style.opacity = '.35';
+  try{ await carregar(); }
+  finally{
+    if(c) c.style.display = 'none';
+    if(app) app.style.opacity = '';
+  }
 }
+
 
 async function carregar(){
   const p = {mes: MES}; if(DIA) p.dia = DIA;
@@ -2099,7 +2115,12 @@ async function carregarAuditoria(){
   document.getElementById('aud-qtd').textContent = lista.length + ' orçamento(s)';
   const el=document.getElementById('lista-auditoria');
   if(!lista.length){ el.innerHTML='<div class="vazio">Nenhum orçamento neste mês.</div>'; return; }
-  el.innerHTML = lista.map(cartaoOrc).join('').replace(/onclick="abrirOrcamento\(/g,'onclick="verAuditoria(');
+  // ordem alfabética: a lista existe para ACHAR um orçamento, e por valor
+  // só se acha o de cima
+  const ord = lista.slice().sort(function(x, y){
+    return String(x.paciente||'').localeCompare(String(y.paciente||''), 'pt-BR');
+  });
+  el.innerHTML = ord.map(cartaoOrc).join('').replace(/onclick="abrirOrcamento\(/g,'onclick="verAuditoria(');
 }
 
 /* Devolve a coluna da direita ao topo quando outro orçamento é escolhido:
