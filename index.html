@@ -2048,6 +2048,13 @@ async function carregarAuditoria(){
   el.innerHTML = lista.map(cartaoOrc).join('').replace(/onclick="abrirOrcamento\(/g,'onclick="verAuditoria(');
 }
 
+/* Devolve a coluna da direita ao topo quando outro orçamento é escolhido:
+   sem isto ela abre na altura em que o anterior tinha sido rolado. */
+function subirColunaDireita(){
+  const c = document.querySelectorAll('#tela-auditoria .grid-aud > .col');
+  if(c[1]) c[1].scrollTop = 0;
+}
+
 async function verAuditoria(id){
   const alvo = document.getElementById('aud-detalhe');
   // aviso imediato: a chamada leva alguns segundos e sem isto o toque
