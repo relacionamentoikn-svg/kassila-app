@@ -103,6 +103,12 @@ header.topo .marca-img{width:34px;height:34px;flex:none;display:block}
 .bt-aud{margin-top:10px;width:100%;border:1px solid var(--linha);background:#fff;color:var(--vinho);
   border-radius:8px;padding:9px;font:600 12px Inter,sans-serif;cursor:pointer}
 .bt-aud:hover{background:var(--vinho);color:#fff}
+#vp-sug{margin-top:5px}
+.vp-sug-item{padding:8px 11px;border:1px solid var(--linha);border-top:0;background:#fff;font-size:13px;cursor:pointer}
+.vp-sug-item:first-child{border-top:1px solid var(--linha);border-radius:7px 7px 0 0}
+.vp-sug-item:last-child{border-radius:0 0 7px 7px}
+.vp-sug-item:hover{background:var(--papel-2,#F3EEE8);color:var(--vinho)}
+.vp-nova{padding:8px 11px;font-size:12px;color:var(--tinta-2);background:#FBF3E7;border:1px solid #E8D2AE;border-radius:7px;margin-top:4px}
 .bt-lanc{margin-top:5px;border:1px solid var(--linha);background:#fff;color:var(--vinho);
   border-radius:6px;padding:4px 10px;font:600 10.5px/1 Inter,sans-serif;cursor:pointer;letter-spacing:.04em}
 .bt-lanc:hover{background:var(--vinho);color:#fff}
@@ -145,7 +151,11 @@ header.topo .marca-img{width:34px;height:34px;flex:none;display:block}
 @media(max-width:560px){
   header.topo{flex-wrap:wrap;row-gap:8px;padding:10px 12px}
   header.topo .marca-bloco{flex:1 1 100%}
-  header.topo .hdr-dir{flex:1 1 100%;justify-content:flex-end;gap:7px}
+  #carregando{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:60;
+  background:var(--vinho);color:var(--creme);border-radius:999px;padding:10px 20px;
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  box-shadow:0 8px 26px rgba(0,0,0,.22);white-space:nowrap}
+header.topo .hdr-dir{flex:1 1 100%;justify-content:flex-end;gap:7px}
   header.topo .atz{flex:1;text-align:left;align-items:flex-start}
   header.topo .btn-atz{width:36px;height:36px}
   header.topo .sel{max-width:120px}
@@ -364,9 +374,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
   <main class="t-corpo" id="t-corpo"></main>
 </div>
 
-<div id="carregando" style="display:flex;align-items:center;justify-content:center;
-     min-height:60vh;font-family:'IBM Plex Mono',monospace;font-size:11px;
-     letter-spacing:.12em;text-transform:uppercase;color:rgba(36,30,28,.45)">carregando...</div>
+<div id="carregando">carregando…</div>
 
 <div id="config" style="display:none">
   <h1>Fluxo de Caixa — Kássila Nasser</h1>
@@ -463,6 +471,19 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 
   <!-- ================= RECEBIMENTOS ================= -->
   <section class="tela" id="tela-recebimentos">
+    <div class="card" style="margin-bottom:14px">
+      <h3>Cobrança <span class="aux" id="rec-qtd"></span></h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 12px">
+        <input id="rec-busca" type="search" placeholder="buscar paciente ou orçamento"
+          oninput="agendarEmAberto(this.value)"
+          style="flex:1;min-width:190px;padding:10px 12px;border:1px solid var(--linha);border-radius:8px;font:400 14px Inter,sans-serif;background:#fff">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--tinta-2);cursor:pointer">
+          <input type="checkbox" id="rec-vencendo" onchange="carregarEmAberto()" style="accent-color:var(--vinho)">
+          só vencidas e vencendo
+        </label>
+      </div>
+      <div id="rec-lista"><div class="carregando">Carregando…</div></div>
+    </div>
     <div class="grid-mes">
       <div class="col">
         <div class="hero" id="hero-receb"></div>
@@ -515,7 +536,7 @@ let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
 let MES = null, DIA = null, R = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V7.1';
+const VERSAO_ESPERADA = 'V7.4';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -990,6 +1011,7 @@ async function iniciar(){
 }
 
 function irPara(t){
+  if(t === 'recebimentos' && document.getElementById('rec-lista')) carregarEmAberto().catch(function(){});
   document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.tela===t));
   document.querySelectorAll('.tela').forEach(s=>s.classList.toggle('on', s.id==='tela-'+t));
 }
@@ -999,7 +1021,7 @@ async function trocarMes(m){
   // aviso imediato: sem ele a troca de mês parecia não ter funcionado
   const c = document.getElementById('carregando');
   const app = document.getElementById('app');
-  if(c){ c.textContent = 'carregando ' + rotuloMes(m) + '...'; c.style.display = 'flex'; }
+  if(c){ c.textContent = 'carregando ' + rotuloMes(m) + '…'; c.style.display = 'block'; }
   if(app) app.style.opacity = '.35';
   try{ await carregar(); }
   finally{
@@ -1109,11 +1131,13 @@ function renderDia(){
       <div class="t"><i style="width:${maxF?x.valor/maxF*100:0}%"></i></div></div>`).join('')}</div>`
     : `<h3>Formas de pagamento</h3><div class="vazio">Nada lançado neste dia.</div>`;
 
-  const serie = R.serie_14||[];
+  // fora sábado e domingo: a clínica não atende, e a barra zerada dava a
+  // impressão de que o comercial não vendeu naquele dia
+  const serie = (R.serie_14||[]).filter(function(x){ return x.dow !== 0 && x.dow !== 6; });
   const maxS = Math.max(1, ...serie.map(x=>x.valor));
   document.getElementById('spark').innerHTML = serie.map(x=>{
-    const fds = (x.dow===0||x.dow===6) ? ' fds':'';
     const sel = x.data===R.hoje ? ' sel':'';
+    const fds = '';
     return `<div class="col-d${fds}${sel}" onclick="escolherDia('${brParaIso(x.data)}')" title="${x.data} · ${brl(x.valor)}">
       <i style="height:${Math.max(2, x.valor/maxS*100)}%"></i></div>`;
   }).join('');
@@ -1343,8 +1367,9 @@ function htmlOrcamento(d, compacto){
     <div class="sec">Como foi pago</div>${parcelas||'<div class="vazio">Sem parcelas.</div>'}
     <div class="sec">Quando entra no caixa</div>${recs||'<div class="vazio">Nenhum recebimento previsto (abatimento de crédito).</div>'}
     ${avisos}
-    ${compacto?`<button class="bt-aud" onclick="abrirEdicao('${o.id_orcamento}')">
-      ${o.auditado_por?'Revisar auditoria':'Auditar e corrigir valores'}</button>`:''}`;
+    ${compacto?`<button class="bt-aud" onclick="abrirPlano('${o.id_orcamento}')">Editar como foi pago</button>
+      <button class="bt-aud" onclick="abrirEdicao('${o.id_orcamento}')">
+      ${o.auditado_por?'Revisar valores auditados':'Auditar e corrigir valores'}</button>`:''}`;
 }
 
 async function abrirOrcamento(id){
@@ -1698,7 +1723,9 @@ function pintarVendaProduto(){
     <div class="lanc-antes">O ERP não emite orçamento para produto. O que você lançar aqui entra na venda do mês como qualquer outra.</div>
 
     <div class="lanc-campo"><label for="vp-pac">Paciente</label>
-      <input id="vp-pac" placeholder="nome completo" value="${tEsc(window.__vpPac||'')}" oninput="window.__vpPac=this.value"></div>
+      <input id="vp-pac" placeholder="digite 2 letras para buscar" autocomplete="off"
+        value="${tEsc(window.__vpPac||'')}" oninput="agendarPacientes(this.value)">
+      <div id="vp-sug"></div></div>
 
     ${PROD.map((x,i)=>`
       <div style="border:1px solid var(--linha);border-radius:10px;padding:11px;margin-bottom:9px;background:#fff">
@@ -2146,6 +2173,212 @@ async function desauditar(){
     document.getElementById('e-erro').innerHTML =
       `<div class="lanc-antes" style="border-left:3px solid #A8442F;color:#7E2E17">${tEsc(e.message)}</div>`;
   }
+}
+
+
+/* ============ PLANO DE PAGAMENTO ============
+   "Forma de pagamento" aqui é COMO FOI PAGO, não o que foi combinado no
+   orçamento. A paciente cancela o 3x no crédito e paga dinheiro + pix +
+   permuta: isso troca o conjunto de linhas, não edita uma linha. */
+let PLANO = null, PLANO_ORC = null;
+
+async function abrirPlano(idOrc){
+  if(!USUARIO_ID){ abrirModal('<div class="vazio">Sessão sem identificação. Recarregue e entre.</div>'); return; }
+  abrirModalCarregando('abrindo pagamento');
+  const d = await api('orcamento', {id: idOrc});
+  if(!DESTINOS){ try{ DESTINOS = await api('destinos'); }catch(e){ DESTINOS = []; } }
+  PLANO_ORC = d.orcamento;
+  PLANO = (d.parcelas||[]).map(x => ({
+    forma: String(x.forma_normalizada||'PIX').toUpperCase(),
+    valor: Number(x.valor_parcela)||0,
+    data: brParaIso(x.data_parcela)||'',
+    destino: x.destino||'', vezes: Number(x.vezes_cartao)||1
+  }));
+  if(!PLANO.length) PLANO = [{forma:'PIX', valor:Number(PLANO_ORC.total)||0, data:brParaIso(PLANO_ORC.data_venda)||'', destino:'', vezes:1}];
+  pintarPlano();
+}
+
+function pintarPlano(){
+  const o = PLANO_ORC;
+  const alvo = Number(o.total)||0;
+  const soma = PLANO.reduce((t,x)=> t + (Number(String(x.valor).replace(',','.'))||0), 0);
+  const dif = Math.round((alvo-soma)*100)/100;
+  abrirModal(`
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--vinho-2);letter-spacing:.1em">COMO FOI PAGO · ORÇ ${tEsc(o.num_orcamento)}</div>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:6px 0 4px;color:var(--vinho)">${tEsc(o.paciente)}</h2>
+    <div class="lanc-antes">Total do orçamento: <b>${brl(alvo)}</b>. Monte aqui como a paciente
+      <b>realmente pagou</b> — pode ser diferente do que foi combinado no PDF.</div>
+
+    ${PLANO.map((x,i)=>`
+      <div style="border:1px solid var(--linha);border-radius:10px;padding:11px;margin-bottom:9px;background:#fff">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font:600 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:var(--vinho-2)">LINHA ${i+1}</span>
+          ${PLANO.length>1?`<button onclick="removerPlano(${i})" style="border:0;background:none;color:#A8442F;cursor:pointer;font-size:11.5px">remover</button>`:''}
+        </div>
+        <div class="lanc-campo" style="margin-bottom:8px">
+          <select onchange="mudarPlano(${i},'forma',this.value)">
+            ${FORMAS_LANC.map(([v,r])=>`<option value="${v}" ${v===x.forma?'selected':''}>${r}</option>`).join('')}
+          </select></div>
+        <div style="display:flex;gap:8px">
+          <div class="lanc-campo" style="flex:1;margin-bottom:8px">
+            <input type="number" step="0.01" min="0" placeholder="valor" value="${x.valor}"
+              oninput="mudarPlano(${i},'valor',this.value)"></div>
+          <div class="lanc-campo" style="flex:1;margin-bottom:8px">
+            <input type="date" value="${x.data}" onchange="mudarPlano(${i},'data',this.value)"></div>
+        </div>
+        ${x.forma==='CARTAO_CREDITO'?`<div class="lanc-campo" style="margin-bottom:8px">
+          <input type="number" min="1" max="24" value="${x.vezes}" placeholder="em quantas vezes"
+            oninput="mudarPlano(${i},'vezes',this.value)"></div>`:''}
+        <div class="lanc-campo" style="margin-bottom:0">
+          <select onchange="mudarPlano(${i},'destino',this.value)">
+            <option value="">— para onde foi —</option>
+            ${(DESTINOS||[]).map(dd=>`<option value="${tEsc(dd.nome)}" ${dd.nome===x.destino?'selected':''}>${tEsc(dd.nome)}</option>`).join('')}
+          </select></div>
+      </div>`).join('')}
+
+    ${PLANO.length<24?`<button onclick="adicionarPlano()" style="width:100%;border:1px dashed var(--linha);background:none;border-radius:9px;padding:10px;cursor:pointer;font:600 12px Inter,sans-serif;color:var(--tinta-2)">+ mais uma forma</button>`:''}
+
+    <div class="lanc-antes" id="p-total" style="margin-top:12px;border-left:3px solid ${Math.abs(dif)<0.01?'#3F6B52':'#A8442F'}">
+      Soma: <b>${brl(soma)}</b><br>${Math.abs(dif)<0.01?'<span style="color:#3F6B52">Fecha com o orçamento.</span>':`<span style="color:#A8442F">${dif>0?'Faltam':'Sobram'} ${brl(Math.abs(dif))}.</span>`}</div>
+
+    <div class="lanc-campo"><label for="p-cod">Seu código de acesso</label>
+      <input id="p-cod" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="off"></div>
+    <div id="p-erro"></div>
+    <button class="lanc-bt" id="p-salvar" onclick="salvarPlano()" ${Math.abs(dif)<0.01?'':'disabled'}>Salvar como foi pago</button>`);
+}
+
+function mudarPlano(i, campo, v){
+  PLANO[i][campo] = v;
+  if(campo === 'forma'){
+    const sug = (DESTINOS||[]).filter(x => (x.formas||[]).indexOf(v) >= 0)[0];
+    PLANO[i].destino = sug ? sug.nome : '';
+    pintarPlano(); return;
+  }
+  if(campo === 'valor'){ atualizarTotalPlano(); return; }
+  if(campo !== 'destino' && campo !== 'vezes') pintarPlano();
+}
+
+function atualizarTotalPlano(){
+  const alvo = Number(PLANO_ORC.total)||0;
+  const soma = PLANO.reduce((t,x)=> t + (Number(String(x.valor).replace(',','.'))||0), 0);
+  const dif = Math.round((alvo-soma)*100)/100;
+  const bt = document.getElementById('p-salvar');
+  if(bt) bt.disabled = Math.abs(dif) >= 0.01;
+  const box = document.getElementById('p-total');
+  if(box){
+    box.style.borderLeft = '3px solid ' + (Math.abs(dif)<0.01 ? '#3F6B52' : '#A8442F');
+    box.innerHTML = `Soma: <b>${brl(soma)}</b><br>` + (Math.abs(dif)<0.01
+      ? '<span style="color:#3F6B52">Fecha com o orçamento.</span>'
+      : `<span style="color:#A8442F">${dif>0?'Faltam':'Sobram'} ${brl(Math.abs(dif))}.</span>`);
+  }
+}
+
+function adicionarPlano(){
+  const alvo = Number(PLANO_ORC.total)||0;
+  const soma = PLANO.reduce((t,x)=> t + (Number(String(x.valor).replace(',','.'))||0), 0);
+  PLANO.push({forma:'PIX', valor: Math.max(0, Math.round((alvo-soma)*100)/100), data: brParaIso(PLANO_ORC.data_venda)||'', destino:'', vezes:1});
+  pintarPlano();
+}
+function removerPlano(i){ PLANO.splice(i,1); pintarPlano(); }
+
+async function salvarPlano(){
+  const err = document.getElementById('p-erro');
+  const bt = document.getElementById('p-salvar');
+  const cod = document.getElementById('p-cod').value.trim();
+  const falhar = m => { err.innerHTML = `<div class="lanc-antes" style="border-left:3px solid #A8442F;color:#7E2E17">${m}</div>`; };
+  for(let i=0;i<PLANO.length;i++){
+    if(!PLANO[i].destino) return falhar('Escolha para onde foi a linha ' + (i+1) + '.');
+    if(!PLANO[i].data) return falhar('Informe a data da linha ' + (i+1) + '.');
+  }
+  if(!/^\d{4}$/.test(cod)) return falhar('Informe os 4 dígitos do seu código.');
+  err.innerHTML=''; bt.disabled=true; bt.textContent='Salvando...';
+  try{
+    const r = await api('plano', {
+      usuario_id: USUARIO_ID, codigo: cod, id_orcamento: PLANO_ORC.id_orcamento,
+      parcelas: JSON.stringify(PLANO.map(x=>({forma:x.forma, rotulo:rotuloForma(x.forma),
+        valor:Number(String(x.valor).replace(',','.')), data:isoParaBr(x.data),
+        destino:x.destino, vezes:x.vezes||1})))
+    });
+    carregar().catch(function(){});
+    carregarAuditoria().catch(function(){});
+    if(document.getElementById('rec-lista')) carregarEmAberto().catch(function(){});
+    abrirModal(`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 10px;color:var(--vinho)">Pagamento atualizado</h2>
+      <div class="lanc-antes"><b>${tEsc(PLANO_ORC.paciente)}</b> · ORÇ ${tEsc(PLANO_ORC.num_orcamento)}<br>
+        ${r.parcelas} forma(s) · ${r.recebimentos} recebimento(s)<br>
+        Venda: <b>${brl(r.venda_comercial)}</b>${r.permuta?` · permuta ${brl(r.permuta)}`:''}<br>
+        <span style="color:var(--tinta-2)">por ${tEsc(r.lancado_por)}</span></div>
+      <button class="lanc-bt" onclick="fecharModal()">Fechar</button>`);
+  }catch(e){ bt.disabled=false; bt.textContent='Salvar como foi pago'; falhar(tEsc(e.message)); }
+}
+
+
+/* ============ COBRANÇA ============
+   O comercial precisa saber quem está vencendo para ligar, e lançar o que a
+   paciente pagou quando ela aparece em data aleatória. */
+let TIMER_ABERTO = null;
+
+function agendarEmAberto(q){
+  if(TIMER_ABERTO) clearTimeout(TIMER_ABERTO);
+  TIMER_ABERTO = setTimeout(carregarEmAberto, 350);
+}
+
+async function carregarEmAberto(){
+  const el = document.getElementById('rec-lista');
+  if(!el) return;
+  const q = (document.getElementById('rec-busca')||{}).value || '';
+  const so = (document.getElementById('rec-vencendo')||{}).checked ? 'SIM' : '';
+  el.innerHTML = '<div class="carregando">Carregando…</div>';
+  try{
+    const d = await api('em_aberto', {q: q, so_vencendo: so});
+    document.getElementById('rec-qtd').textContent = d.total + ' parcela(s)';
+    if(!d.itens.length){ el.innerHTML = '<div class="vazio">Nada em aberto com esse filtro.</div>'; return; }
+    el.innerHTML = d.itens.map(function(x){
+      const cor = x.situacao==='VENCIDA' ? '#A8442F' : (x.situacao==='VENCENDO' ? '#B8894A' : '#7E8F7C');
+      const quando = x.dias < 0 ? `vencida há ${-x.dias} dia(s)`
+                   : (x.dias === 0 ? 'vence hoje' : `vence em ${x.dias} dia(s)`);
+      return `<div class="orc" style="border-left-color:${cor};cursor:pointer"
+                   onclick="abrirPlano('${x.id_orcamento}')">
+        <div class="l1"><span class="pac">${tEsc(x.paciente)}</span><span class="vl">${brl(x.valor)}</span></div>
+        <div class="qt">ORÇ ${tEsc(x.num)} · ${tEsc(x.forma_original||x.forma)} · ${tEsc(x.data)}${x.destino?' · '+tEsc(x.destino):''}</div>
+        <div class="qt" style="color:${cor}">◆ ${quando}${x.auditado_por?' · auditado':''}</div>
+      </div>`;
+    }).join('');
+  }catch(e){ el.innerHTML = `<div class="vazio">Não consegui carregar: ${tEsc(e.message)}</div>`; }
+}
+
+/* ---- autocomplete de paciente no lançamento manual ---- */
+let TIMER_PAC = null, PACIENTES = [];
+
+function agendarPacientes(q){
+  window.__vpPac = q;
+  if(TIMER_PAC) clearTimeout(TIMER_PAC);
+  TIMER_PAC = setTimeout(function(){ buscarPacientes(q); }, 300);
+}
+
+async function buscarPacientes(q){
+  const box = document.getElementById('vp-sug');
+  if(!box) return;
+  if(String(q).trim().length < 2){ box.innerHTML = ''; return; }
+  try{
+    const d = await api('pacientes', {q: q});
+    PACIENTES = d.nomes || [];
+    if(!PACIENTES.length){
+      box.innerHTML = `<div class="vp-nova">Nenhuma paciente com esse nome.
+        <b>Vai ser cadastrada como nova.</b></div>`;
+      return;
+    }
+    box.innerHTML = PACIENTES.slice(0,8).map(function(n){
+      return `<div class="vp-sug-item" onclick="escolherPaciente(${JSON.stringify(n).replace(/"/g,'&quot;')})">${tEsc(n)}</div>`;
+    }).join('') + (PACIENTES.length>8?`<div class="vp-nova">e mais ${PACIENTES.length-8}… refine o nome</div>`:'');
+  }catch(e){ box.innerHTML = ''; }
+}
+
+function escolherPaciente(nome){
+  const inp = document.getElementById('vp-pac');
+  if(inp) inp.value = nome;
+  window.__vpPac = nome;
+  const box = document.getElementById('vp-sug');
+  if(box) box.innerHTML = `<div class="vp-nova" style="color:#3F6B52">✓ paciente já cadastrada</div>`;
 }
 
 function abrirModal(h){
