@@ -97,13 +97,14 @@ header.topo .marca-img{width:34px;height:34px;flex:none;display:block}
   padding:6px 12px;font:600 11.5px/1 Inter,sans-serif}
 .aud-ok{position:relative}
 .aud-ok .orc{border-left-color:#3F6B52}
-/* Selo alinhado à direita, ABAIXO do valor. No canto superior ele cobria o
-   número; embaixo do cartão, em faixa larga, empurrava a lista toda. */
-.aud-ok{display:block}
-.selo-aud{display:block;text-align:right;margin:-9px 14px 11px 0;color:#3F6B52;
-  font:600 9px/1.4 'IBM Plex Mono',monospace;letter-spacing:.05em}
-.selo-aud::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;
-  background:#3F6B52;margin-right:5px;vertical-align:middle}
+/* Faixa de auditado embaixo do cartão, com a frase inteira. O único ajuste
+   em relação à primeira versão é a margem: antes ela encostava na linha
+   divisória do cartão seguinte. */
+.aud-ok{display:block;margin-bottom:6px}
+.aud-ok .orc{border-bottom:0;margin-bottom:0}
+.selo-aud{display:block;background:#EAF2EA;color:#3F6B52;border:1px solid #BFD3C0;
+  border-radius:6px;padding:5px 10px;margin:6px 14px 4px 14px;
+  font:600 9.5px/1.4 'IBM Plex Mono',monospace;letter-spacing:.04em}
 .orc.auditado{border-left-color:#3F6B52}
 .bt-aud{margin-top:10px;width:100%;border:1px solid var(--linha);background:#fff;color:var(--vinho);
   border-radius:8px;padding:9px;font:600 12px Inter,sans-serif;cursor:pointer}
@@ -370,7 +371,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
       </div>
     </div>
   </header>
-  <div class="t-passos" id="t-passos">
+  <div class="t-passos" id="t-passos" style="display:none">
     <div data-p="1">1 · Identificação</div>
     <div data-p="2">2 · Aviso</div>
     <div data-p="3">3 · Termo</div>
@@ -541,7 +542,7 @@ let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
 let MES = null, DIA = null, R = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V7.5';
+const VERSAO_ESPERADA = 'V7.6';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -741,7 +742,7 @@ async function abrirTermo(){
   document.getElementById('config').style.display='none';
   document.getElementById('app').style.display='none';
   try{
-    const d = await api('usuarios');
+    const d = await api('abrir');
     tUsuarios = d.usuarios || [];
     if(!tUsuarios.length) throw new Error('nenhum usuário ativo na aba Usuarios');
   }catch(err){
@@ -771,18 +772,17 @@ function tPintar(){
 }
 
 function tTela1(){
-  return `<p class="olho">Acesso restrito</p><h2>Identifique-se</h2>
-  <p class="sub2">Este painel é de uso exclusivo das pessoas autorizadas pela direção clínica.<br>Quem já assinou o termo entra direto.</p>
+  return `<p class="olho">Acesso restrito</p><h2>Entrar</h2>
+  <p class="sub2">Painel comercial do Instituto Kássila Nasser.</p>
   ${tErro?`<div class="t-erro">${tEsc(tErro)}</div>`:''}
-  <div class="t-campo"><label for="t-quem">Quem está acessando</label>
+  <div class="t-campo"><label for="t-quem">Usuário</label>
     <select id="t-quem"><option value="">— selecione —</option>
-    ${tUsuarios.map(u=>`<option value="${tEsc(u.id)}" ${u.id===tSel?'selected':''}>${tEsc(u.nome)} · ${tEsc(u.papel)}</option>`).join('')}
+    ${tUsuarios.map(u=>`<option value="${tEsc(u.id)}" ${u.id===tSel?'selected':''}>${tEsc(u.nome)}</option>`).join('')}
     </select></div>
-  <div class="t-campo"><label for="t-cod">Código de acesso</label>
-    <input id="t-cod" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="0000">
-    <div class="dica">Quatro dígitos, entregues pessoalmente pela direção. Não compartilhe —
-      as consultas ficam registradas em seu nome.</div></div>
-  <button class="t-bt" onclick="tIr2()">Continuar</button>`;
+  <div class="t-campo"><label for="t-cod">Senha</label>
+    <input id="t-cod" type="password" inputmode="numeric" maxlength="4" autocomplete="off"
+      placeholder="••••" onkeydown="if(event.key==='Enter')tIr2()"></div>
+  <button class="t-bt" onclick="tIr2()">Entrar</button>`;
 }
 
 function tTela2(){
@@ -870,31 +870,30 @@ function tTela5(){
 }
 
 async function tIr2(){
-  const id=document.getElementById('t-quem').value;
-  const cod=document.getElementById('t-cod').value.trim();
-  tSel=id;
-  if(!id){ tErro='Selecione o seu nome na lista.'; tPintar(); return; }
-  if(!/^\d{4}$/.test(cod)){ tErro='Informe os 4 dígitos do código.'; tPintar(); return; }
-  tPessoa = tUsuarios.filter(u=>u.id===id)[0];
-  tPessoa.codigo = cod;          // conferido no servidor, na hora de gravar
-  tErro='';
+  const id = document.getElementById('t-quem').value;
+  const cod = document.getElementById('t-cod').value.trim();
+  if(!/^\d{4}$/.test(cod)){ tErro='Informe os 4 dígitos da senha.'; tPintar(); return; }
+  tSel = id; tErro = '';
 
-  /* Quem já assinou não reassina. A resposta vem do SERVIDOR, não da memória
-     do navegador: dentro do iframe do Apps Script essa memória é descartada a
-     cada abertura, e o termo reaparecia toda vez. */
-  const bt=document.querySelector('#t-corpo button.t-bt');
-  if(bt){ bt.disabled=true; bt.textContent='Verificando...'; }
+  const bt = document.querySelector('#t-corpo button.t-bt');
+  if(bt){ bt.disabled = true; bt.textContent = 'Entrando…'; }
   try{
-    const st = await api('aceite_status', {id: id});
-    if(st.aceitou){
-      USUARIO_ID = id;
-      document.getElementById('termo-tela').style.display='none';
-      iniciar();
+    // UMA chamada: confere a senha, diz se já assinou e já traz o painel
+    const r = await api('entrar', {id: id, codigo: cod});
+    USUARIO_ID = r.id;
+    tPessoa = {id: r.id, nome: r.nome, papel: r.papel, codigo: cod};
+    if(r.aceitou){
+      document.getElementById('termo-tela').style.display = 'none';
+      iniciar(r.painel);
       return;
     }
-  }catch(err){ /* sem resposta: segue pelo termo, que é o lado seguro */ }
-  if(bt){ bt.disabled=false; bt.textContent='Continuar'; }
-  tPasso=2; tPintar();
+    document.getElementById('t-passos').style.display = 'flex';
+    tPasso = 2; tPintar();
+  }catch(err){
+    tErro = err.message;
+    if(bt){ bt.disabled = false; bt.textContent = 'Entrar'; }
+    tPintar();
+  }
 }
 
 function tLigarDoc(){
@@ -987,31 +986,34 @@ function tEntrar(){
 /* verificarAceite() foi removida: a entrada passa sempre pela identificação. */
 
 
-async function iniciar(){
+async function iniciar(pronto){
   const car=document.getElementById('carregando'); if(car) car.style.display='none';
   document.getElementById('config').style.display='none';
   document.getElementById('app').style.display='block';
   try{
-    const meses = await api('meses');
+    // "pronto" vem junto do login: evita 5 idas ao servidor no arranque
+    const meses = pronto ? pronto.meses : await api('meses');
     const sel = document.getElementById('sel-mes');
     sel.innerHTML = meses.map(m=>`<option value="${m}">${rotuloMes(m)}</option>`).join('');
     MES = meses[meses.length-1]; sel.value = MES; DIA = null;
-    await carregar();
+    if(pronto && pronto.resumo){
+      R = pronto.resumo; ULTIMA = new Date(); IND = null;
+      document.getElementById('hdr-sub').textContent = R.hoje + '  ·  ' + rotuloMes(R.mes);
+      conferirVersao();
+      document.getElementById('inp-dia').value = brParaIso(R.hoje);
+      renderDia(); renderMes(); renderResumoMesLateral(); pintarAtualizacao();
+      carregarListaDia(pronto.lista).catch(function(){});
+      carregarCalendario(pronto.calendario).catch(function(){});
+      carregarAuditoria().catch(function(){});
+    } else {
+      await carregar();
+    }
   }catch(e){
-    // Com a URL cravada no arquivo, cair aqui não é "falta configurar" — é a
-    // API não respondendo. Sem esta distinção a tela pedia a URL de novo e
-    // parecia que o endereço estava errado, quando o problema é outro.
     document.getElementById('config').style.display='block';
     document.getElementById('app').style.display='none';
     const el=document.getElementById('config-erro'); el.style.display='block';
-    const fixa = API_FIXA.indexOf('COLE_AQUI') < 0;
-    el.innerHTML = fixa
-      ? '<b>A API não respondeu.</b><br>' + e.message
-        + '<br><br>Confira, nesta ordem:<br>'
-        + '1. A implantação foi republicada com <b>Nova versão</b>?<br>'
-        + '2. Em Gerenciar implantações, <b>Quem pode acessar</b> está como <b>Qualquer pessoa</b>?<br>'
-        + '3. Sem internet no aparelho?'
-      : 'Erro: ' + e.message;
+    el.innerHTML = '<b>A API não respondeu.</b><br>' + e.message
+      + '<br><br>Confira: a implantação foi republicada com <b>Nova versão</b>?';
   }
 }
 
@@ -1195,8 +1197,8 @@ function renderDia(){
   document.getElementById('spark-eixo').innerHTML = serie.map(x=>`<span>${x.dia}</span>`).join('');
 }
 
-async function carregarListaDia(){
-  const lista = await api('lista',{conta:'venda',periodo:'dia',mes:MES,dia:DIA||R.hoje});
+async function carregarListaDia(pronta){
+  const lista = pronta || await api('lista',{conta:'venda',periodo:'dia',mes:MES,dia:DIA||R.hoje});
   const el = document.getElementById('lista-dia');
   if(!lista.length){ el.innerHTML='<div class="vazio">Nenhum orçamento fechado neste dia.</div>'; return; }
   el.innerHTML = lista.map(cartaoOrc).join('');
@@ -2464,8 +2466,8 @@ function fecharModal(){
 }
 
 /* ---------------- CALENDÁRIO ---------------- */
-async function carregarCalendario(){
-  const c = await api('calendario',{mes:MES});
+async function carregarCalendario(pronto){
+  const c = pronto || await api('calendario',{mes:MES});
   const [ano,mes]=MES.split('-').map(Number);
   const ini=new Date(ano,mes-1,1).getDay();
   const n=new Date(ano,mes,0).getDate();
@@ -2544,8 +2546,8 @@ async function carregarAuditoria(){
   el.innerHTML = ord.map(function(o){
     const h = cartaoOrc(o);
     if(!o.auditado_por) return h;
-    return `<div class="aud-ok">${h}<span class="selo-aud" title="auditado por ${tEsc(o.auditado_por)} em ${tEsc(o.auditado_em)}">`
-         + `✓ ${tEsc(String(o.auditado_por).split(' ')[0])}</span></div>`;
+    return `<div class="aud-ok">${h}<div class="selo-aud">✓ auditado por ${tEsc(o.auditado_por)}`
+         + ` · ${tEsc(String(o.auditado_em).slice(0,10))}</div></div>`;
   }).join('').replace(/onclick="abrirOrcamento\(/g,'onclick="verAuditoria(');
 }
 
