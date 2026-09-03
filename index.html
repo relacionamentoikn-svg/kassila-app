@@ -422,6 +422,10 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 
   <!-- ================= DIA ================= -->
   <section class="tela on" id="tela-dia">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+      <button class="bt-aud" style="width:auto;margin:0;padding:8px 14px" onclick="abrirEnvioResumo()">
+        Enviar fechamento por e-mail</button>
+    </div>
     <div class="navdia">
       <button onclick="andarDia(-1)" title="dia anterior">‹</button>
       <input type="date" id="inp-dia" onchange="escolherDia(this.value)">
@@ -542,7 +546,7 @@ let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
 let MES = null, DIA = null, R = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V7.6';
+const VERSAO_ESPERADA = 'V7.7';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -2434,6 +2438,36 @@ function escolherPaciente(nome){
   if(box) box.innerHTML = `<div class="vp-nova" style="color:#3F6B52">✓ paciente já cadastrada</div>`;
 }
 
+
+/* Envio manual do fechamento do dia. O gatilho manda sozinho no horário
+   configurado; este botão serve para quando a clínica fecha mais cedo ou
+   mais tarde que o normal. */
+async function abrirEnvioResumo(){
+  if(!USUARIO_ID){ abrirModal('<div class="vazio">Sessão sem identificação.</div>'); return; }
+  abrirModal(`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 10px;color:var(--vinho)">Enviar fechamento</h2>
+    <div class="lanc-antes">Manda agora o fechamento do dia para os e-mails cadastrados na
+      aba <b>Config</b>, no parâmetro <b>emails_diretoria</b>.</div>
+    <div class="lanc-campo"><label for="er-cod">Sua senha</label>
+      <input id="er-cod" type="password" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off"></div>
+    <div id="er-erro"></div>
+    <button class="lanc-bt" id="er-bt" onclick="enviarResumo()">Enviar agora</button>`);
+}
+
+async function enviarResumo(){
+  const err = document.getElementById('er-erro');
+  const bt = document.getElementById('er-bt');
+  const cod = document.getElementById('er-cod').value.trim();
+  const falhar = m => { err.innerHTML = `<div class="lanc-antes" style="border-left:3px solid #A8442F;color:#7E2E17">${m}</div>`; };
+  if(!/^\d{4}$/.test(cod)) return falhar('Informe os 4 dígitos da sua senha.');
+  err.innerHTML=''; bt.disabled=true; bt.textContent='Enviando…';
+  try{
+    const r = await api('enviar_resumo', {usuario_id: USUARIO_ID, codigo: cod});
+    abrirModal(`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 10px;color:var(--vinho)">Fechamento enviado</h2>
+      <div class="lanc-antes">${tEsc(r.detalhe)}<br><span style="color:var(--tinta-2)">por ${tEsc(r.por)}</span></div>
+      <button class="lanc-bt" onclick="fecharModal()">Fechar</button>`);
+  }catch(e){ bt.disabled=false; bt.textContent='Enviar agora'; falhar(tEsc(e.message)); }
+}
+
 function abrirModal(h){
   const c = document.getElementById('modal-conteudo');
   c.innerHTML = h;
@@ -2546,8 +2580,11 @@ async function carregarAuditoria(){
   el.innerHTML = ord.map(function(o){
     const h = cartaoOrc(o);
     if(!o.auditado_por) return h;
-    return `<div class="aud-ok">${h}<div class="selo-aud">✓ auditado por ${tEsc(o.auditado_por)}`
-         + ` · ${tEsc(String(o.auditado_em).slice(0,10))}</div></div>`;
+    // o campo pode trazer várias marcas separadas por " | "
+    const marcas = String(o.auditado_por).split('|').map(function(x){ return x.trim(); }).filter(Boolean);
+    return `<div class="aud-ok">${h}<div class="selo-aud">`
+         + marcas.map(function(m){ return '✓ auditado por ' + tEsc(m); }).join('<br>')
+         + `</div></div>`;
   }).join('').replace(/onclick="abrirOrcamento\(/g,'onclick="verAuditoria(');
 }
 
