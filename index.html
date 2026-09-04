@@ -27,6 +27,20 @@
   --tinta:#241E1C; --latao:#B8894A; --salvia:#4F6B58; --roxo:#7A5C99;
   --linha:rgba(36,30,28,.14); --linha-forte:rgba(36,30,28,.28);
 }
+
+/* Carregando: monograma girando e texto legível. Precisa ficar no NÍVEL RAIZ
+   do CSS — as duas tentativas anteriores caíram dentro de uma media query de
+   celular e por isso a regra não valia no computador. */
+#carregando{display:none;position:fixed;inset:0;z-index:60;
+  background:rgba(250,247,243,.94);
+  flex-direction:column;align-items:center;justify-content:center;gap:18px}
+#carregando.on{display:flex}
+#carregando img{width:62px;height:62px;border-radius:50%;
+  animation:girar 1.1s linear infinite;box-shadow:0 6px 20px rgba(92,26,43,.18)}
+#carregando span{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.16em;
+  text-transform:uppercase;color:#5C1A2B;font-weight:600;text-align:center;padding:0 20px}
+@keyframes girar{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){#carregando img{animation:none;opacity:.65}}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;min-height:100%}
 body{background:var(--papel);color:var(--tinta);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
@@ -102,11 +116,14 @@ header.topo .marca-img{width:34px;height:34px;flex:none;display:block}
    divisória do cartão seguinte. */
 .aud-ok{display:block;margin-bottom:6px}
 .aud-ok .orc{border-bottom:0;margin-bottom:0}
+/* A cor tinha que ser declarada nos filhos também: o texto herdava a cor
+   escura do cartão e sumia sobre o fundo vinho. */
 .aud-dia{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:baseline;
-  gap:10px;background:var(--vinho);color:var(--creme);border-radius:7px;padding:6px 11px;margin:14px 0 9px;
-  font:600 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.06em}
+  gap:10px;background:var(--vinho);border-radius:7px;padding:7px 12px;margin:16px 0 9px;
+  font:600 11.5px/1.4 'IBM Plex Mono',monospace;letter-spacing:.06em}
+.aud-dia,.aud-dia *{color:#FFF!important}
 .aud-dia:first-child{margin-top:0}
-.aud-dia-inf{font-weight:400;font-size:9.5px;color:rgba(250,247,243,.72);white-space:nowrap}
+.aud-dia-inf{font-weight:400;font-size:10px;opacity:.8;white-space:nowrap}
 @media(max-width:620px){.aud-dia{flex-wrap:wrap;row-gap:2px}.aud-dia-inf{font-size:9px}}
 .selo-aud{display:block;background:#EAF2EA;color:#3F6B52;border:1px solid #BFD3C0;
   border-radius:6px;padding:5px 10px;margin:6px 14px 4px 14px;
@@ -163,10 +180,6 @@ header.topo .marca-img{width:34px;height:34px;flex:none;display:block}
 @media(max-width:560px){
   header.topo{flex-wrap:wrap;row-gap:8px;padding:10px 12px}
   header.topo .marca-bloco{flex:1 1 100%}
-  #carregando{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:60;
-  background:var(--vinho);color:var(--creme);border-radius:999px;padding:10px 20px;
-  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
-  box-shadow:0 8px 26px rgba(0,0,0,.22);white-space:nowrap}
 header.topo .hdr-dir{flex:1 1 100%;justify-content:flex-end;gap:7px}
   header.topo .atz{flex:1;text-align:left;align-items:flex-start}
   header.topo .btn-atz{width:36px;height:36px}
@@ -386,7 +399,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
   <main class="t-corpo" id="t-corpo"></main>
 </div>
 
-<div id="carregando">carregando…</div>
+<div id="carregando"><img id="carregando-mono" alt=""><span id="carregando-txt">carregando</span></div>
 
 <div id="config" style="display:none">
   <h1>Fluxo de Caixa — Kássila Nasser</h1>
@@ -552,7 +565,7 @@ let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
 let MES = null, DIA = null, R = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V7.8';
+const VERSAO_ESPERADA = 'V7.9';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -756,14 +769,14 @@ async function abrirTermo(){
     tUsuarios = d.usuarios || [];
     if(!tUsuarios.length) throw new Error('nenhum usuário ativo na aba Usuarios');
   }catch(err){
-    const c0=document.getElementById('carregando'); if(c0) c0.style.display='none';
+    esconderCarregando();
     document.getElementById('termo-tela').style.display='block';
     document.getElementById('t-corpo').innerHTML =
       `<div class="t-erro"><b>Não consegui carregar os usuários.</b><br>${tEsc(err.message)}
        <br><br>No Apps Script, rode <b>prepararTermo()</b> e republique a implantação.</div>`;
     return;
   }
-  const car=document.getElementById('carregando'); if(car) car.style.display='none';
+  esconderCarregando();
   document.getElementById('termo-tela').style.display='block';
   tPintar();
 }
@@ -997,7 +1010,7 @@ function tEntrar(){
 
 
 async function iniciar(pronto){
-  const car=document.getElementById('carregando'); if(car) car.style.display='none';
+  esconderCarregando();
   document.getElementById('config').style.display='none';
   document.getElementById('app').style.display='block';
   try{
@@ -1050,10 +1063,9 @@ function andarDia(passo){
 /* Volta para o dia de hoje e limpa a escolha. */
 async function irHoje(){
   DIA = null;
-  const c = document.getElementById('carregando');
-  if(c){ c.textContent = 'carregando…'; c.style.display = 'block'; }
+  mostrarCarregando('carregando');
   try{ await carregar(); }
-  finally{ if(c) c.style.display = 'none'; }
+  finally{ esconderCarregando(); }
 }
 
 /* Abrir um dia específico. Some quando o mês do dia escolhido é diferente do
@@ -1070,23 +1082,21 @@ async function escolherDia(iso){
       MES = mesDoDia; sel.value = mesDoDia;
     }
   }
-  const c = document.getElementById('carregando');
-  if(c){ c.textContent = 'carregando ' + DIA + '…'; c.style.display = 'block'; }
+  mostrarCarregando('carregando ' + DIA);
   try{ await carregar(); }
-  finally{ if(c) c.style.display = 'none'; }
+  finally{ esconderCarregando(); }
   irPara('dia');
 }
 
 async function trocarMes(m){
   MES = m; DIA = null;
   // aviso imediato: sem ele a troca de mês parecia não ter funcionado
-  const c = document.getElementById('carregando');
   const app = document.getElementById('app');
-  if(c){ c.textContent = 'carregando ' + rotuloMes(m) + '…'; c.style.display = 'block'; }
+  mostrarCarregando('carregando ' + rotuloMes(m));
   if(app) app.style.opacity = '.35';
   try{ await carregar(); }
   finally{
-    if(c) c.style.display = 'none';
+    esconderCarregando();
     if(app) app.style.opacity = '';
   }
 }
@@ -2610,6 +2620,31 @@ async function salvarAddItens(){
   }catch(e){ bt.disabled=false; bt.textContent='Lançar no orçamento'; falhar(tEsc(e.message)); }
 }
 
+
+/* Carregando com o monograma girando. O ícone vem do próprio favicon, então
+   não precisa de arquivo novo nem de rede. */
+function mostrarCarregando(texto){
+  const c = document.getElementById('carregando');
+  if(!c) return;
+  const img = document.getElementById('carregando-mono');
+  if(img && !img.src){
+    const ico = document.querySelector('link[rel="icon"][sizes="192x192"]')
+             || document.querySelector('link[rel="apple-touch-icon"]')
+             || document.querySelector('link[rel="icon"]');
+    // no Apps Script não há <link rel=icon>: cai no monograma do cabeçalho
+    const alt = document.querySelector('header.topo .marca-img');
+    if(ico) img.src = ico.href;
+    else if(alt) img.src = alt.src;
+  }
+  const t = document.getElementById('carregando-txt');
+  if(t) t.textContent = texto || 'carregando';
+  c.classList.add('on');
+}
+function esconderCarregando(){
+  const c = document.getElementById('carregando');
+  if(c) c.classList.remove('on');
+}
+
 function abrirModal(h){
   const c = document.getElementById('modal-conteudo');
   c.innerHTML = h;
@@ -2779,9 +2814,8 @@ document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==
 const DENTRO_APPS_SCRIPT = (typeof google !== 'undefined' && google.script && google.script.run);
 
 async function arrancar(){
-  const car = document.getElementById('carregando');
   if(!API_URL && !DENTRO_APPS_SCRIPT){
-    if(car) car.style.display='none';
+    esconderCarregando();
     document.getElementById('config').style.display='block';
     return;
   }
@@ -2793,7 +2827,7 @@ async function arrancar(){
      paciente sem se identificar. Quem já assinou não reassina o termo —
      digita o código e entra direto. */
   await abrirTermo();
-  if(car) car.style.display='none';
+  esconderCarregando();
 }
 arrancar();
 
