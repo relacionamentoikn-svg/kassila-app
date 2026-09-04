@@ -102,6 +102,12 @@ header.topo .marca-img{width:34px;height:34px;flex:none;display:block}
    divisória do cartão seguinte. */
 .aud-ok{display:block;margin-bottom:6px}
 .aud-ok .orc{border-bottom:0;margin-bottom:0}
+.aud-dia{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:baseline;
+  gap:10px;background:var(--vinho);color:var(--creme);border-radius:7px;padding:6px 11px;margin:14px 0 9px;
+  font:600 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.06em}
+.aud-dia:first-child{margin-top:0}
+.aud-dia-inf{font-weight:400;font-size:9.5px;color:rgba(250,247,243,.72);white-space:nowrap}
+@media(max-width:620px){.aud-dia{flex-wrap:wrap;row-gap:2px}.aud-dia-inf{font-size:9px}}
 .selo-aud{display:block;background:#EAF2EA;color:#3F6B52;border:1px solid #BFD3C0;
   border-radius:6px;padding:5px 10px;margin:6px 14px 4px 14px;
   font:600 9.5px/1.4 'IBM Plex Mono',monospace;letter-spacing:.04em}
@@ -546,7 +552,7 @@ let API_URL = (API_FIXA.indexOf('COLE_AQUI') < 0 ? API_FIXA : '')
            || localStorage.getItem('kassila_api_url') || '';
 let MES = null, DIA = null, R = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V7.7';
+const VERSAO_ESPERADA = 'V7.8';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -1424,7 +1430,8 @@ function htmlOrcamento(d, compacto){
     <div class="sec">Como foi pago</div>${parcelas||'<div class="vazio">Sem parcelas.</div>'}
     <div class="sec">Quando entra no caixa</div>${recs||'<div class="vazio">Nenhum recebimento previsto (abatimento de crédito).</div>'}
     ${avisos}
-    ${compacto?`<button class="bt-aud" onclick="abrirPlano('${o.id_orcamento}')">Editar como foi pago</button>
+    ${compacto?`<button class="bt-aud" onclick="abrirAddItens('${o.id_orcamento}')">Lançar venda no orçamento</button>
+      <button class="bt-aud" onclick="abrirPlano('${o.id_orcamento}')">Editar como foi pago</button>
       <button class="bt-aud" onclick="abrirEdicao('${o.id_orcamento}')">
       ${o.auditado_por?'Revisar valores auditados':'Auditar e corrigir valores'}</button>`:''}`;
 }
@@ -2150,6 +2157,9 @@ function pintarEdicao(){
       <div class="lanc-campo" style="flex:1"><label for="e-co">Cortesia</label>
         <input id="e-co" type="number" step="0.01" min="0" value="${v('valor_cortesia')}" oninput="previaEdicao()"></div>
     </div>
+    <div class="lanc-campo"><label for="e-ac">Acréscimo (juros de máquina)</label>
+      <input id="e-ac" type="number" step="0.01" min="0" value="${v('acrescimo')}" oninput="previaEdicao()">
+      <div style="font-size:11px;color:rgba(36,30,28,.55);margin-top:5px">Entra no total do orçamento, não na venda. Justifique no campo abaixo.</div></div>
 
     <div class="lanc-antes" id="e-previa" style="border-left:3px solid var(--ouro)"></div>
 
@@ -2167,9 +2177,9 @@ function pintarEdicao(){
 
 function previaEdicao(){
   const g = id => Number(String(document.getElementById(id).value).replace(',','.')) || 0;
-  const tp = g('e-tp'), de = g('e-de'), pe = g('e-pe'), du = g('e-du');
+  const tp = g('e-tp'), de = g('e-de'), pe = g('e-pe'), du = g('e-du'), ac = g('e-ac');
   const venda = tp - du - pe;
-  const total = tp - de;
+  const total = tp - de + ac;
   const pct = tp ? (de / tp * 100) : 0;
   const box = document.getElementById('e-previa');
   const bt = document.getElementById('e-salvar');
@@ -2182,7 +2192,7 @@ function previaEdicao(){
   box.innerHTML = erro
     ? `<span style="color:#A8442F">${erro}</span>`
     : `Venda do comercial: <b>${brl(venda)}</b><br>
-       Total do orçamento (após desconto): ${brl(total)}<br>
+       Total do orçamento: ${brl(total)}${ac?` <span style="color:var(--tinta-2)">(inclui ${brl(ac)} de acréscimo)</span>`:''}<br>
        Desconto: ${pct.toFixed(2).replace('.',',')}%`;
 }
 
@@ -2198,6 +2208,7 @@ async function salvarEdicao(){
       usuario_id: USUARIO_ID, codigo: cod, id_orcamento: EDIT.id_orcamento,
       total_procedimentos: document.getElementById('e-tp').value,
       desconto: document.getElementById('e-de').value,
+      acrescimo: document.getElementById('e-ac').value,
       valor_permuta: document.getElementById('e-pe').value,
       valor_duplicata: document.getElementById('e-du').value,
       valor_cortesia: document.getElementById('e-co').value,
@@ -2468,6 +2479,137 @@ async function enviarResumo(){
   }catch(e){ bt.disabled=false; bt.textContent='Enviar agora'; falhar(tEsc(e.message)); }
 }
 
+
+/* ============ LANÇAR VENDA NO ORÇAMENTO ============
+   A paciente leva um produto junto e o ERP não põe no orçamento: o valor pago
+   fica maior que o total dos procedimentos. Criar um orçamento separado
+   jogaria a venda em outro cartão e outra data. O item entra NO orçamento
+   dela, e a diferença fecha. */
+let ADDI = [], ADDI_ORC = null, ADDI_PAGO = 0;
+
+async function abrirAddItens(idOrc){
+  if(!USUARIO_ID){ abrirModal('<div class="vazio">Sessão sem identificação.</div>'); return; }
+  abrirModalCarregando('abrindo orçamento');
+  const d = await api('orcamento', {id: idOrc});
+  ADDI_ORC = d.orcamento;
+  ADDI_PAGO = (d.parcelas||[]).reduce((t,x)=> t + (Number(x.valor_parcela)||0), 0);
+  ADDI = [{descricao:'', qtde:1, valor_unit:'', tipo:'produto'}];
+  pintarAddItens();
+}
+
+function faltaFechar(){
+  const tp = Number(ADDI_ORC.total_procedimentos)||0;
+  const de = Number(ADDI_ORC.desconto)||0;
+  const ac = Number(ADDI_ORC.acrescimo)||0;
+  const jaAdd = ADDI.reduce((t,x)=> t + ((Number(x.qtde)||0) * (Number(String(x.valor_unit).replace(',','.'))||0)), 0);
+  // o que a paciente pagou menos o que o orçamento já explica
+  const explicado = tp - de + ac + jaAdd;
+  return {tp: tp, jaAdd: jaAdd, pago: ADDI_PAGO, dif: Math.round((ADDI_PAGO - explicado)*100)/100};
+}
+
+function pintarAddItens(){
+  const o = ADDI_ORC, f = faltaFechar();
+  abrirModal(`
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--vinho-2);letter-spacing:.1em">LANÇAR VENDA · ORÇ ${tEsc(o.num_orcamento)}</div>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:6px 0 4px;color:var(--vinho)">${tEsc(o.paciente)}</h2>
+    <div class="lanc-antes">
+      Procedimentos: <b>${brl(f.tp)}</b><br>
+      A paciente pagou: <b>${brl(f.pago)}</b><br>
+      <span style="color:var(--tinta-2)">A diferença é o que ela levou de produto ou procedimento fora do orçamento.</span>
+    </div>
+
+    ${ADDI.map((x,i)=>`
+      <div style="border:1px solid var(--linha);border-radius:10px;padding:11px;margin-bottom:9px;background:#fff">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font:600 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:var(--vinho-2)">ITEM ${i+1}</span>
+          ${ADDI.length>1?`<button onclick="removerAddItem(${i})" style="border:0;background:none;color:#A8442F;cursor:pointer;font-size:11.5px">remover</button>`:''}
+        </div>
+        <div class="lanc-campo" style="margin-bottom:8px">
+          <select onchange="mudarAddItem(${i},'tipo',this.value)">
+            <option value="produto" ${x.tipo==='produto'?'selected':''}>Produto</option>
+            <option value="procedimento" ${x.tipo==='procedimento'?'selected':''}>Procedimento</option>
+          </select></div>
+        <div class="lanc-campo" style="margin-bottom:8px">
+          <input placeholder="nome do produto ou procedimento" value="${tEsc(x.descricao)}"
+            oninput="mudarAddItem(${i},'descricao',this.value)"></div>
+        <div style="display:flex;gap:8px">
+          <div class="lanc-campo" style="width:90px;margin-bottom:0">
+            <input type="number" min="1" step="1" placeholder="qtd" value="${x.qtde}"
+              oninput="mudarAddItem(${i},'qtde',this.value)"></div>
+          <div class="lanc-campo" style="flex:1;margin-bottom:0">
+            <input type="number" min="0" step="0.01" placeholder="valor unitário" value="${x.valor_unit}"
+              oninput="mudarAddItem(${i},'valor_unit',this.value)"></div>
+        </div>
+      </div>`).join('')}
+
+    ${ADDI.length<20?`<button onclick="adicionarAddItem()" style="width:100%;border:1px dashed var(--linha);background:none;border-radius:9px;padding:10px;cursor:pointer;font:600 12px Inter,sans-serif;color:var(--tinta-2);margin-bottom:12px">+ mais um item</button>`:''}
+
+    <div class="lanc-antes" id="ai-total" style="border-left:3px solid ${Math.abs(f.dif)<0.01?'#3F6B52':'#B8894A'}"></div>
+
+    <div class="lanc-campo"><label for="ai-cod">Sua senha</label>
+      <input id="ai-cod" type="password" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off"></div>
+    <div id="ai-erro"></div>
+    <button class="lanc-bt" id="ai-salvar" onclick="salvarAddItens()">Lançar no orçamento</button>`);
+  atualizarAddTotal();
+}
+
+function atualizarAddTotal(){
+  const f = faltaFechar();
+  const box = document.getElementById('ai-total');
+  const bt = document.getElementById('ai-salvar');
+  if(bt) bt.disabled = f.jaAdd <= 0;
+  if(!box) return;
+  const fecha = Math.abs(f.dif) < 0.01;
+  box.style.borderLeft = '3px solid ' + (fecha ? '#3F6B52' : '#B8894A');
+  box.innerHTML = `Lançando: <b>${brl(f.jaAdd)}</b><br>` + (fecha
+    ? '<span style="color:#3F6B52">Fecha exato com o que a paciente pagou.</span>'
+    : (f.dif > 0
+        ? `<span style="color:#B8894A">Ainda faltam ${brl(f.dif)} para fechar.</span>`
+        : `<span style="color:#A8442F">Passou ${brl(Math.abs(f.dif))} do que foi pago.</span>`));
+}
+
+function mudarAddItem(i, campo, v){
+  ADDI[i][campo] = v;
+  if(campo === 'descricao') return;      // redesenhar tiraria o foco
+  if(campo === 'tipo'){ pintarAddItens(); return; }
+  atualizarAddTotal();
+}
+function adicionarAddItem(){
+  const f = faltaFechar();
+  ADDI.push({descricao:'', qtde:1, valor_unit: f.dif > 0 ? f.dif : '', tipo:'produto'});
+  pintarAddItens();
+}
+function removerAddItem(i){ ADDI.splice(i,1); pintarAddItens(); }
+
+async function salvarAddItens(){
+  const err = document.getElementById('ai-erro');
+  const bt = document.getElementById('ai-salvar');
+  const cod = document.getElementById('ai-cod').value.trim();
+  const falhar = m => { err.innerHTML = `<div class="lanc-antes" style="border-left:3px solid #A8442F;color:#7E2E17">${m}</div>`; };
+  for(let i=0;i<ADDI.length;i++){
+    if(!String(ADDI[i].descricao).trim()) return falhar('Informe o nome do item ' + (i+1) + '.');
+    if(!(Number(String(ADDI[i].valor_unit).replace(',','.')) > 0)) return falhar('Valor inválido no item ' + (i+1) + '.');
+  }
+  if(!/^\d{4}$/.test(cod)) return falhar('Informe os 4 dígitos da sua senha.');
+  err.innerHTML=''; bt.disabled=true; bt.textContent='Lançando…';
+  try{
+    const r = await api('add_itens', {
+      usuario_id: USUARIO_ID, codigo: cod, id_orcamento: ADDI_ORC.id_orcamento,
+      itens: JSON.stringify(ADDI.map(x=>({descricao:String(x.descricao).trim(), qtde:Number(x.qtde),
+        valor_unit:Number(String(x.valor_unit).replace(',','.')), tipo:x.tipo})))
+    });
+    carregar().catch(function(){});
+    carregarAuditoria().catch(function(){});
+    abrirModal(`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 10px;color:var(--vinho)">Lançado no orçamento</h2>
+      <div class="lanc-antes"><b>${tEsc(ADDI_ORC.paciente)}</b> · ORÇ ${tEsc(ADDI_ORC.num_orcamento)}<br>
+        ${r.itens} item(ns) · ${brl(r.valor)}<br>
+        Procedimentos agora: <b>${brl(r.total_procedimentos)}</b><br>
+        Venda: <b>${brl(r.venda_comercial)}</b><br>
+        <span style="color:var(--tinta-2)">por ${tEsc(r.por)}</span></div>
+      <button class="lanc-bt" onclick="fecharModal()">Fechar</button>`);
+  }catch(e){ bt.disabled=false; bt.textContent='Lançar no orçamento'; falhar(tEsc(e.message)); }
+}
+
 function abrirModal(h){
   const c = document.getElementById('modal-conteudo');
   c.innerHTML = h;
@@ -2571,20 +2713,40 @@ async function carregarAuditoria(){
   // só se acha o de cima
   AUD_MAPA = {};
   lista.forEach(function(x){ AUD_MAPA[x.id] = x; });
-  const ord = lista.slice().sort(function(x, y){
-    return String(x.paciente||'').localeCompare(String(y.paciente||''), 'pt-BR');
+  /* Agrupado por DATA DA VENDA, mais recente em cima, e alfabético dentro do
+     dia. A Thais audita o fechamento do dia: sem o agrupamento ela caçava as
+     vendas de ontem no meio da lista do mês inteiro. */
+  const porDia = {};
+  lista.forEach(function(x){
+    const d = String(x.data || 'sem data');
+    if(!porDia[d]) porDia[d] = [];
+    porDia[d].push(x);
   });
+  const chave = function(d){ const p = String(d).split('/'); return p.length===3 ? p[2]+p[1]+p[0] : '0'; };
+  const dias = Object.keys(porDia).sort(function(a, b){ return chave(b).localeCompare(chave(a)); });
+  const ord = [];   // mantido para a varredura de compatibilidade abaixo
   /* Selo do que já foi revisado: o comercial marca um a um e enxerga o que
      falta. Envolvo o cartão em vez de tentar injetar dentro dele — depender do
      formato interno do cartão quebra em silêncio quando ele muda. */
-  el.innerHTML = ord.map(function(o){
+  const cartao = function(o){
     const h = cartaoOrc(o);
     if(!o.auditado_por) return h;
-    // o campo pode trazer várias marcas separadas por " | "
     const marcas = String(o.auditado_por).split('|').map(function(x){ return x.trim(); }).filter(Boolean);
     return `<div class="aud-ok">${h}<div class="selo-aud">`
          + marcas.map(function(m){ return '✓ auditado por ' + tEsc(m); }).join('<br>')
          + `</div></div>`;
+  };
+
+  el.innerHTML = dias.map(function(d){
+    const doDia = porDia[d].slice().sort(function(x, y){
+      return String(x.paciente||'').localeCompare(String(y.paciente||''), 'pt-BR');
+    });
+    const soma = doDia.reduce(function(t, x){ return t + (Number(x.valor)||0); }, 0);
+    const feitos = doDia.filter(function(x){ return x.auditado_por; }).length;
+    return `<div class="aud-dia">
+        <span>${tEsc(d)}</span>
+        <span class="aud-dia-inf">${doDia.length} orç · ${brl(soma)} · ${feitos}/${doDia.length} auditado(s)</span>
+      </div>` + doDia.map(cartao).join('');
   }).join('').replace(/onclick="abrirOrcamento\(/g,'onclick="verAuditoria(');
 }
 
