@@ -40,6 +40,9 @@
 .aguardando::after{content:'';position:absolute;inset:0;background:rgba(250,247,243,.55);
   border-radius:inherit}
 @media (prefers-reduced-motion:reduce){.mod-carreg .mod-mono{animation:none;opacity:.65}}
+/* A aba Dia não repete o acumulado do mês — é o que a aba Mês mostra, e
+   duplicar confundia quem olhava rápido no celular. */
+#col-mes-resumo[hidden]{display:none!important}
 #carregando{display:none;position:fixed;inset:0;z-index:60;
   background:rgba(250,247,243,.94);
   flex-direction:column;align-items:center;justify-content:center;gap:18px}
@@ -480,7 +483,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
         </div>
       </div>
 
-      <div class="col" id="col-mes-resumo"></div>
+      <div class="col" id="col-mes-resumo" hidden></div>
     </div>
   </section>
 
@@ -579,7 +582,7 @@ let MES = null, DIA = null, R = null;
    com o código de senha e o app parava no login. */
 let USUARIO_ID = null, PASSE = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V8.0';
+const VERSAO_ESPERADA = 'V8.1';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -1040,7 +1043,7 @@ async function iniciar(pronto){
       document.getElementById('hdr-sub').textContent = R.hoje + '  ·  ' + rotuloMes(R.mes);
       conferirVersao();
       document.getElementById('inp-dia').value = brParaIso(R.hoje);
-      renderDia(); renderMes(); renderResumoMesLateral(); pintarAtualizacao();
+      renderDia(); renderMes(); pintarAtualizacao();
       carregarListaDia(pronto.lista).catch(function(){});
       carregarCalendario(pronto.calendario).catch(function(){});
       carregarAuditoria().catch(function(){});
@@ -1129,7 +1132,7 @@ async function carregar(){
   // só reposiciona o campo quando não há dia escolhido: senão a escolha do
   // usuário era sobrescrita a cada recarga
   if(!DIA) document.getElementById('inp-dia').value = brParaIso(R.hoje);
-  renderDia(); renderMes(); renderResumoMesLateral();
+  renderDia(); renderMes();
   carregarListaDia(); carregarCalendario(); carregarAuditoria();
   pintarAtualizacao();
 }
@@ -1359,6 +1362,8 @@ async function abrirPacientes(tipo){
 }
 
 /* resumo do mês na coluna direita da tela Dia (PC) */
+/* Deixou de ser chamada: a aba Dia repetia o acumulado do mês, que é o que a
+   aba Mês já mostra. Mantida caso queira voltar. */
 function renderResumoMesLateral(){
   const c=R.mes_cascata, m=R.meta;
   let metaHtml = m ? `
@@ -1460,7 +1465,7 @@ function htmlOrcamento(d, compacto){
     ${compacto?`<button class="bt-aud" onclick="abrirAddItens('${o.id_orcamento}')">Lançar venda no orçamento</button>
       <button class="bt-aud" onclick="abrirPlano('${o.id_orcamento}')">Editar como foi pago</button>
       <button class="bt-aud" onclick="abrirEdicao('${o.id_orcamento}')">
-      ${o.auditado_por?'Revisar valores auditados':'Auditar e corrigir valores'}</button>`:''}`;
+      Auditoria Gerencial</button>`:''}`;
 }
 
 async function abrirOrcamento(id){
@@ -2778,6 +2783,18 @@ function subirColunaDireita(){
 }
 
 async function verAuditoria(id){
+  /* No celular abre em painel, como no app da Dynamics. Rolar a lista inteira
+     até o detalhe lá embaixo era lento e desorientava — e não havia volta. */
+  if(window.innerWidth < 1000){
+    abrirModalCarregando('abrindo orçamento');
+    try{
+      const d = await api('orcamento',{id});
+      abrirModal(`<button class="lanc-bt" style="background:#fff;color:var(--tinta);
+        border:1px solid var(--linha);margin:0 0 12px" onclick="fecharModal()">‹ Voltar para a lista</button>`
+        + htmlOrcamento(d, true));
+    }catch(e){ abrirModal(`<div class="vazio">Não consegui abrir: ${tEsc(e.message)}</div>`); }
+    return;
+  }
   const alvo = document.getElementById('aud-detalhe');
   // aviso imediato: a chamada leva alguns segundos e sem isto o toque
   // parecia não ter funcionado
