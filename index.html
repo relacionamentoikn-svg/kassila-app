@@ -498,7 +498,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
           <p style="font-size:10.5px;color:rgba(36,30,28,.55);line-height:1.5;margin:12px 0 0">
             <b>Caixa recebido no mês</b> são as parcelas que caem neste mês, venham de qual venda vierem.
             Na cascata, <b>caixa das vendas do mês</b> é só o que as vendas deste mês geraram.
-            <b>A receber</b> é a carteira inteira, inclusive meses seguintes.
+            <b>A receber</b> é tudo que ainda vai entrar, inclusive de meses seguintes.
           </p>
         </div>
       </div>
@@ -582,7 +582,7 @@ let MES = null, DIA = null, R = null;
    com o código de senha e o app parava no login. */
 let USUARIO_ID = null, PASSE = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V8.2';
+const VERSAO_ESPERADA = 'V8.4';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -1258,7 +1258,7 @@ function cartaoOrc(o){
   const tags=[];
   if(Number(o.desconto)>0) tags.push(`<span class="tag desc">desconto ${o.desconto_pct}%</span>`);
   if(o.tem_cortesia==='SIM') tags.push(`<span class="tag flag">cortesia</span>`);
-  if(o.tem_duplicata==='SIM') tags.push(`<span class="tag">abatimento de crédito</span>`);
+  if(o.tem_duplicata==='SIM') tags.push(`<span class="tag">crediário</span>`);
   if(Number(o.caixa)>0) tags.push(`<span class="tag ok">caixa ${brl0(o.caixa)}</span>`);
   if(Number(o.a_receber)>0) tags.push(`<span class="tag">a receber ${brl0(o.a_receber)}</span>`);
   return `<div class="${cls}" onclick="abrirOrcamento('${o.id}')">
@@ -1281,14 +1281,14 @@ function renderMes(){
       <div><span>Total dos procedimentos</span><span>${brl(c.total_procedimentos)}</span></div>
       <div class="menos"><span>Descontos</span><span>−${brl(c.desconto)}</span></div>
       <div><span>Total dos orçamentos</span><span>${brl(c.total)}</span></div>
-      <div class="menos"><span>Abatimento por crédito</span><span>−${brl(c.valor_duplicata)}</span></div>
+      <div class="menos"><span>Crediário</span><span>−${brl(c.valor_duplicata)}</span></div>
       <div class="menos"><span>Permuta</span><span>−${brl(c.valor_permuta)}</span></div>
       <div class="tot"><span>Venda do comercial</span><span>${brl(c.venda_comercial)}</span></div>
       <div class="sub2"><span>caixa das vendas do mês</span><span>${brl(c.caixa_imediato)}</span></div>
       <div class="sub2"><span>a receber gerado pelas vendas do mês</span><span>${brl(c.a_receber)}</span></div>
     </div>`;
 
-  const nomes={venda:'Venda',caixa:'Caixa recebido',a_receber:'A receber (carteira)',permuta:'Permuta',duplicata:'Duplicata',cortesia:'Cortesia'};
+  const nomes={venda:'Venda',caixa:'Caixa recebido',a_receber:'A receber',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
   const cls={venda:'c-venda',caixa:'c-caixa',a_receber:'c-receber',permuta:'c-permuta',duplicata:'c-duplicata',cortesia:'c-cortesia'};
   document.getElementById('contas-grid').innerHTML = Object.keys(R.contas).map(k=>{
     const x=R.contas[k];
@@ -1385,7 +1385,7 @@ function renderResumoMesLateral(){
     <div class="card"><h3>Metas</h3>${metaHtml}</div>
     <div class="card"><h3>Contas do mês</h3><div class="contas-grid">${
       Object.keys(R.contas).map(k=>{
-        const nomes={venda:'Venda',caixa:'Caixa',a_receber:'A receber',permuta:'Permuta',duplicata:'Duplicata',cortesia:'Cortesia'};
+        const nomes={venda:'Venda',caixa:'Caixa',a_receber:'A receber',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
         const cls={venda:'c-venda',caixa:'c-caixa',a_receber:'c-receber',permuta:'c-permuta',duplicata:'c-duplicata',cortesia:'c-cortesia'};
         const x=R.contas[k];
         return `<button class="conta-btn ${cls[k]}" onclick="abrirConta('${k}')">
@@ -1397,7 +1397,7 @@ function renderResumoMesLateral(){
 /* ---------------- CONTAS ---------------- */
 async function abrirConta(conta){
   const lista = await api('lista',{conta,periodo:'mes',mes:MES});
-  const nomes={venda:'Venda do comercial',caixa:'Caixa recebido no mês',a_receber:'A receber — carteira futura',permuta:'Permuta',duplicata:'Abatimento por crédito',cortesia:'Cortesia concedida'};
+  const nomes={venda:'Venda do comercial',caixa:'Caixa recebido no mês',a_receber:'A receber',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia concedida'};
   let html=`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 4px;color:var(--vinho)">${nomes[conta]}</h2>
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(36,30,28,.5);margin-bottom:14px">${rotuloMes(MES)} · ${lista.length} registro(s)</div>`;
   if(!lista.length) html+='<div class="vazio">Nenhum registro neste mês.</div>';
@@ -1442,7 +1442,7 @@ function htmlOrcamento(d, compacto){
       <div class="vr">${brl(r.valor)}</div></div>`).join('');
   let avisos='';
   if(o.tem_cortesia==='SIM') avisos+=`<div class="aviso-box"><b>Cortesia.</b> Item a zero — fora da venda e fora da meta.</div>`;
-  if(o.tem_duplicata==='SIM') avisos+=`<div class="aviso-box"><b>Abatimento de crédito.</b> Não entra na venda do comercial nem no caixa.</div>`;
+  if(o.tem_duplicata==='SIM') avisos+=`<div class="aviso-box"><b>Crediário.</b> Não entra na venda do comercial nem no caixa.</div>`;
   if(o.conferido!=='OK-AUTO') avisos+=`<div class="aviso-box"><b>A revisar:</b> ${o.motivo_revisao}</div>`;
 
   let recorrencia='';
@@ -1460,7 +1460,7 @@ function htmlOrcamento(d, compacto){
     ${Number(o.desconto)>0?`<div class="item-l"><div class="nm">Descontos (${o.desconto_pct}%)</div><div class="vt" style="color:var(--vinho-2)">−${brl(o.desconto)}</div></div>`:''}
     <div class="item-l" style="font-weight:600"><div class="nm">Venda do comercial</div><div class="vt" style="color:var(--vinho)">${brl(o.venda_comercial)}</div></div>
     <div class="sec">Como foi pago</div>${parcelas||'<div class="vazio">Sem parcelas.</div>'}
-    <div class="sec">Quando entra no caixa</div>${recs||'<div class="vazio">Nenhum recebimento previsto (abatimento de crédito).</div>'}
+    <div class="sec">Quando entra no caixa</div>${recs||'<div class="vazio">Nenhum recebimento previsto (crediário).</div>'}
     ${avisos}
     ${compacto?`<button class="bt-aud" onclick="abrirAddItens('${o.id_orcamento}')">Lançar venda no orçamento</button>
       <button class="bt-aud" onclick="abrirPlano('${o.id_orcamento}')">Editar como foi pago</button>
@@ -1526,7 +1526,7 @@ let DESTINOS = null, LANC = null, DESTINO_TOCADO = false;
 const FORMAS_LANC = [
   ['PIX','Pix'], ['CARTAO_DEBITO','Cartão de débito'],
   ['CARTAO_CREDITO','Cartão de crédito'], ['DINHEIRO','Dinheiro'],
-  ['BOLETO','Boleto'], ['DUPLICATA','Duplicata / abatimento'],
+  ['BOLETO','Boleto'], ['DUPLICATA','Crediário'],
   ['PERMUTA','Permuta'], ['CORTESIA','Cortesia']
 ];
 
@@ -2175,7 +2175,7 @@ function pintarEdicao(){
         <input id="e-pe" type="number" step="0.01" min="0" value="${v('valor_permuta')}" oninput="previaEdicao()"></div>
     </div>
     <div style="display:flex;gap:8px">
-      <div class="lanc-campo" style="flex:1"><label for="e-du">Duplicata</label>
+      <div class="lanc-campo" style="flex:1"><label for="e-du">Crediário</label>
         <input id="e-du" type="number" step="0.01" min="0" value="${v('valor_duplicata')}" oninput="previaEdicao()"></div>
       <div class="lanc-campo" style="flex:1"><label for="e-co">Cortesia</label>
         <input id="e-co" type="number" step="0.01" min="0" value="${v('valor_cortesia')}" oninput="previaEdicao()"></div>
