@@ -1,7 +1,8 @@
 {
-  "name": "KN Recall — Instituto Kássila Nasser",
-  "short_name": "KN Recall",
-  "description": "Recall e follow-up da carteira de pacientes do Instituto Kássila Nasser",
+  "id": "kn-recall-kassila",
+  "name": "Gestão Recall e Follow-up — Kássila Nasser",
+  "short_name": "Recall KN",
+  "description": "Gestão de recall e follow-up da carteira de pacientes do Instituto Kássila Nasser",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
