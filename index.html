@@ -352,6 +352,31 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 .msg-previa{background:#fff;border:1px solid var(--linha);border-left:3px solid var(--salvia);border-radius:8px;
   padding:12px 13px;font-size:13px;line-height:1.55;white-space:pre-wrap;margin:10px 0}
 .res-busca{display:grid;gap:8px;margin-top:12px}
+
+/* ---------- BUSCA GLOBAL ----------
+   Fica acima das abas de propósito: ela não pertence a aba nenhuma, procura
+   na carteira inteira. Antes era um ícone de lupa perdido no canto do
+   cabeçalho, e a gestora acabava abrindo aba por aba e digitando em cada
+   campo de filtro — que procura só dentro daquela aba. */
+.bg-faixa{position:sticky;top:92px;z-index:18;background:#fff;border-bottom:1px solid var(--linha);
+  padding:8px 16px}
+/* Abaixo das abas, nunca acima: o painel de resultados precisa cobrir
+   conteúdo, não a navegação. Com a busca em cima, o resultado aberto tapava
+   as abas e a gestora ficava sem conseguir trocar de tela. */
+@media(max-width:620px){.bg-faixa{position:static}}
+.bg-cx{position:relative;max-width:620px;margin:0 auto}
+.bg-cx input{width:100%;padding:9px 38px 9px 13px;border:1px solid var(--linha-forte);border-radius:9px;
+  font-family:inherit;font-size:13.5px;color:var(--tinta);background:var(--papel-2)}
+.bg-cx input:focus{outline:none;border-color:var(--vinho);background:#fff}
+.bg-cx .lupa{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:28px;height:28px;
+  border:0;background:var(--vinho);color:#fff;border-radius:7px;cursor:pointer;font-size:14px;line-height:1}
+.bg-painel{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;z-index:30;
+  border:1px solid var(--linha-forte);border-radius:10px;box-shadow:0 12px 32px rgba(36,30,28,.16);
+  max-height:62vh;overflow:auto;padding:8px;display:none}
+.bg-painel.on{display:block}
+.bg-painel .pac{width:100%}
+.bg-cab{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(36,30,28,.5);padding:4px 6px 8px}
 .onde{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;
   padding:3px 7px;border-radius:3px;font-weight:600}
 .onde-RECALL{background:rgba(184,137,74,.2);color:#8A6529}
@@ -480,7 +505,6 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
     <div class="hdr-dir">
       <div class="atz"><span id="atz-txt">—</span><span id="atz-base"></span></div>
       <button class="quem" id="bt-quem" onclick="abrirPortao()">Identificar-se</button>
-      <button class="btn-atz" id="bt-busca" onclick="abrirBusca()" title="Buscar paciente em toda a carteira">⌕</button>
       <button class="btn-atz" id="bt-atz" onclick="atualizarAgora()" title="Atualizar dados">↻</button>
     </div>
   </header>
@@ -496,6 +520,14 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
     <button data-tela="agenda" onclick="irPara('agenda')">Agenda</button>
     <button data-tela="indicadores" onclick="irPara('indicadores')">Indicadores</button>
   </nav>
+
+  <div class="bg-faixa">
+    <div class="bg-cx">
+      <input id="bg-campo" autocomplete="off" placeholder="Buscar paciente em toda a carteira — nome, telefone ou nº do orçamento">
+      <button class="lupa" id="bg-lupa" title="Buscar">&#9906;</button>
+      <div class="bg-painel" id="bg-painel"></div>
+    </div>
+  </div>
 
   <!-- ===================== ACOMPANHAMENTO =====================
        A fila do dia. Quem já foi contatada sai do Recall e vive aqui até
@@ -1988,6 +2020,90 @@ function formEncerrar(){
 /* ==========================================================================
    BUSCA GLOBAL — varre a carteira inteira, não só a fila da tela
    ========================================================================== */
+/* ===================== BUSCA GLOBAL =====================
+ *
+ * Uma caixa só, sempre visível, que procura na carteira inteira: recall,
+ * dormente, follow-up, high ticket e encerradas. O resultado diz em qual aba
+ * cada paciente vive e abre a ficha direto.
+ *
+ * Por que com espera e não a cada tecla: cada busca lê as 2.148 pacientes na
+ * planilha, e o Apps Script atende uma chamada por vez para a mesma conta.
+ * Disparar a cada letra encheria a fila e deixaria o aplicativo travado —
+ * exatamente o defeito que já nos custou uma apresentação. Então o app
+ * espera a pessoa parar de digitar, e guarda o que já procurou. */
+let BG_RELOGIO = null, BG_ULTIMO = '';
+const BG_CACHE = {};
+
+function ligarBuscaGlobal(){
+  const campo = el('bg-campo'), painel = el('bg-painel');
+  if (!campo) return;
+
+  const fechar = () => { painel.classList.remove('on'); painel.innerHTML = ''; };
+
+  const procurar = async (termo) => {
+    if (termo.length < 3){ fechar(); return; }
+    BG_ULTIMO = termo;
+
+    if (BG_CACHE[termo]){ pintar(termo, BG_CACHE[termo]); return; }
+
+    painel.classList.add('on');
+    painel.innerHTML = blocoCarregando('procurando em toda a carteira');
+    try {
+      const d = await api('buscar', { termo: termo });
+      BG_CACHE[termo] = d;
+      if (BG_ULTIMO !== termo) return;      // ela já digitou outra coisa
+      pintar(termo, d);
+    } catch (e) {
+      if (BG_ULTIMO !== termo) return;
+      painel.innerHTML = '<div class="aviso-box" style="margin:6px">Não consegui buscar agora. ' +
+        esc(e.message || e) + '</div>';
+    }
+  };
+
+  const pintar = (termo, d) => {
+    painel.classList.add('on');
+    if (!d || !d.itens || !d.itens.length){
+      painel.innerHTML = '<div class="vazio" style="padding:14px">Ninguém encontrado com “' +
+        esc(termo) + '”.</div>';
+      return;
+    }
+    painel.innerHTML =
+      '<div class="bg-cab">' + d.total + ' encontrada(s) · toque para abrir a ficha</div>' +
+      '<div class="res-busca">' + d.itens.map(x => cartaoBusca(x)).join('') + '</div>' +
+      (d.total > d.itens.length
+        ? '<div class="nota" style="margin:8px 6px 2px">Mostrando as ' + d.itens.length +
+          ' primeiras. Escreva mais do nome para afinar.</div>' : '');
+    painel.querySelectorAll('.pac').forEach(c => {
+      c.onclick = () => { fechar(); abrirFicha(c.dataset.chave); };
+    });
+  };
+
+  campo.oninput = () => {
+    const t = campo.value.trim();
+    clearTimeout(BG_RELOGIO);
+    if (t.length < 3){ fechar(); return; }
+    BG_RELOGIO = setTimeout(() => procurar(t), 500);
+  };
+  campo.onkeydown = ev => {
+    if (ev.key === 'Escape'){ campo.value = ''; fechar(); campo.blur(); return; }
+    if (ev.key === 'Enter'){
+      ev.preventDefault();
+      clearTimeout(BG_RELOGIO);
+      const primeiro = painel.querySelector('.pac');
+      if (primeiro) { primeiro.click(); return; }
+      procurar(campo.value.trim());
+    }
+  };
+  el('bg-lupa').onclick = () => { clearTimeout(BG_RELOGIO); procurar(campo.value.trim()); };
+
+  /* clicar fora fecha, mas clicar dentro do painel não */
+  document.addEventListener('click', ev => {
+    if (!painel.classList.contains('on')) return;
+    if (ev.target.closest('.bg-cx')) return;
+    fechar();
+  });
+}
+
 function abrirBusca(){
   abrirModal(`<h2>Buscar paciente</h2>
     <div class="sub2" style="font-size:12.5px;color:rgba(36,30,28,.6);margin-bottom:12px">
@@ -2026,6 +2142,7 @@ function cartaoBusca(p){
     <div class="pac-in">
       <div class="pac-l1"><span class="pac-nome">${esc(p.paciente)}</span>
         <span class="onde onde-${esc(p.onde)}">${esc(ROTULO_ONDE[p.onde] || p.onde)}</span>
+        ${p.classe_ht ? `<span class="tag ht ${esc(p.classe_ht)}">${esc(p.classe_ht)}</span>` : ''}
         <span class="pac-dias"><b>${p.dias == null ? '—' : p.dias}</b><span>dias</span></span></div>
       <div class="pac-l2">${p.telefone ? esc(p.telefone) + ' · ' : ''}${p.ultimo_orcamento
         ? 'último orçamento ' + esc(p.ultimo_orcamento) + (p.ultimo_orcamento_situacao ? ' (' + esc(p.ultimo_orcamento_situacao) + ')' : '')
@@ -2779,6 +2896,7 @@ async function iniciar(){
     USUARIOS_ABERTOS = guardado.usuarios || [];
     if (guardado.textos) TERMOS = guardado.textos;
   }
+  ligarBuscaGlobal();
   abrirPortao();
   esconderCarregando();
 
