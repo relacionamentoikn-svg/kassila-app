@@ -39,7 +39,7 @@
   --f-quente:#2E7D57; --f-morno:#C98A16; --f-frio:#C0623A; --f-dormente:#8C807A;
   /* Alto padrão: metais, não semáforo. A régua de dias fala de urgência; esta
      fala de patrimônio, e misturar as duas linguagens confunde a leitura. */
-  --f-ouro:#A87B1E; --f-prata:#6C7A82; --f-bronze:#8A5A33;
+  --f-diamante:#4F7A91; --f-ouro:#A87B1E; --f-bronze:#8A5A33;
   /* farol do follow-up — este SIM é semáforo de verdade, e só nesta tela */
   --verde:#1F7A4D; --ambar:#C98A16; --vermelho:#C0392B; --decidir:#7A5C99;
 }
@@ -141,12 +141,12 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 .regua button[aria-pressed="true"]{box-shadow:inset 0 0 0 3px rgba(255,255,255,.85)}
 .regua b{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;line-height:1}
 .regua span{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.92}
-.fx-OURO{background:var(--f-ouro)}.fx-PRATA{background:var(--f-prata)}
+.fx-DIAMANTE{background:var(--f-diamante)}.fx-OURO{background:var(--f-ouro)}
 .fx-BRONZE{background:var(--f-bronze)}
-.tj-OURO{background:var(--f-ouro)}.tj-PRATA{background:var(--f-prata)}
+.tj-DIAMANTE{background:var(--f-diamante)}.tj-OURO{background:var(--f-ouro)}
 .tj-BRONZE{background:var(--f-bronze)}
 .tag.ht{background:#FBF3E2;border-color:#E3CF9F;color:#7A5810;font-weight:600;letter-spacing:.04em}
-.tag.ht.PRATA{background:#EFF2F4;border-color:#CBD5DA;color:#4A585F}
+.tag.ht.DIAMANTE{background:#EAF1F5;border-color:#B9D0DC;color:#36617A}
 .tag.ht.BRONZE{background:#F7EDE6;border-color:#DFC3AC;color:#6E4526}
 .ht-escolha{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .ht-escolha button{flex:1 1 auto;min-width:74px}
@@ -1208,9 +1208,9 @@ function pintarFila(tela, d){
     MORNO:    `${R.quente + 1} a ${R.morno} dias`,
     FRIO:     `${R.morno + 1} a ${R.frio} dias`,
     DORMENTE: `mais de ${R.frio} dias`,
-    OURO:   'classificada pela gestora',
-    PRATA:  'classificada pela gestora',
-    BRONZE: 'classificada pela gestora'
+    DIAMANTE: 'classificada pela gestora',
+    OURO:     'classificada pela gestora',
+    BRONZE:   'classificada pela gestora'
   };
   const ehHt = tela === 'highticket';
 
@@ -1782,7 +1782,9 @@ function montarFicha(d){
  * TIRA a paciente das filas de Recall e Dormente. Ela deixa de aparecer no
  * trabalho de lote e passa a viver só na aba High Ticket.
  */
-const CLASSES_HT = ['OURO', 'PRATA', 'BRONZE'];
+/* Do topo para a base. A ordem desta lista é a ordem dos botões na ficha e
+   das faixas na régua — não é alfabética por acaso, é hierárquica. */
+const CLASSES_HT = ['DIAMANTE', 'OURO', 'BRONZE'];
 
 function blocoClasse(p){
   const atual = p.classe_ht || '';
