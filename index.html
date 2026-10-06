@@ -95,6 +95,12 @@ header.topo .sub{font-family:'IBM Plex Mono',monospace;font-size:10px;opacity:.7
 header.topo .hdr-dir{display:flex;align-items:center;gap:9px}
 header.topo .atz{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:rgba(250,247,243,.72);line-height:1.3;text-align:right}
 header.topo .atz .velho{color:#F0C36A}
+/* Carimbo de versão. Existe para responder, num olhar, à pergunta que já nos
+   custou uma noite: "a página que estou vendo é a nova ou a velha?". Verde
+   quando tela e servidor batem, âmbar quando não batem. */
+header.topo .atz .ver{color:rgba(250,247,243,.5)}
+header.topo .atz .ver b{color:#9FD5A8;font-weight:600}
+header.topo .atz .ver.desencontro b{color:#F0C36A}
 header.topo .btn-atz{background:rgba(250,247,243,.12);border:1px solid rgba(250,247,243,.28);color:var(--creme);width:32px;height:32px;border-radius:8px;font-size:15px;line-height:1;flex:none;transition:transform .5s,background .2s}
 header.topo .btn-atz:hover{background:rgba(250,247,243,.22)}
 header.topo .btn-atz.girando{transform:rotate(360deg)}
@@ -129,6 +135,9 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 .card h3{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(36,30,28,.6);margin:0 0 13px;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .card h3 .aux{font-size:9.5px;letter-spacing:.04em;text-transform:none;color:rgba(36,30,28,.45);font-weight:400}
 .bloco{margin-bottom:14px}
+.sec-imp{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 0 8px}
+.sec-imp .sec{margin:0;flex:1 1 auto}
+.sec-imp button{flex:none;text-transform:none;letter-spacing:.02em;font-size:10px;padding:5px 11px}
 .sec{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(36,30,28,.6);margin:16px 0 8px;font-weight:600}
 .vazio{text-align:center;padding:28px 12px;color:rgba(36,30,28,.42);font-size:12.5px}
 .carregando{text-align:center;padding:28px;color:rgba(36,30,28,.45);font-size:12.5px}
@@ -506,7 +515,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
       </div>
     </div>
     <div class="hdr-dir">
-      <div class="atz"><span id="atz-txt">—</span><span id="atz-base"></span></div>
+      <div class="atz"><span id="atz-txt">—</span><span id="atz-base"></span><span id="atz-ver"></span></div>
       <button class="quem" id="bt-quem" onclick="abrirPortao()">Identificar-se</button>
       <button class="btn-atz" id="bt-atz" onclick="atualizarAgora()" title="Atualizar dados">↻</button>
     </div>
@@ -552,7 +561,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
     <div class="filtros bloco" id="ac-filtros"></div>
     <div class="split">
       <div>
-        <div class="sec" id="ac-rotulo">Fila do dia</div>
+        <div class="sec-imp"><div class="sec" id="ac-rotulo">Fila do dia</div><button class="bt-min" onclick="imprimirTela('acompanhamento')" title="Imprime em PDF as pacientes que estão nesta tela, do jeito que elas estão filtradas">Imprimir relatório</button></div>
         <div class="lista" id="ac-lista"><div class="carregando">Carregando…</div></div>
       </div>
       <div class="ficha-slot" id="slot-acompanhamento"></div>
@@ -580,7 +589,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
     <div class="split">
       <div>
         <div class="filtros bloco" id="rc-filtros"></div>
-        <div class="sec" id="rc-rotulo">Fila de trabalho</div>
+        <div class="sec-imp"><div class="sec" id="rc-rotulo">Fila de trabalho</div><button class="bt-min" onclick="imprimirTela('recall')" title="Imprime em PDF as pacientes que estão nesta tela, do jeito que elas estão filtradas">Imprimir relatório</button></div>
         <div class="lista" id="rc-lista"><div class="carregando">Carregando…</div></div>
         <div class="barra-sel" id="rc-barra"></div>
       </div>
@@ -606,7 +615,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
     <div class="split">
       <div>
         <div class="filtros bloco" id="dm-filtros"></div>
-        <div class="sec" id="dm-rotulo">Fila dormente</div>
+        <div class="sec-imp"><div class="sec" id="dm-rotulo">Fila dormente</div><button class="bt-min" onclick="imprimirTela('dormente')" title="Imprime em PDF as pacientes que estão nesta tela, do jeito que elas estão filtradas">Imprimir relatório</button></div>
         <div class="lista" id="dm-lista"><div class="carregando">Carregando…</div></div>
         <div class="barra-sel" id="dm-barra"></div>
       </div>
@@ -635,7 +644,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
     <div class="split">
       <div>
         <div class="filtros bloco" id="ht-filtros"></div>
-        <div class="sec" id="ht-rotulo">Carteira de alto padrão</div>
+        <div class="sec-imp"><div class="sec" id="ht-rotulo">Carteira de alto padrão</div><button class="bt-min" onclick="imprimirTela('highticket')" title="Imprime em PDF as pacientes que estão nesta tela, do jeito que elas estão filtradas">Imprimir relatório</button></div>
         <div class="lista" id="ht-lista"><div class="carregando">Carregando…</div></div>
         <div class="barra-sel" id="ht-barra"></div>
       </div>
@@ -664,7 +673,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
     <div class="split">
       <div>
         <div class="filtros bloco" id="fu-filtros"></div>
-        <div class="sec" id="fu-rotulo">Orçamentos em aberto</div>
+        <div class="sec-imp"><div class="sec" id="fu-rotulo">Orçamentos em aberto</div><button class="bt-min" onclick="imprimirTela('follow')" title="Imprime em PDF as pacientes que estão nesta tela, do jeito que elas estão filtradas">Imprimir relatório</button></div>
         <div class="lista" id="fu-lista"><div class="carregando">Carregando…</div></div>
       </div>
       <div class="ficha-slot" id="slot-follow"></div>
@@ -753,6 +762,10 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 let API_URL = '';
 try { API_URL = (window.KN_RECALL_API || '').trim(); } catch (e) {}
 if (!API_URL) { try { API_URL = localStorage.getItem('kassila_recall_url') || ''; } catch (e) {} }
+
+/* Versão DESTA tela. Precisa bater com a do Codigo.gs; o cabeçalho mostra as
+   duas e avisa quando divergem. */
+const VERSAO_TELA = 'V3.9';
 
 let CTX = null, USUARIO = null, PAC = null, ULTIMA = null;
 let MES = null, ESCOPO = 'RECALL', PERIODO_AGENDA = 14;
@@ -1132,6 +1145,7 @@ function aplicarContexto(ctx){
     ' · frio ' + (R.morno + 1) + '–' + R.frio +
     ' · dormente +' + R.frio + '</span>';
   pintarAtualizacao();
+  pintarVersao();
   if (!MES && CTX.meses && CTX.meses.length){
     MES = CTX.meses[CTX.meses.length - 1];
     const sel = el('sel-mes');
@@ -1158,6 +1172,20 @@ function pintarUsuario(){
           : sv ? 'Seu acesso não inclui valores. Os números de dinheiro não são enviados ao seu aparelho.' : '';
   b.classList.toggle('suporte', tecnico);
 
+}
+
+function pintarVersao(){
+  const alvo = el('atz-ver');
+  if (!alvo) return;
+  const srv = (CTX && CTX.versao) ? String(CTX.versao) : '?';
+  const bate = srv === VERSAO_TELA;
+  alvo.className = 'ver' + (bate ? '' : ' desencontro');
+  alvo.innerHTML = bate
+    ? `tela e planilha <b>${esc(VERSAO_TELA)}</b>`
+    : `tela <b>${esc(VERSAO_TELA)}</b> · planilha <b>${esc(srv)}</b>`;
+  alvo.title = bate
+    ? 'A página e o Codigo.gs estão na mesma versão.'
+    : 'A página e o Codigo.gs estão em versões diferentes. Um dos dois não foi atualizado.';
 }
 
 function pintarAtualizacao(){
@@ -1198,6 +1226,13 @@ async function carregarFila(tela){
   } finally {
     marcarAtualizando(pre + '-lista', false);
   }
+}
+
+/* O que cada lista já sabe de cada paciente, para a ficha abrir com o
+   cabeçalho pronto enquanto a planilha responde. */
+const ITENS_VISTOS = {};
+function guardarItens(itens){
+  (itens || []).forEach(x => { if (x && x.chave) ITENS_VISTOS[x.chave] = x; });
 }
 
 function pintarFila(tela, d){
@@ -1258,6 +1293,7 @@ function pintarFila(tela, d){
     (f.faixa !== 'TODAS' ? ` · ${f.faixa.toLowerCase()} (${legendaTxt[f.faixa]})` : '') +
     ` · ${rotuloOrdem(f.ordem)}`;
 
+  guardarItens(d.itens);
   el(pre + '-lista').innerHTML = d.itens.length
     ? d.itens.map(p => cartaoPaciente(p, tela)).join('')
     : '<div class="card vazio">Nenhuma paciente com esses filtros.</div>';
@@ -1360,7 +1396,7 @@ function ligarCartoes(container, tela){
       if (ev.target.closest('.sel-cx') || ev.target.closest('[data-acao]')) return;
       container.querySelectorAll('.pac').forEach(x => x.removeAttribute('aria-current'));
       c.setAttribute('aria-current', 'true');
-      abrirFicha(c.dataset.chave);
+      abrirFicha(c.dataset.chave, ITENS_VISTOS[c.dataset.chave]);
     };
     c.onclick = abrir;
     c.onkeydown = ev => { if (ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); abrir(ev); } };
@@ -1485,7 +1521,7 @@ function ligarCartoesAc(){
     c.querySelectorAll('[data-acao]').forEach(b => {
       b.onclick = ev => {
         ev.stopPropagation();
-        if (b.dataset.acao === 'ficha') { abrirFicha(c.dataset.chave); return; }
+        if (b.dataset.acao === 'ficha') { abrirFicha(c.dataset.chave, ITENS_VISTOS[c.dataset.chave]); return; }
         api('mensagem', { evento: 'RETORNO', chave: c.dataset.chave }).then(m => {
           if (m.erro) { toast(m.erro); return; }
           abrirModal(`<h2>Mensagem de retorno</h2>${blocoMensagem(m)}
@@ -1543,9 +1579,60 @@ function pintarBarraSel(tela){
          trabalho da gestora — outro documento, outro leitor. */
       exportar({ tipo: a === 'sintetico' ? 'SINTETICA' : 'LISTA',
                  formato: a === 'xlsx' ? 'XLSX' : 'PDF',
-                 chaves: SEL[tela].join(';'), titulo: tituloExport(tela) });
+                 chaves: SEL[tela].join(';'), titulo: tituloExport(tela),
+                 agrupar: tela === 'highticket' ? '1' : '0' });
     };
   });
+}
+
+/* ==========================================================================
+   IMPRESSÃO POR ABA
+   Cada tela tem seu botão. Ele imprime EXATAMENTE o que está na tela — com os
+   filtros que a pessoa deixou ligados —, nunca a base inteira: relatório que
+   não bate com o que se está vendo é relatório que ninguém confere.
+   ========================================================================== */
+const IMPRESSAO = {
+  acompanhamento: { lista: 'ac-lista', titulo: () => 'Fila do dia' },
+  recall:         { lista: 'rc-lista', titulo: () => tituloExport('recall') },
+  dormente:       { lista: 'dm-lista', titulo: () => tituloExport('dormente') },
+  highticket:     { lista: 'ht-lista', titulo: () => 'High Ticket — carteira de alto padrão',
+                    agrupar: true },
+  follow:         { lista: 'fu-lista', titulo: () => 'Follow-up — orçamentos em aberto' }
+};
+
+/* Lê as chaves direto dos cartões desenhados. No Follow-up a mesma paciente
+   pode ter mais de um orçamento aberto, e ela entra uma vez só no relatório. */
+function chavesNaTela(idLista){
+  const fora = [], ja = {};
+  const cx = el(idLista);
+  if (!cx) return fora;
+  cx.querySelectorAll('.pac[data-chave]').forEach(c => {
+    const k = (c.dataset.chave || '').trim();
+    if (k && !ja[k]){ ja[k] = 1; fora.push(k); }
+  });
+  return fora;
+}
+
+function imprimirTela(tela){
+  if (!USUARIO){ abrirPortao(); return; }
+  const c = IMPRESSAO[tela];
+  if (!c) return;
+  if (semDinheiro()){
+    toast('Seu acesso é de contato com pacientes e não inclui relatórios.');
+    return;
+  }
+  const chaves = chavesNaTela(c.lista);
+  if (!chaves.length){ toast('Não há paciente nesta tela para imprimir.'); return; }
+
+  /* Cerca de 10 cartões por folha. Avisar antes é mais barato do que a pessoa
+     descobrir o tamanho do documento na impressora. */
+  const folhas = Math.ceil(chaves.length / 10);
+  if (folhas > 10 && !confirm(chaves.length + ' pacientes dão mais ou menos ' + folhas +
+      ' folhas.\n\nQuer imprimir assim mesmo? Se preferir menos, feche aqui e use os ' +
+      'filtros da tela antes.')) return;
+
+  exportar({ tipo: 'LISTA', formato: 'PDF', chaves: chaves.join(';'),
+             titulo: c.titulo(), agrupar: c.agrupar ? '1' : '0' });
 }
 
 function tituloExport(tela){
@@ -1578,8 +1665,8 @@ function entregarArquivo(r){
       ${esc(r.nome)} · ${kb} KB</div>
     <a class="bt prim larga" id="bx-link" href="${url}" download="${esc(r.nome)}" target="_blank" rel="noopener">
       Baixar ${/\.pdf$/i.test(r.nome) ? 'PDF' : 'Excel'}</a>
-    <div class="nota">O arquivo traz uma coluna <b>Anotações</b> em branco e o aviso de dado sensível da
-      LGPD no rodapé. Depois de usar, destrua a via impressa.</div>`);
+    <div class="nota">Cada paciente sai num cartão com uma linha de <b>anotações</b> em branco, e o
+      rodapé traz o aviso de dado sensível da LGPD. Depois de usar, destrua a via impressa.</div>`);
   try { el('bx-link').click(); } catch (e) {}
   setTimeout(() => URL.revokeObjectURL(url), 120000);
 }
@@ -1589,7 +1676,7 @@ function entregarArquivo(r){
    ========================================================================== */
 let POSICAO_ROLAGEM = 0;
 
-function abrirFicha(chave){
+function abrirFicha(chave, jaSabido){
   if (!chave) return;
   const lateral = el('ficha').classList.contains('lateral');
   if (!lateral) POSICAO_ROLAGEM = window.scrollY || 0;
@@ -1606,6 +1693,16 @@ function abrirFicha(chave){
 
   const cacheChave = 'ficha:' + chave;
   if (CACHE[cacheChave]) { PAC = CACHE[cacheChave]; montarFicha(PAC); }
+  else if (jaSabido) {
+    /* A lista já tem nome, telefone, dias, valor e faixa. Pintar o cabeçalho
+       com isso ANTES de a planilha responder tira a sensação de travamento:
+       a ficha abre na hora e o miolo chega depois. */
+    el('fc-nome').textContent = jaSabido.paciente || '';
+    el('fc-sub').textContent = [
+      jaSabido.faixa, jaSabido.dias == null ? '' : jaSabido.dias + ' dias desde o último orçamento',
+      jaSabido.cidade ? jaSabido.cidade + (jaSabido.uf ? '/' + jaSabido.uf : '') : ''
+    ].filter(Boolean).join(' · ');
+  }
 
   api('ficha', { chave: chave }).then(d => {
     if (!d || d.erro){ toast((d && d.erro) || 'Ficha não encontrada.'); fecharFicha(); return; }
@@ -1800,7 +1897,7 @@ function blocoClasse(p){
     ? `Classificada por <b>${esc(p.classe_ht_por)}</b>${p.classe_ht_em ? ' em ' + esc(p.classe_ht_em) : ''}.`
     : '';
 
-  return `<div class="card" style="margin-top:10px">
+  return `<div class="card" data-bloco-ht="1" style="margin-top:10px">
     <div class="sec" style="margin:0 0 4px">Alto padrão</div>
     <div class="nota">${atual
       ? `Esta paciente está em <b>${esc(atual)}</b> e aparece só na aba High Ticket. ${assinatura}`
@@ -1812,24 +1909,74 @@ function blocoClasse(p){
 async function classificar(classe){
   if (!PAC || !PAC.paciente) return;
   const alvo = String(classe || '').toUpperCase();
-  const nome = PAC.paciente.paciente || PAC.paciente.nome || 'esta paciente';
+  const p = PAC.paciente;
+  const nome = p.paciente || p.nome || 'esta paciente';
 
   const pergunta = alvo === 'REMOVER'
     ? `Tirar ${nome} do alto padrão? Ela volta às filas de Recall e Dormente.`
     : `Classificar ${nome} como ${alvo}? Ela sai das filas de Recall e Dormente e passa a ser trabalhada só na aba High Ticket.`;
   if (!confirm(pergunta)) return;
 
+  /* Trava os botões em vez de fechar a tela. Antes isto limpava o cache
+     inteiro, reabria a ficha e recarregava a aba — três idas à planilha para
+     gravar uma palavra. A tela piscava e demorava segundos. */
+  const botoes = el('fc-corpo').querySelectorAll('[data-ht]');
+  botoes.forEach(b => b.disabled = true);
+
   try {
-    const r = await api('classificar', { chave: PAC.paciente.chave, classe: alvo, autor: USUARIO ? USUARIO.nome : '' });
+    const r = await api('classificar', { chave: p.chave, classe: alvo, autor: USUARIO ? USUARIO.nome : '' });
     if (!r || r.erro) { alert((r && r.erro) || 'Não consegui gravar a classificação.'); return; }
-    /* a paciente mudou de aba: todo cache de lista está velho */
+
+    const nova = r.classe || '';
+    p.classe_ht = nova;
+    p.classe_ht_por = r.por || (USUARIO ? USUARIO.nome : '');
+    p.classe_ht_em = r.em || '';
+
+    /* repinta SÓ o bloco de alto padrão da ficha */
+    const bloco = el('fc-corpo').querySelector('[data-bloco-ht]');
+    if (bloco){
+      bloco.outerHTML = blocoClasse(p);
+      el('fc-corpo').querySelectorAll('[data-ht]').forEach(b => {
+        b.onclick = () => classificar(b.dataset.ht);
+      });
+    }
+
+    /* tira a paciente da lista em que ela estava, sem ir à planilha: a
+       classificação a move de aba, e quem está olhando precisa ver isso
+       acontecer. Os contadores do topo são ajustados na mão. */
+    tirarDaListaAtual(p.chave);
+
+    /* os números do servidor mudaram; a próxima visita a cada aba busca de
+       novo, mas só quando a pessoa for até lá */
     limparCache();
-    await abrirFicha(PAC.paciente.chave);
-    const atual = document.querySelector('nav.tabs button.on');
-    if (atual) irPara(atual.dataset.tela);
+
+    toast(nova ? ('Classificada como ' + nova + '.') : 'Removida do alto padrão.');
   } catch (e) {
     alert('Não consegui gravar a classificação: ' + (e.message || e));
+  } finally {
+    el('fc-corpo').querySelectorAll('[data-ht]').forEach(b => b.disabled = false);
   }
+}
+
+/* Remove o cartão da lista visível e acerta o contador do cabeçalho, sem
+   recarregar nada. */
+function tirarDaListaAtual(chave){
+  const cartao = document.querySelector(`.lista .pac[data-chave="${CSS.escape(chave)}"]`);
+  if (!cartao) return;
+  const lista = cartao.closest('.lista');
+  cartao.style.transition = 'opacity .25s';
+  cartao.style.opacity = '0';
+  setTimeout(() => {
+    cartao.remove();
+    if (lista && !lista.querySelector('.pac')){
+      lista.innerHTML = '<div class="card vazio">Nenhuma paciente com esses filtros.</div>';
+    }
+    const rot = lista ? lista.parentElement.querySelector('.sec') : null;
+    if (rot){
+      const n = lista.querySelectorAll('.pac').length;
+      rot.textContent = rot.textContent.replace(/\d[\d.]*\s+paciente\(s\)/, n + ' paciente(s)');
+    }
+  }, 260);
 }
 
 /* Quantos dias desde o último contato, a partir do que a ficha já traz.
@@ -1846,6 +1993,7 @@ function diasDesde(dataBr){
   if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return null;
   return Math.round((d2 - d1) / 86400000);
 }
+
 /* QUANDO FOI O ÚLTIMO CONTATO — uma função só, usada por todos.
    A ficha pergunta primeiro ao HISTÓRICO que ela mesma carrega: é o registro
    de verdade, com data e autor, e existe mesmo que o campo resumido venha
@@ -2079,7 +2227,7 @@ function ligarBuscaGlobal(){
         ? '<div class="nota" style="margin:8px 6px 2px">Mostrando as ' + d.itens.length +
           ' primeiras. Escreva mais do nome para afinar.</div>' : '');
     painel.querySelectorAll('.pac').forEach(c => {
-      c.onclick = () => { fechar(); abrirFicha(c.dataset.chave); };
+      c.onclick = () => { fechar(); abrirFicha(c.dataset.chave); };   // a busca já traz tudo
     });
   };
 
