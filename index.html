@@ -389,6 +389,107 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 .alerta-versao b{font-weight:600}
 .vazio{text-align:center;padding:28px 12px;color:rgba(36,30,28,.42);font-size:12.5px}
 .carregando{text-align:center;padding:28px;color:rgba(36,30,28,.45);font-size:12.5px}
+
+/* ============ RELATÓRIOS EM PDF ============
+   O relatório é montado num bloco próprio, escondido na tela, e só ele vai
+   para a impressão. "Salvar como PDF" do navegador gera o arquivo — sem
+   biblioteca externa, funciona igual no PC, no Android e no iPhone. */
+.rel-barra{display:flex;justify-content:flex-end;margin:0 0 12px}
+.bt-rel{border:1px solid var(--vinho);background:transparent;color:var(--vinho);border-radius:8px;
+  padding:8px 12px;font:600 11px 'Inter',system-ui,sans-serif;letter-spacing:.02em;cursor:pointer}
+.bt-rel:hover{background:var(--vinho);color:var(--papel-2)}
+.card h3 .bt-rel{float:right;margin-top:-4px;padding:5px 9px;font-size:10px}
+.rel-mtit{font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 6px;color:var(--vinho)}
+.rel-mdesc{font-size:12px;color:rgba(36,30,28,.65);line-height:1.5;margin:0 0 12px}
+.rel-campos{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+.rel-campos label{flex:1;min-width:130px;display:flex;flex-direction:column;gap:5px;
+  font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(36,30,28,.6)}
+.rel-campos select,.rel-campos input{font:400 14px 'Inter',system-ui,sans-serif;text-transform:none;letter-spacing:0;
+  color:var(--tinta);padding:10px;border:1px solid var(--linha-forte);border-radius:8px;background:#fff;width:100%}
+.rel-modo{display:flex;gap:8px;margin:0 0 12px}
+.rel-modo label{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;
+  border:1px solid var(--linha-forte);border-radius:8px;font-size:13px;cursor:pointer}
+.rel-modo label:has(input:checked){border-color:var(--vinho);background:rgba(92,26,43,.06);color:var(--vinho);font-weight:600}
+.rel-erro{color:#A8442F;font-size:12px;min-height:0;margin:0 0 8px}
+.rel-prog{font:500 11px 'IBM Plex Mono',monospace;color:var(--vinho-2);margin:0 0 8px}
+.rel-prog .trilho{height:4px;background:var(--linha);border-radius:2px;margin-top:6px;overflow:hidden}
+.rel-prog .trilho i{display:block;height:100%;background:var(--vinho);transition:width .2s}
+
+#relatorio{display:none}
+@page{size:A4;margin:11mm 10mm 12mm}
+@media print{
+  body.imprimindo > *:not(#relatorio){display:none!important}
+  body.imprimindo{background:#fff!important;overflow:visible!important}
+  body.imprimindo #relatorio{display:block}
+}
+#relatorio{color:#241E1C;font:400 9.5px/1.4 'Inter',system-ui,sans-serif;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;font-variant-numeric:tabular-nums}
+#relatorio .rel-cab{display:flex;align-items:center;gap:14px;background:#5C1A2B;color:#FAF7F3;
+  padding:13px 16px;border-bottom:3px solid #B8894A}
+#relatorio .rel-logo{width:48px;height:48px;border-radius:50%;background:#FAF7F3;object-fit:cover;flex:none;
+  border:1.5px solid #B8894A}
+#relatorio .rel-clin{font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:500;letter-spacing:.01em}
+#relatorio .rel-tit{font:600 9px 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;
+  color:#E3C58F;margin-top:3px}
+#relatorio .rel-sub{font-size:10px;opacity:.88;margin-top:2px}
+#relatorio .rel-cab-data{margin-left:auto;text-align:right;font:400 8px 'IBM Plex Mono',monospace;
+  letter-spacing:.06em;opacity:.85;line-height:1.5}
+#relatorio .rel-cab-data b{font-size:9.5px;letter-spacing:0;opacity:1}
+#relatorio .rel-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0 4px}
+#relatorio .rel-kpi{border:1px solid #E4DAD1;border-top:2.5px solid #5C1A2B;padding:7px 9px;background:#FAF7F3}
+#relatorio .rel-kpi.ouro{border-top-color:#B8894A}
+#relatorio .rel-kpi .r{font:500 7.5px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6B6259}
+#relatorio .rel-kpi .v{font-family:'Fraunces',Georgia,serif;font-size:15px;margin-top:3px;color:#241E1C}
+#relatorio .rel-kpi .s{font-size:8px;color:#6B6259;margin-top:1px}
+#relatorio .rel-sec{font-family:'Fraunces',Georgia,serif;font-size:12.5px;font-weight:500;color:#5C1A2B;
+  margin:14px 0 6px;padding-bottom:3px;border-bottom:1px solid #B8894A;break-after:avoid}
+#relatorio table.rel-t{width:100%;border-collapse:collapse}
+#relatorio .rel-t th{background:#F3EDE6;text-align:left;font:600 7.5px 'IBM Plex Mono',monospace;
+  letter-spacing:.07em;text-transform:uppercase;color:#4A403C;padding:5px 6px;border-bottom:1px solid #C9B8A8}
+#relatorio .rel-t td{padding:4px 6px;border-bottom:1px solid #EDE5DC;vertical-align:top}
+#relatorio .rel-t .n{text-align:right;white-space:nowrap}
+#relatorio .rel-t tr{break-inside:avoid}
+#relatorio .rel-t thead{display:table-header-group}
+#relatorio .rel-t tr.tot td{font-weight:600;border-top:1px solid #5C1A2B;border-bottom:0;background:#FAF7F3}
+#relatorio .rel-t tr.dest td{color:#5C1A2B;font-weight:600}
+#relatorio .rel-t i.cor{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:-.5px}
+#relatorio .rel-mix{display:grid;grid-template-columns:62px 1fr 92px;align-items:center;gap:9px;margin:4px 0;break-inside:avoid}
+#relatorio .rel-mix .m{font:500 8.5px 'IBM Plex Mono',monospace;color:#4A403C}
+#relatorio .rel-mix .t{text-align:right;font-weight:600}
+#relatorio .rel-stack{display:flex;height:13px;overflow:hidden;background:#EDE5DC;border-radius:2px}
+#relatorio .rel-stack span{display:block;height:100%;border-right:1px solid #fff}
+#relatorio .rel-stack span:last-child{border-right:0}
+#relatorio .rel-leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:8px;margin:7px 0 0 71px;color:#4A403C}
+#relatorio .rel-leg i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:-.5px}
+#relatorio .rel-nota{font-size:8px;color:#6B6259;margin-top:8px;line-height:1.55}
+#relatorio .rel-nota b{color:#4A403C}
+#relatorio .rel-rod{margin-top:16px;padding-top:5px;border-top:1px solid #E4DAD1;font:400 7.5px 'IBM Plex Mono',monospace;
+  letter-spacing:.04em;color:#8A7F76;text-align:center}
+#relatorio .rel-quebra{break-before:page}
+#relatorio .rf-dia{display:flex;justify-content:space-between;align-items:baseline;background:#5C1A2B;color:#FAF7F3;
+  padding:5px 9px;margin:10px 0 6px;font:600 9px 'IBM Plex Mono',monospace;letter-spacing:.06em;break-after:avoid}
+#relatorio .rf-dia span:last-child{font-weight:400;opacity:.85;font-size:8.5px}
+#relatorio .rf{border:1px solid #E4DAD1;border-left:3px solid #5C1A2B;padding:8px 10px 6px;margin:0 0 8px;
+  break-inside:avoid;background:#fff}
+#relatorio .rf.ok{border-left-color:#4F6B58}
+#relatorio .rf-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:5px}
+#relatorio .rf-num{font:600 8px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#8A3A4C}
+#relatorio .rf-pac{font-family:'Fraunces',Georgia,serif;font-size:12.5px;font-weight:500;margin:2px 0 1px}
+#relatorio .rf-meta{font-size:8px;color:#6B6259}
+#relatorio .rf-val{text-align:right;flex:none}
+#relatorio .rf-val .r{font:500 7px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6B6259}
+#relatorio .rf-val .v{font-family:'Fraunces',Georgia,serif;font-size:14px;color:#5C1A2B}
+#relatorio .rf-val .d{font-size:8px;color:#A8442F}
+#relatorio .rf-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#relatorio .rf-h{font:600 7px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#B8894A;margin:5px 0 2px}
+#relatorio .rf .rel-t td,#relatorio .rf .rel-t th{padding:2.5px 4px;font-size:8.3px}
+#relatorio .rf .rel-t th{font-size:6.8px}
+#relatorio .rf-pe{display:flex;justify-content:space-between;gap:10px;margin-top:5px;padding-top:4px;border-top:1px dashed #E4DAD1;font-size:8px}
+#relatorio .rf-pe .aud{color:#4F6B58;font-weight:600}
+#relatorio .rf-pe .naud{color:#A8442F;font-weight:600}
+#relatorio .rf-pe .av{color:#8A3A4C}
+#relatorio .rf-falha{color:#A8442F;font-size:8.5px}
+
 </style>
 </head>
 <body>
@@ -547,6 +648,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 
   <!-- ================= AUDITORIA ================= -->
   <section class="tela" id="tela-indicadores">
+  <div class="rel-barra"><button class="bt-rel" onclick="abrirRelFormas()">⎙ Relatório de formas de pagamento (PDF)</button></div>
   <div id="ind-corpo"><div class="vazio">Carregando indicadores...</div></div>
 </section>
 
@@ -554,7 +656,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
     <div class="grid-aud">
       <div class="col">
         <div class="card">
-          <h3>Orçamentos do mês <span class="aux" id="aud-qtd"></span></h3>
+          <h3>Orçamentos do mês <span class="aux" id="aud-qtd"></span><button class="bt-rel" onclick="abrirRelAuditoria()">⎙ Relatório PDF</button></h3>
           <div id="lista-auditoria"><div class="carregando">Carregando…</div></div>
         </div>
       </div>
@@ -2651,6 +2753,423 @@ function abrirModalCarregando(titulo){
 }
 
 /* Endereço do monograma, com reserva no cabeçalho para o Apps Script. */
+/* ============ RELATÓRIOS EM PDF ============
+   Dois relatórios, montados só com o que a API já devolve:
+     - Formas de pagamento por mês (aba Indicadores), período em colunas
+     - Auditoria, por mês ou período, com a ficha completa de cada orçamento
+   O PDF sai pelo "Salvar como PDF" do próprio navegador. O nome sugerido do
+   arquivo vem do título da página, trocado só durante a impressão. */
+const VERSAO_TELA = 'V8.4.1';
+const REL_CORES = ['#5C1A2B','#B8894A','#4F6B58','#7A5C99','#3E5C76','#A8442F','#8A7F76','#C79A9E'];
+const REL_LIMITE_DIAS = 92;      // período maior que isso vira dezenas de páginas e minutos de espera
+const relE = v => (v === null || v === undefined) ? '' : tEsc(v);
+const relPct = (v, base) => base ? (v / base * 100).toFixed(1).replace('.', ',') + '%' : '—';
+
+function relAgora(){
+  const d = new Date(), z = n => String(n).padStart(2, '0');
+  return z(d.getDate()) + '/' + z(d.getMonth() + 1) + '/' + d.getFullYear() + ' às ' + z(d.getHours()) + ':' + z(d.getMinutes());
+}
+function relChave(br){            // dd/mm/aaaa -> aaaammdd, para comparar e ordenar
+  const p = String(br || '').trim().slice(0, 10).split('/');
+  return p.length === 3 ? p[2] + p[1] + p[0] : '';
+}
+function relIsoParaBr(iso){ const p = String(iso).split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+function relUltimoDia(mes){ const p = mes.split('-'); return new Date(+p[0], +p[1], 0).getDate(); }
+function relMesExtenso(m){
+  const N = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const p = String(m).split('-'); return N[+p[1] - 1] + ' de ' + p[0];
+}
+
+function relCabecalho(titulo, sub){
+  return `<div class="rel-cab">
+      <img class="rel-logo" alt="" src="${monogramaSrc()}">
+      <div><div class="rel-clin">Instituto Kássila Nasser</div>
+        <div class="rel-tit">${relE(titulo)}</div>
+        <div class="rel-sub">${relE(sub)}</div></div>
+      <div class="rel-cab-data">EMITIDO EM<br><b>${relAgora()}</b></div>
+    </div>`;
+}
+function relRodape(){
+  return `<div class="rel-rod">Instituto Kássila Nasser · Gestão Comercial Vendas · documento de uso interno · ${VERSAO_TELA}</div>`;
+}
+
+/* Põe o relatório na página e chama a impressão. Não limpa sozinho no
+   "afterprint": no Chrome do Android esse evento dispara antes de o PDF ser
+   gerado, e o arquivo sairia em branco. Limpa no próximo toque no app. */
+async function relImprimir(html, nomeArquivo){
+  let r = document.getElementById('relatorio');
+  if(!r){ r = document.createElement('div'); r.id = 'relatorio'; document.body.appendChild(r); }
+  r.innerHTML = html;
+  await Promise.all(Array.from(r.querySelectorAll('img')).map(function(i){
+    return i.complete ? null : new Promise(function(ok){ i.onload = i.onerror = ok; });
+  }));
+  if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+  fecharModal();
+  if(!window.__relTitulo) window.__relTitulo = document.title;
+  document.title = nomeArquivo;
+  document.body.classList.add('imprimindo');
+  setTimeout(function(){
+    window.print();
+    setTimeout(function(){
+      const limpar = function(){
+        document.body.classList.remove('imprimindo');
+        if(window.__relTitulo){ document.title = window.__relTitulo; window.__relTitulo = null; }
+        document.removeEventListener('pointerdown', limpar, true);
+      };
+      document.addEventListener('pointerdown', limpar, true);
+    }, 800);
+  }, 200);
+}
+
+/* ---------- 1. FORMAS DE PAGAMENTO POR MÊS ---------- */
+async function abrirRelFormas(){
+  if(!IND){
+    abrirModalCarregando('carregando indicadores');
+    try{ IND = await api('indicadores'); }
+    catch(e){ abrirModal(`<div class="vazio">Não consegui carregar: ${relE(e.message)}</div>`); return; }
+  }
+  const meses = (IND.serie || []).filter(function(x){
+    return x.tem_pdf && x.formas && Object.keys(x.formas).length;
+  }).map(function(x){ return x.mes; });
+  if(!meses.length){
+    abrirModal(`<div class="vazio">Nenhum mês com formas de pagamento disponível.
+      Esse dado só existe nos meses processados por PDF.</div>`);
+    return;
+  }
+  const op = meses.map(function(m){ return `<option value="${m}">${rotuloMes(m)}</option>`; }).join('');
+  abrirModal(`<h2 class="rel-mtit">Formas de pagamento por mês</h2>
+    <p class="rel-mdesc">Cada mês do período vira uma coluna, com total por forma, participação no período
+      e a composição mês a mês. Mesma base da aba Indicadores.</p>
+    <div class="rel-campos">
+      <label>Mês inicial<select id="rf-ini">${op}</select></label>
+      <label>Mês final<select id="rf-fim">${op}</select></label>
+    </div>
+    <div id="rf-erro" class="rel-erro"></div>
+    <button class="lanc-bt" onclick="gerarRelFormas()">Gerar PDF</button>`);
+  document.getElementById('rf-ini').value = meses[Math.max(0, meses.length - 3)];
+  document.getElementById('rf-fim').value = meses[meses.length - 1];
+}
+
+function gerarRelFormas(){
+  const ini = document.getElementById('rf-ini').value;
+  const fim = document.getElementById('rf-fim').value;
+  const erro = document.getElementById('rf-erro');
+  if(ini > fim){ erro.textContent = 'O mês inicial está depois do mês final.'; return; }
+
+  const S = (IND.serie || []).filter(function(x){ return x.tem_pdf && x.mes >= ini && x.mes <= fim; });
+  const tot = {}, totMes = {};
+  S.forEach(function(x){
+    totMes[x.mes] = 0;
+    Object.keys(x.formas || {}).forEach(function(f){
+      const v = Number(x.formas[f]) || 0;
+      tot[f] = (tot[f] || 0) + v; totMes[x.mes] += v;
+    });
+  });
+  const formas = Object.keys(tot).sort(function(a, b){ return tot[b] - tot[a]; });
+  const geral = formas.reduce(function(t, f){ return t + tot[f]; }, 0);
+  if(!formas.length || !geral){ erro.textContent = 'Sem valores de formas de pagamento no período escolhido.'; return; }
+  const cor = {}; formas.forEach(function(f, i){ cor[f] = REL_CORES[i % REL_CORES.length]; });
+
+  const mesesS = S.map(function(x){ return x.mes; });
+  const maiorMes = mesesS.slice().sort(function(a, b){ return totMes[b] - totMes[a]; })[0];
+  const sub = ini === fim ? relMesExtenso(ini) : relMesExtenso(ini) + ' a ' + relMesExtenso(fim);
+  const largo = mesesS.length > 6;
+
+  const tabela = `<table class="rel-t">
+    <thead><tr><th>Forma de pagamento</th>
+      ${mesesS.map(function(m){ return `<th class="n">${mesCurto(m)}</th>`; }).join('')}
+      <th class="n">Total</th><th class="n">% período</th></tr></thead>
+    <tbody>
+    ${formas.map(function(f, i){
+      const linha = S.map(function(x){
+        const v = Number((x.formas || {})[f]) || 0;
+        return `<td class="n">${v ? brl(v) : '—'}</td>`;
+      }).join('');
+      return `<tr${i === 0 ? ' class="dest"' : ''}><td><i class="cor" style="background:${cor[f]}"></i>${relE(rotuloForma(f))}</td>
+        ${linha}<td class="n">${brl(tot[f])}</td><td class="n">${relPct(tot[f], geral)}</td></tr>`;
+    }).join('')}
+    <tr class="tot"><td>Total</td>
+      ${S.map(function(x){ return `<td class="n">${brl(totMes[x.mes])}</td>`; }).join('')}
+      <td class="n">${brl(geral)}</td><td class="n">100%</td></tr>
+    </tbody></table>`;
+
+  const pctTabela = `<table class="rel-t">
+    <thead><tr><th>Participação no mês</th>
+      ${mesesS.map(function(m){ return `<th class="n">${mesCurto(m)}</th>`; }).join('')}</tr></thead>
+    <tbody>${formas.map(function(f){
+      return `<tr><td><i class="cor" style="background:${cor[f]}"></i>${relE(rotuloForma(f))}</td>
+        ${S.map(function(x){
+          const v = Number((x.formas || {})[f]) || 0;
+          return `<td class="n">${v ? relPct(v, totMes[x.mes]) : '—'}</td>`;
+        }).join('')}</tr>`;
+    }).join('')}</tbody></table>`;
+
+  const mix = S.map(function(x){
+    const b = totMes[x.mes] || 1;
+    return `<div class="rel-mix"><div class="m">${mesCurto(x.mes)}</div>
+      <div class="rel-stack">${formas.map(function(f){
+        const v = Number((x.formas || {})[f]) || 0;
+        return v ? `<span style="width:${(v / b * 100).toFixed(2)}%;background:${cor[f]}"></span>` : '';
+      }).join('')}</div>
+      <div class="t">${brl(totMes[x.mes])}</div></div>`;
+  }).join('');
+  const legenda = `<div class="rel-leg">${formas.map(function(f){
+    return `<span><i style="background:${cor[f]}"></i>${relE(rotuloForma(f))}</span>`; }).join('')}</div>`;
+
+  const html = `<style>@page{size:A4 ${largo ? 'landscape' : 'portrait'}}</style>
+    ${relCabecalho('Relatório de formas de pagamento', sub)}
+    <div class="rel-kpis">
+      <div class="rel-kpi"><div class="r">Total do período</div><div class="v">${brl(geral)}</div>
+        <div class="s">${mesesS.length} mês(es)</div></div>
+      <div class="rel-kpi ouro"><div class="r">Forma predominante</div><div class="v">${relE(rotuloForma(formas[0]))}</div>
+        <div class="s">${relPct(tot[formas[0]], geral)} do período</div></div>
+      <div class="rel-kpi"><div class="r">Média mensal</div><div class="v">${brl(geral / mesesS.length)}</div>
+        <div class="s">${formas.length} forma(s) utilizadas</div></div>
+      <div class="rel-kpi ouro"><div class="r">Maior mês</div><div class="v">${mesCurto(maiorMes)}</div>
+        <div class="s">${brl(totMes[maiorMes])}</div></div>
+    </div>
+    <div class="rel-sec">Valores por forma de pagamento</div>${tabela}
+    <div class="rel-sec">Composição mensal</div>${mix}${legenda}
+    <div class="rel-sec">Participação de cada forma no mês</div>${pctTabela}
+    <div class="rel-nota"><b>Base:</b> orçamentos fechados e processados por PDF, mesma origem dos números da aba
+      Indicadores. Meses sem PDF processado não entram no período.</div>
+    ${relRodape()}`;
+  relImprimir(html, 'Formas_Pagamento_' + ini + (ini === fim ? '' : '_a_' + fim));
+}
+
+/* ---------- 2. AUDITORIA ---------- */
+function abrirRelAuditoria(){
+  const opts = Array.from(document.querySelectorAll('#sel-mes option'));
+  if(!opts.length){ abrirModal('<div class="vazio">Nenhum mês disponível.</div>'); return; }
+  const op = opts.map(function(o){ return `<option value="${o.value}">${relE(o.textContent)}</option>`; }).join('');
+  abrirModal(`<h2 class="rel-mtit">Relatório de auditoria</h2>
+    <p class="rel-mdesc">Resumo do período e a ficha completa de cada orçamento: procedimentos, desconto,
+      como foi pago, quando entra no caixa e situação da auditoria.</p>
+    <div class="rel-modo">
+      <label><input type="radio" name="ra-modo" value="mes" checked onchange="relModoAud()"> Mês</label>
+      <label><input type="radio" name="ra-modo" value="per" onchange="relModoAud()"> Período</label>
+    </div>
+    <div id="ra-mes-box" class="rel-campos"><label>Mês<select id="ra-mes">${op}</select></label></div>
+    <div id="ra-per-box" class="rel-campos" style="display:none">
+      <label>De<input type="date" id="ra-de"></label><label>Até<input type="date" id="ra-ate"></label></div>
+    <div class="rel-campos"><label>Ordenar por data da venda<select id="ra-ord">
+      <option value="asc">Mais antiga primeiro</option>
+      <option value="desc">Mais recente primeiro</option></select></label></div>
+    <div id="ra-erro" class="rel-erro"></div>
+    <div id="ra-prog" class="rel-prog"></div>
+    <button class="lanc-bt" id="ra-bt" onclick="gerarRelAuditoria()">Gerar PDF</button>`);
+  const m = MES || opts[opts.length - 1].value;
+  document.getElementById('ra-mes').value = m;
+  document.getElementById('ra-de').value = m + '-01';
+  document.getElementById('ra-ate').value = m + '-' + String(relUltimoDia(m)).padStart(2, '0');
+}
+
+function relModoAud(){
+  const per = document.querySelector('input[name="ra-modo"]:checked').value === 'per';
+  document.getElementById('ra-mes-box').style.display = per ? 'none' : 'flex';
+  document.getElementById('ra-per-box').style.display = per ? 'flex' : 'none';
+}
+
+async function gerarRelAuditoria(){
+  const erro = document.getElementById('ra-erro');
+  const prog = document.getElementById('ra-prog');
+  const bt = document.getElementById('ra-bt');
+  const passo = function(txt, frac){
+    prog.innerHTML = relE(txt) + (frac === undefined ? ''
+      : `<div class="trilho"><i style="width:${Math.round(frac * 100)}%"></i></div>`);
+  };
+  erro.textContent = '';
+  const per = document.querySelector('input[name="ra-modo"]:checked').value === 'per';
+  const ordem = document.getElementById('ra-ord').value;
+  let de, ate, sub;
+  if(per){
+    de = document.getElementById('ra-de').value; ate = document.getElementById('ra-ate').value;
+    if(!de || !ate){ erro.textContent = 'Preencha as duas datas.'; return; }
+    if(de > ate){ erro.textContent = 'A data inicial está depois da final.'; return; }
+    const dias = (new Date(ate) - new Date(de)) / 86400000 + 1;
+    if(dias > REL_LIMITE_DIAS){ erro.textContent = 'Período máximo de ' + REL_LIMITE_DIAS + ' dias por relatório.'; return; }
+    sub = relIsoParaBr(de) + ' a ' + relIsoParaBr(ate);
+  } else {
+    const m = document.getElementById('ra-mes').value;
+    de = m + '-01'; ate = m + '-' + String(relUltimoDia(m)).padStart(2, '0');
+    sub = relMesExtenso(m);
+  }
+  const kDe = de.replace(/-/g, ''), kAte = ate.replace(/-/g, '');
+  const disponiveis = Array.from(document.querySelectorAll('#sel-mes option')).map(function(o){ return o.value; });
+  const alvo = disponiveis.filter(function(m){ return m >= de.slice(0, 7) && m <= ate.slice(0, 7); });
+  if(!alvo.length){ erro.textContent = 'Não há meses com orçamentos nesse intervalo.'; return; }
+
+  bt.disabled = true; bt.style.opacity = '.5';
+  try{
+    // 1. listas dos meses tocados pelo período
+    let lista = [];
+    for(let i = 0; i < alvo.length; i++){
+      passo('lendo ' + rotuloMes(alvo[i]), i / (alvo.length + 1) * 0.15);
+      lista = lista.concat(await api('lista', {conta: 'venda', periodo: 'mes', mes: alvo[i]}) || []);
+    }
+    const vistos = {};
+    lista = lista.filter(function(x){
+      const k = relChave(x.data);
+      if(!k || k < kDe || k > kAte || vistos[x.id]) return false;
+      vistos[x.id] = true; return true;
+    });
+    if(!lista.length){ erro.textContent = 'Nenhum orçamento fechado nesse período.'; prog.innerHTML = ''; return; }
+    lista.sort(function(a, b){
+      const d = relChave(a.data).localeCompare(relChave(b.data));
+      if(d) return ordem === 'desc' ? -d : d;
+      return String(a.paciente || '').localeCompare(String(b.paciente || ''), 'pt-BR');
+    });
+
+    // 2. ficha de cada orçamento, 4 de cada vez
+    const fichas = new Array(lista.length);
+    let feitos = 0, prox = 0;
+    const trabalhador = async function(){
+      while(prox < lista.length){
+        const i = prox++;
+        try{ fichas[i] = await api('orcamento', {id: lista[i].id}); }
+        catch(e){ fichas[i] = {falha: e.message || 'erro'}; }
+        feitos++;
+        passo('carregando ficha ' + feitos + ' de ' + lista.length, 0.15 + feitos / lista.length * 0.85);
+      }
+    };
+    await Promise.all([trabalhador(), trabalhador(), trabalhador(), trabalhador()]);
+    passo('montando o PDF', 1);
+
+    const nome = 'Auditoria_' + (per ? de + '_a_' + ate : de.slice(0, 7));
+    relImprimir(relHtmlAuditoria(lista, fichas, sub, ordem), nome);
+  }catch(e){
+    erro.textContent = 'Não consegui montar o relatório: ' + (e.message || e);
+    prog.innerHTML = '';
+  }finally{
+    if(bt){ bt.disabled = false; bt.style.opacity = ''; }
+  }
+}
+
+function relHtmlAuditoria(lista, fichas, sub, ordem){
+  const num = function(v){ return Number(v) || 0; };
+  let tProc = 0, tDesc = 0, tVenda = 0, auditados = 0, falhas = 0;
+  lista.forEach(function(x, i){
+    const o = fichas[i] && fichas[i].orcamento;
+    if(!o){ falhas++; tVenda += num(x.valor); }
+    else { tProc += num(o.total_procedimentos); tDesc += num(o.desconto); tVenda += num(o.venda_comercial); }
+    if(x.auditado_por) auditados++;
+  });
+
+  // resumo por dia, na mesma ordem escolhida
+  const dias = [], porDia = {};
+  lista.forEach(function(x, i){
+    const d = String(x.data || 'sem data').slice(0, 10);
+    if(!porDia[d]){ porDia[d] = []; dias.push(d); }
+    porDia[d].push(i);
+  });
+  const vendaDe = function(i){ const o = fichas[i] && fichas[i].orcamento; return o ? num(o.venda_comercial) : num(lista[i].valor); };
+  const resumoDias = `<table class="rel-t"><thead><tr><th>Data</th><th class="n">Orçamentos</th>
+      <th class="n">Venda do comercial</th><th class="n">Auditados</th></tr></thead><tbody>
+    ${dias.map(function(d){
+      const ix = porDia[d];
+      const v = ix.reduce(function(t, i){ return t + vendaDe(i); }, 0);
+      const a = ix.filter(function(i){ return lista[i].auditado_por; }).length;
+      return `<tr><td>${relE(d)}</td><td class="n">${ix.length}</td><td class="n">${brl(v)}</td>
+        <td class="n">${a}/${ix.length}</td></tr>`;
+    }).join('')}
+    <tr class="tot"><td>Total</td><td class="n">${lista.length}</td><td class="n">${brl(tVenda)}</td>
+      <td class="n">${auditados}/${lista.length}</td></tr></tbody></table>`;
+
+  const fichasHtml = dias.map(function(d){
+    const ix = porDia[d];
+    const v = ix.reduce(function(t, i){ return t + vendaDe(i); }, 0);
+    return `<div class="rf-dia"><span>${relE(d)}</span><span>${ix.length} orçamento(s) · ${brl(v)}</span></div>`
+      + ix.map(function(i){ return relFicha(lista[i], fichas[i]); }).join('');
+  }).join('');
+
+  return relCabecalho('Relatório de auditoria', sub + ' · ordenado por data da venda, '
+      + (ordem === 'desc' ? 'mais recente primeiro' : 'mais antiga primeiro'))
+    + `<div class="rel-kpis">
+        <div class="rel-kpi"><div class="r">Orçamentos</div><div class="v">${lista.length}</div>
+          <div class="s">${dias.length} dia(s) com venda</div></div>
+        <div class="rel-kpi ouro"><div class="r">Total dos procedimentos</div><div class="v">${brl(tProc)}</div>
+          <div class="s">descontos ${brl(tDesc)} · ${relPct(tDesc, tProc)}</div></div>
+        <div class="rel-kpi"><div class="r">Venda do comercial</div><div class="v">${brl(tVenda)}</div>
+          <div class="s">ticket médio ${brl(tVenda / lista.length)}</div></div>
+        <div class="rel-kpi ouro"><div class="r">Auditoria</div><div class="v">${auditados} de ${lista.length}</div>
+          <div class="s">${relPct(auditados, lista.length)} auditados</div></div>
+      </div>
+      <div class="rel-sec">Resumo por dia</div>${resumoDias}
+      ${falhas ? `<div class="rel-nota"><b>Atenção:</b> ${falhas} ficha(s) não carregaram e aparecem incompletas;
+        nelas a venda considerada é a da lista do mês.</div>` : ''}
+      <div class="rel-nota"><b>Venda do comercial</b> = total dos procedimentos − crediário − permuta. O desconto é
+        indicador de monitoramento e não abate a venda.</div>
+      <div class="rel-quebra"></div>
+      <div class="rel-sec" style="margin-top:0">Fichas dos orçamentos</div>
+      ${fichasHtml}
+      ${relRodape()}`;
+}
+
+function relFicha(x, d){
+  const marcas = String(x.auditado_por || '').split('|').map(function(m){ return m.trim(); }).filter(Boolean);
+  const pe_aud = marcas.length
+    ? `<span class="aud">✓ Auditado por ${relE(marcas.join(', '))}</span>`
+    : `<span class="naud">Pendente de auditoria</span>`;
+
+  if(!d || !d.orcamento){
+    return `<div class="rf"><div class="rf-top"><div>
+        <div class="rf-num">ORÇ ${relE(x.num || '')}</div><div class="rf-pac">${relE(x.paciente)}</div>
+        <div class="rf-falha">Ficha não carregou${d && d.falha ? ': ' + relE(d.falha) : ''}. Gere o relatório de novo para completá-la.</div></div>
+        <div class="rf-val"><div class="r">Venda</div><div class="v">${brl(x.valor)}</div></div></div>
+      <div class="rf-pe"><span></span>${pe_aud}</div></div>`;
+  }
+  const o = d.orcamento;
+  let rec = '';
+  if(o.classificacao_paciente === 'NOVA') rec = 'paciente nova';
+  else if(o.dias_desde_anterior !== '' && o.dias_desde_anterior !== undefined && o.dias_desde_anterior !== null)
+    rec = 'última compra há ' + o.dias_desde_anterior + ' dias (' + o.orc_anterior_data + ')';
+  const meta = [o.data_venda, o.responsavel, rec].filter(Boolean).map(relE).join(' · ');
+  const descPct = Number(o.desconto) > 0 ? (Number(o.desconto_pct) || 0).toFixed(1).replace('.', ',') + '%' : '';
+
+  const itens = (d.itens || []).map(function(i){
+    const cort = i.is_cortesia === 'SIM';
+    return `<tr><td>${relE(i.descricao)}${i.obs_item ? ` <span style="color:#6B6259">· ${relE(i.obs_item)}</span>` : ''}</td>
+      <td class="n">${relE(i.qtde)}</td><td class="n">${brl(i.preco_unit)}</td>
+      <td class="n">${cort ? 'cortesia' : brl(i.valor_total)}</td></tr>`;
+  }).join('');
+  const parcelas = (d.parcelas || []).map(function(p){
+    return `<tr><td>${relE(rotuloForma(p.forma_normalizada || p.forma_original))}</td>
+      <td>${relE(p.data_parcela)}</td><td>${relE(p.destino || '')}</td><td class="n">${brl(p.valor_parcela)}</td></tr>`;
+  }).join('');
+  const recs = (d.recebimentos || []).map(function(r){
+    return `<tr><td>${relE(String(r.data_prevista).slice(0, 10))}</td><td>${relE(rotuloForma(r.forma_normalizada))}</td>
+      <td>${relE(r.parcela_n)}/${relE(r.de_n)}</td><td>${r.classe === 'CAIXA' ? 'caixa' : 'a receber'}</td>
+      <td class="n">${brl(r.valor)}</td></tr>`;
+  }).join('');
+
+  const avisos = [];
+  if(o.tem_cortesia === 'SIM') avisos.push('cortesia');
+  if(o.tem_duplicata === 'SIM') avisos.push('crediário');
+  if(Number(o.valor_permuta) > 0) avisos.push('permuta ' + brl(o.valor_permuta));
+  if(o.conferido && o.conferido !== 'OK-AUTO') avisos.push('a revisar: ' + (o.motivo_revisao || o.conferido));
+
+  return `<div class="rf${marcas.length ? ' ok' : ''}">
+    <div class="rf-top"><div>
+      <div class="rf-num">ORÇ ${relE(o.num_orcamento)}${o.descricao_orcamento ? ' · ' + relE(o.descricao_orcamento) : ''}</div>
+      <div class="rf-pac">${relE(o.paciente)}</div><div class="rf-meta">${meta}</div></div>
+      <div class="rf-val"><div class="r">Venda do comercial</div><div class="v">${brl(o.venda_comercial)}</div>
+        ${descPct ? `<div class="d">desconto ${brl(o.desconto)} · ${descPct}</div>` : ''}</div></div>
+    <div class="rf-h">Procedimentos</div>
+    <table class="rel-t"><thead><tr><th>Descrição</th><th class="n">Qtd</th><th class="n">Unitário</th><th class="n">Total</th></tr></thead>
+      <tbody>${itens || '<tr><td colspan="4">Sem procedimentos.</td></tr>'}
+      <tr class="tot"><td colspan="3">Total dos procedimentos</td><td class="n">${brl(o.total_procedimentos)}</td></tr></tbody></table>
+    <div class="rf-cols">
+      <div><div class="rf-h">Como foi pago</div>
+        <table class="rel-t"><thead><tr><th>Forma</th><th>Vencimento</th><th>Destino</th><th class="n">Valor</th></tr></thead>
+        <tbody>${parcelas || '<tr><td colspan="4">Sem parcelas.</td></tr>'}</tbody></table></div>
+      <div><div class="rf-h">Quando entra no caixa</div>
+        <table class="rel-t"><thead><tr><th>Data</th><th>Forma</th><th>Parc.</th><th>Classe</th><th class="n">Valor</th></tr></thead>
+        <tbody>${recs || '<tr><td colspan="5">Nenhum recebimento previsto.</td></tr>'}</tbody></table></div>
+    </div>
+    <div class="rf-pe"><span class="av">${avisos.length ? '◆ ' + relE(avisos.join(' · ')) : ''}</span>${pe_aud}</div>
+  </div>`;
+}
+
 function monogramaSrc(){
   const ico = document.querySelector('link[rel="icon"][sizes="192x192"]')
            || document.querySelector('link[rel="apple-touch-icon"]')
