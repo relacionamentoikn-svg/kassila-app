@@ -675,7 +675,8 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
   <nav class="tabs">
     <button data-tela="dia" class="on" onclick="irPara('dia')">Dia</button>
     <button data-tela="mes" onclick="irPara('mes')">Mês</button>
-    <button data-tela="recebimentos" onclick="irPara('recebimentos')">Recebimentos</button>
+    <!-- aba Recebimentos oculta (ainda não será usada). Para voltar: apague hidden e style abaixo -->
+    <button data-tela="recebimentos" onclick="irPara('recebimentos')" hidden style="display:none">Recebimentos</button>
     <button data-tela="indicadores" onclick="irParaIndicadores()">Indicadores</button>
     <button data-tela="auditoria" onclick="irPara('auditoria')">Auditoria</button>
   </nav>
@@ -728,7 +729,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
           <p style="font-size:10.5px;color:rgba(36,30,28,.55);line-height:1.5;margin:12px 0 0">
             <b>Caixa recebido no mês</b> são as parcelas que caem neste mês, venham de qual venda vierem.
             Na cascata, <b>caixa das vendas do mês</b> é só o que as vendas deste mês geraram.
-            <b>A receber</b> é tudo que ainda vai entrar, inclusive de meses seguintes.
+            <b>Parcelado</b> é tudo que ainda vai entrar, inclusive de meses seguintes.
           </p>
         </div>
       </div>
@@ -1492,7 +1493,7 @@ function cartaoOrc(o){
   if(o.tem_cortesia==='SIM') tags.push(`<span class="tag flag">cortesia</span>`);
   if(o.tem_duplicata==='SIM') tags.push(`<span class="tag">crediário</span>`);
   if(Number(o.caixa)>0) tags.push(`<span class="tag ok">caixa ${brl0(o.caixa)}</span>`);
-  if(Number(o.a_receber)>0) tags.push(`<span class="tag">a receber ${brl0(o.a_receber)}</span>`);
+  if(Number(o.a_receber)>0) tags.push(`<span class="tag">parcelado ${brl0(o.a_receber)}</span>`);
   return `<div class="${cls}" onclick="abrirOrcamento('${o.id}')">
     <div class="l1"><span class="pac">${o.paciente}</span><span class="val">${brl(o.valor)}</span></div>
     <div class="l2"><span class="cod">ORÇ ${o.num} · ${o.descricao||''}</span>
@@ -1517,10 +1518,10 @@ function renderMes(){
       <div class="menos"><span>Permuta</span><span>−${brl(c.valor_permuta)}</span></div>
       <div class="tot"><span>Venda do comercial</span><span>${brl(c.venda_comercial)}</span></div>
       <div class="sub2"><span>caixa das vendas do mês</span><span>${brl(c.caixa_imediato)}</span></div>
-      <div class="sub2"><span>a receber gerado pelas vendas do mês</span><span>${brl(c.a_receber)}</span></div>
+      <div class="sub2"><span>parcelado gerado pelas vendas do mês</span><span>${brl(c.a_receber)}</span></div>
     </div>`;
 
-  const nomes={venda:'Venda',caixa:'Caixa recebido',a_receber:'A receber',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
+  const nomes={venda:'Venda',caixa:'Caixa recebido',a_receber:'Parcelado',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
   const cls={venda:'c-venda',caixa:'c-caixa',a_receber:'c-receber',permuta:'c-permuta',duplicata:'c-duplicata',cortesia:'c-cortesia'};
   document.getElementById('contas-grid').innerHTML = Object.keys(R.contas).map(k=>{
     const x=R.contas[k];
@@ -1610,14 +1611,14 @@ function renderResumoMesLateral(){
       <div class="grande"><small>R$</small>${brl0(c.venda_comercial)}</div>
       <div class="cascata">
         <div><span>Caixa recebido</span><span>${brl(R.contas.caixa.valor)}</span></div>
-        <div><span>A receber</span><span>${brl(R.contas.a_receber.valor)}</span></div>
+        <div><span>Parcelado</span><span>${brl(R.contas.a_receber.valor)}</span></div>
         <div class="menos"><span>Cortesia concedida</span><span>${brl(c.valor_cortesia)}</span></div>
       </div>
     </div>
     <div class="card"><h3>Metas</h3>${metaHtml}</div>
     <div class="card"><h3>Contas do mês</h3><div class="contas-grid">${
       Object.keys(R.contas).map(k=>{
-        const nomes={venda:'Venda',caixa:'Caixa',a_receber:'A receber',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
+        const nomes={venda:'Venda',caixa:'Caixa',a_receber:'Parcelado',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
         const cls={venda:'c-venda',caixa:'c-caixa',a_receber:'c-receber',permuta:'c-permuta',duplicata:'c-duplicata',cortesia:'c-cortesia'};
         const x=R.contas[k];
         return `<button class="conta-btn ${cls[k]}" onclick="abrirConta('${k}')">
@@ -1629,7 +1630,7 @@ function renderResumoMesLateral(){
 /* ---------------- CONTAS ---------------- */
 async function abrirConta(conta){
   const lista = await api('lista',{conta,periodo:'mes',mes:MES});
-  const nomes={venda:'Venda do comercial',caixa:'Caixa recebido no mês',a_receber:'A receber',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia concedida'};
+  const nomes={venda:'Venda do comercial',caixa:'Caixa recebido no mês',a_receber:'Parcelado',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia concedida'};
   let html=`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 4px;color:var(--vinho)">${nomes[conta]}</h2>
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(36,30,28,.5);margin-bottom:14px">${rotuloMes(MES)} · ${lista.length} registro(s)</div>`;
   if(!lista.length) html+='<div class="vazio">Nenhum registro neste mês.</div>';
@@ -1670,7 +1671,7 @@ function htmlOrcamento(d, compacto){
       </div></div>`;}).join('');
   const recs=(d.recebimentos||[]).map(r=>`<div class="linha-r">
       <div class="dt"><b>${String(r.data_prevista).slice(0,2)}</b>${String(r.data_prevista).slice(3,5)}/${String(r.data_prevista).slice(8,10)}</div>
-      <div class="de">${r.forma_normalizada}<span>parcela ${r.parcela_n} de ${r.de_n} · ${r.classe==='CAIXA'?'caixa':'a receber'}</span></div>
+      <div class="de">${r.forma_normalizada}<span>parcela ${r.parcela_n} de ${r.de_n} · ${r.classe==='CAIXA'?'caixa':'parcelado'}</span></div>
       <div class="vr">${brl(r.valor)}</div></div>`).join('');
   let avisos='';
   if(o.tem_cortesia==='SIM') avisos+=`<div class="aviso-box"><b>Cortesia.</b> Item a zero — fora da venda e fora da meta.</div>`;
@@ -2343,7 +2344,7 @@ function pintarIndicadores(){
       <div class="ind-card"><div class="r">Prazo médio</div>
         <div class="v">${u.prazo_medio!==null?u.prazo_medio+' d':'—'}</div>
         <div class="d">até o recebimento</div></div>
-      <div class="ind-card"><div class="r">A receber</div><div class="v">${brl(u.a_receber||0)}</div></div>
+      <div class="ind-card"><div class="r">Parcelado</div><div class="v">${brl(u.a_receber||0)}</div></div>
       <div class="ind-card"><div class="r">Permuta</div><div class="v">${brl(u.permuta||0)}</div></div>
       <div class="ind-card"><div class="r">Cortesia</div><div class="v">${brl(u.cortesia||0)}</div></div>
     </div>
@@ -2890,7 +2891,7 @@ function abrirModalCarregando(titulo){
      - Auditoria, por mês ou período, com a ficha completa de cada orçamento
    O PDF sai pelo "Salvar como PDF" do próprio navegador. O nome sugerido do
    arquivo vem do título da página, trocado só durante a impressão. */
-const VERSAO_TELA = 'V8.4.3';
+const VERSAO_TELA = 'V8.4.4';
 const REL_CORES = ['#5C1A2B','#B8894A','#4F6B58','#7A5C99','#3E5C76','#A8442F','#8A7F76','#C79A9E'];
 const REL_LIMITE_DIAS = 92;      // período maior que isso vira dezenas de páginas e minutos de espera
 const relE = v => (v === null || v === undefined) ? '' : tEsc(v);
@@ -3172,7 +3173,7 @@ function relHtmlFechamento(mes, r, vendas, novas, recs){
     </div>`;
 
   /* ---- composição da venda + contas ---- */
-  const nomesConta = {venda:'Venda', caixa:'Caixa recebido', a_receber:'A receber', permuta:'Permuta', duplicata:'Crediário', cortesia:'Cortesia'};
+  const nomesConta = {venda:'Venda', caixa:'Caixa recebido', a_receber:'Parcelado', permuta:'Permuta', duplicata:'Crediário', cortesia:'Cortesia'};
   const composicao = `<table class="rel-t">
       <thead><tr><th>Composição da venda</th><th class="n">Valor</th></tr></thead><tbody>
       <tr><td>Total dos procedimentos</td><td class="n">${brl(c.total_procedimentos)}</td></tr>
@@ -3182,7 +3183,7 @@ function relHtmlFechamento(mes, r, vendas, novas, recs){
       <tr><td>Permuta</td><td class="n">−${brl(c.valor_permuta)}</td></tr>
       <tr class="tot"><td>Venda do comercial</td><td class="n">${brl(c.venda_comercial)}</td></tr>
       <tr><td class="sub">caixa das vendas do mês</td><td class="n">${brl(c.caixa_imediato)}</td></tr>
-      <tr><td class="sub">a receber gerado pelas vendas do mês</td><td class="n">${brl(c.a_receber)}</td></tr>
+      <tr><td class="sub">parcelado gerado pelas vendas do mês</td><td class="n">${brl(c.a_receber)}</td></tr>
       </tbody></table>`;
   const contas = `<table class="rel-t">
       <thead><tr><th>Contas do mês</th><th class="n">Registros</th><th class="n">Valor</th></tr></thead><tbody>
@@ -3192,7 +3193,7 @@ function relHtmlFechamento(mes, r, vendas, novas, recs){
       }).join('')}
       </tbody></table>
       <div class="rel-nota"><b>Caixa recebido</b> reúne as parcelas que caem no mês, de qualquer venda.
-        <b>A receber</b> é tudo que ainda vai entrar, inclusive em meses seguintes.</div>`;
+        <b>Parcelado</b> é tudo que ainda vai entrar, inclusive em meses seguintes.</div>`;
 
   /* ---- meta ---- */
   let metaHtml = '';
@@ -3483,7 +3484,7 @@ function relFicha(x, d){
   }).join('');
   const recs = (d.recebimentos || []).map(function(r){
     return `<tr><td>${relE(String(r.data_prevista).slice(0, 10))}</td><td>${relE(rotuloForma(r.forma_normalizada))}</td>
-      <td>${relE(r.parcela_n)}/${relE(r.de_n)}</td><td>${r.classe === 'CAIXA' ? 'caixa' : 'a receber'}</td>
+      <td>${relE(r.parcela_n)}/${relE(r.de_n)}</td><td>${r.classe === 'CAIXA' ? 'caixa' : 'parcelado'}</td>
       <td class="n">${brl(r.valor)}</td></tr>`;
   }).join('');
 
