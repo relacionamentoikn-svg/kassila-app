@@ -466,6 +466,34 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 #relatorio .rel-rod{margin-top:16px;padding-top:5px;border-top:1px solid #E4DAD1;font:400 7.5px 'IBM Plex Mono',monospace;
   letter-spacing:.04em;color:#8A7F76;text-align:center}
 #relatorio .rel-quebra{break-before:page}
+#relatorio .rel-tit-g{font:500 22px 'Fraunces',Georgia,serif;letter-spacing:.005em;text-transform:none;color:#FAF7F3;margin-top:4px}
+#relatorio .rel-cab-mes{margin-left:auto;text-align:right;line-height:1.15}
+#relatorio .rel-cab-mes span{display:block;font:500 7.5px 'IBM Plex Mono',monospace;letter-spacing:.16em;color:#E3C58F}
+#relatorio .rel-cab-mes b{display:block;font:500 24px 'Fraunces',Georgia,serif;color:#FAF7F3;margin-top:3px;letter-spacing:.005em}
+#relatorio .rel-cab-mes em{display:block;font:400 7.5px 'IBM Plex Mono',monospace;font-style:normal;opacity:.75;margin-top:5px}
+#relatorio .rel-2col{display:grid;grid-template-columns:1.15fr 1fr;gap:14px;margin-top:12px;align-items:start}
+#relatorio .rel-sec small{font:500 8px 'IBM Plex Mono',monospace;color:#8A7F76;letter-spacing:.06em;margin-left:6px}
+#relatorio .rel-t tr.mute td{color:#8A7F76;font-style:italic}
+#relatorio .rel-t tr.mute small{font-size:7px;letter-spacing:.04em;text-transform:uppercase;margin-left:4px}
+#relatorio .rel-t td.sub{color:#6B6259;padding-left:14px}
+#relatorio .rel-t td.pos{color:#8A7F76;font:500 8px 'IBM Plex Mono',monospace}
+#relatorio .rel-bar{height:7px;background:#EDE5DC;border-radius:2px;overflow:hidden;margin-top:3px}
+#relatorio .rel-bar i{display:block;height:100%;background:#5C1A2B}
+#relatorio .rel-tag{display:inline-block;font:600 7px 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;
+  padding:1.5px 5px;border-radius:2px;background:#EDE5DC;color:#6B6259}
+#relatorio .rel-tag.n{background:#DDE7DF;color:#3C5A47}
+#relatorio .rel-tag.r{background:#EBD9DE;color:#5C1A2B}
+#relatorio .rel-meta{border:1px solid #E4DAD1;background:#FAF7F3;padding:9px 11px;break-inside:avoid}
+#relatorio .rel-meta-cab{display:flex;justify-content:space-between;align-items:baseline;font-size:10px}
+#relatorio .rel-meta-cab span{font:500 15px 'Fraunces',Georgia,serif;color:#5C1A2B}
+#relatorio .rel-meta-t{position:relative;height:9px;background:#E9E2DA;border-radius:2px;margin:6px 0 5px}
+#relatorio .rel-meta-t i{display:block;height:100%;background:#5C1A2B;border-radius:2px}
+#relatorio .rel-meta-t u{position:absolute;top:-3px;width:2px;height:15px;background:#241E1C;text-decoration:none}
+#relatorio .rel-meta-b{display:flex;justify-content:space-between;font:400 8px 'IBM Plex Mono',monospace;color:#6B6259}
+#relatorio .rel-meta-o{font-size:9px;font-weight:600;margin-top:5px}
+#relatorio .rel-meta-o.ok{color:#3C5A47}
+#relatorio .rel-meta-o.at{color:#A8442F}
+#relatorio .rel-meta-o small{font-weight:400;color:#6B6259;margin-left:2px}
 #relatorio .rf-dia{display:flex;justify-content:space-between;align-items:baseline;background:#5C1A2B;color:#FAF7F3;
   padding:5px 9px;margin:10px 0 6px;font:600 9px 'IBM Plex Mono',monospace;letter-spacing:.06em;break-after:avoid}
 #relatorio .rf-dia span:last-child{font-weight:400;opacity:.85;font-size:8.5px}
@@ -690,6 +718,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 
   <!-- ================= MÊS ================= -->
   <section class="tela" id="tela-mes">
+    <div class="rel-barra"><button class="bt-rel" onclick="abrirRelFechamento()">⎙ Relatório de fechamento de vendas (PDF)</button></div>
     <div class="grid-mes">
       <div class="col">
         <div class="hero" id="hero-mes"><div class="carregando" style="color:rgba(255,255,255,.7)">Carregando…</div></div>
@@ -2855,12 +2884,13 @@ function abrirModalCarregando(titulo){
 
 /* Endereço do monograma, com reserva no cabeçalho para o Apps Script. */
 /* ============ RELATÓRIOS EM PDF ============
-   Dois relatórios, montados só com o que a API já devolve:
+   Três relatórios, montados só com o que a API já devolve:
+     - Fechamento de vendas do mês (aba Mês)
      - Formas de pagamento por mês (aba Indicadores), período em colunas
      - Auditoria, por mês ou período, com a ficha completa de cada orçamento
    O PDF sai pelo "Salvar como PDF" do próprio navegador. O nome sugerido do
    arquivo vem do título da página, trocado só durante a impressão. */
-const VERSAO_TELA = 'V8.4.2';
+const VERSAO_TELA = 'V8.4.3';
 const REL_CORES = ['#5C1A2B','#B8894A','#4F6B58','#7A5C99','#3E5C76','#A8442F','#8A7F76','#C79A9E'];
 const REL_LIMITE_DIAS = 92;      // período maior que isso vira dezenas de páginas e minutos de espera
 const relE = v => (v === null || v === undefined) ? '' : tEsc(v);
@@ -3036,6 +3066,220 @@ function gerarRelFormas(){
       Indicadores. Meses sem PDF processado não entram no período.</div>
     ${relRodape()}`;
   relImprimir(html, 'Formas_Pagamento_' + ini + (ini === fim ? '' : '_a_' + fim));
+}
+
+/* ---------- 3. FECHAMENTO DE VENDAS DO MÊS ---------- */
+function relNorm(s){
+  return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim().toUpperCase();
+}
+const relNum = v => Number(v) || 0;
+
+function abrirRelFechamento(){
+  const opts = Array.from(document.querySelectorAll('#sel-mes option'));
+  if(!opts.length){ abrirModal('<div class="vazio">Nenhum mês disponível.</div>'); return; }
+  const op = opts.map(function(o){ return `<option value="${relE(o.value)}">${relE(o.textContent)}</option>`; }).join('');
+  abrirModal(`<h2 class="rel-mtit">Fechamento de vendas</h2>
+    <p class="rel-mdesc">Relatório do mês escolhido: venda do comercial, metas, contas, ranking de procedimentos,
+      ranking de pacientes por valor e a lista de pacientes novas e recorrentes. Mesma base da aba Mês.</p>
+    <div class="rel-campos"><label>Mês<select id="rfe-mes">${op}</select></label></div>
+    <div id="rfe-erro" class="rel-erro"></div>
+    <button class="lanc-bt" id="rfe-bt" onclick="gerarRelFechamento()">Gerar PDF</button>`);
+  document.getElementById('rfe-mes').value = MES;
+}
+
+async function gerarRelFechamento(){
+  const mes = document.getElementById('rfe-mes').value;
+  const erro = document.getElementById('rfe-erro');
+  const bt = document.getElementById('rfe-bt');
+  erro.textContent = '';
+  bt.disabled = true; bt.textContent = 'Reunindo os dados…';
+  let r, vendas, novas, recs;
+  try{
+    r = (R && R.mes === mes) ? R : await api('resumo', {mes: mes});
+    const lotes = await Promise.all([
+      api('lista', {conta: 'venda', periodo: 'mes', mes: mes}),
+      api('lista', {conta: 'pacientes_novas', mes: mes}),
+      api('lista', {conta: 'pacientes_recorrentes', mes: mes})
+    ]);
+    vendas = lotes[0] || []; novas = lotes[1] || []; recs = lotes[2] || [];
+  }catch(e){
+    erro.textContent = 'Não consegui reunir os dados: ' + e.message;
+    bt.disabled = false; bt.textContent = 'Gerar PDF'; return;
+  }
+  if(!r || !r.mes_cascata){
+    erro.textContent = 'Sem dados de venda para este mês.';
+    bt.disabled = false; bt.textContent = 'Gerar PDF'; return;
+  }
+  relImprimir(relHtmlFechamento(mes, r, vendas, novas, recs), 'Fechamento_Vendas_' + mes);
+}
+
+function relHtmlFechamento(mes, r, vendas, novas, recs){
+  const c = r.mes_cascata, m = r.meta;
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const mesTxt = cap(relMesExtenso(mes));
+
+  /* valor por paciente (soma dos orçamentos do mês) */
+  const setN = {}, setR = {};
+  novas.forEach(function(p){ setN[relNorm(p.paciente)] = 1; });
+  recs.forEach(function(p){ setR[relNorm(p.paciente)] = 1; });
+  const pac = {};
+  vendas.forEach(function(i){
+    const k = relNorm(i.paciente); if(!k) return;
+    const v = i.valor !== undefined ? i.valor : i.valor_estimado;
+    if(!pac[k]) pac[k] = {nome: String(i.paciente).trim(), orc: 0, valor: 0};
+    pac[k].orc += 1; pac[k].valor += relNum(v);
+  });
+  const tipoDe = k => setN[k] ? 'N' : (setR[k] ? 'R' : '');
+  const rank = Object.keys(pac).map(function(k){ const p = pac[k]; p.k = k; p.tipo = tipoDe(k); return p; })
+    .sort(function(a, b){ return b.valor - a.valor || a.nome.localeCompare(b.nome, 'pt-BR'); });
+  const somaRank = rank.reduce(function(t, p){ return t + p.valor; }, 0);
+  const semClasse = rank.filter(function(p){ return !p.tipo; }).length;
+  const top5 = rank.slice(0, 5).reduce(function(t, p){ return t + p.valor; }, 0);
+  const ticket = rank.length ? c.venda_comercial / rank.length : 0;
+
+  const lista = function(arr){          // novas / recorrentes, com valor do mês
+    const vistos = {}, out = [];
+    arr.forEach(function(p){
+      const k = relNorm(p.paciente); if(!k || vistos[k]) return; vistos[k] = 1;
+      const x = pac[k];
+      out.push({nome: x ? x.nome : String(p.paciente).trim(), orc: x ? x.orc : 0, valor: x ? x.valor : 0});
+    });
+    return out.sort(function(a, b){ return b.valor - a.valor || a.nome.localeCompare(b.nome, 'pt-BR'); });
+  };
+  const LN = lista(novas), LR = lista(recs);
+  const somaL = a => a.reduce(function(t, p){ return t + p.valor; }, 0);
+
+  /* ---- cabeçalho: título e mês em destaque ---- */
+  const cab = `<div class="rel-cab">
+      <img class="rel-logo" alt="" src="${monogramaSrc()}">
+      <div><div class="rel-clin">Instituto Kássila Nasser</div>
+        <div class="rel-tit rel-tit-g">Fechamento de vendas</div></div>
+      <div class="rel-cab-mes"><span>MÊS DE REFERÊNCIA</span><b>${relE(mesTxt)}</b>
+        <em>emitido em ${relAgora()}</em></div>
+    </div>`;
+
+  /* ---- KPIs ---- */
+  const kpis = `<div class="rel-kpis">
+      <div class="rel-kpi"><div class="r">Venda do comercial</div><div class="v">${brl(c.venda_comercial)}</div>
+        <div class="s">${vendas.length} orçamento(s) fechado(s)</div></div>
+      <div class="rel-kpi ouro"><div class="r">Meta de venda</div>
+        <div class="v">${m ? pct(m.pct_venda) : '—'}</div>
+        <div class="s">${m ? 'meta ' + brl(m.meta_venda) : 'sem meta cadastrada'}</div></div>
+      <div class="rel-kpi"><div class="r">Pacientes no mês</div><div class="v">${LN.length + LR.length}</div>
+        <div class="s">${LN.length} nova(s) · ${LR.length} recorrente(s)</div></div>
+      <div class="rel-kpi ouro"><div class="r">Ticket médio por paciente</div><div class="v">${brl(ticket)}</div>
+        <div class="s">${rank.length} paciente(s) com venda</div></div>
+    </div>`;
+
+  /* ---- composição da venda + contas ---- */
+  const nomesConta = {venda:'Venda', caixa:'Caixa recebido', a_receber:'A receber', permuta:'Permuta', duplicata:'Crediário', cortesia:'Cortesia'};
+  const composicao = `<table class="rel-t">
+      <thead><tr><th>Composição da venda</th><th class="n">Valor</th></tr></thead><tbody>
+      <tr><td>Total dos procedimentos</td><td class="n">${brl(c.total_procedimentos)}</td></tr>
+      <tr class="mute"><td>Descontos concedidos <small>informativo</small></td><td class="n">−${brl(c.desconto)}</td></tr>
+      <tr class="mute"><td>Total dos orçamentos <small>informativo</small></td><td class="n">${brl(c.total)}</td></tr>
+      <tr><td>Crediário</td><td class="n">−${brl(c.valor_duplicata)}</td></tr>
+      <tr><td>Permuta</td><td class="n">−${brl(c.valor_permuta)}</td></tr>
+      <tr class="tot"><td>Venda do comercial</td><td class="n">${brl(c.venda_comercial)}</td></tr>
+      <tr><td class="sub">caixa das vendas do mês</td><td class="n">${brl(c.caixa_imediato)}</td></tr>
+      <tr><td class="sub">a receber gerado pelas vendas do mês</td><td class="n">${brl(c.a_receber)}</td></tr>
+      </tbody></table>`;
+  const contas = `<table class="rel-t">
+      <thead><tr><th>Contas do mês</th><th class="n">Registros</th><th class="n">Valor</th></tr></thead><tbody>
+      ${Object.keys(r.contas || {}).map(function(k){
+        const x = r.contas[k];
+        return `<tr><td>${relE(nomesConta[k] || k)}</td><td class="n">${relNum(x.qtd)}</td><td class="n">${brl(x.valor)}</td></tr>`;
+      }).join('')}
+      </tbody></table>
+      <div class="rel-nota"><b>Caixa recebido</b> reúne as parcelas que caem no mês, de qualquer venda.
+        <b>A receber</b> é tudo que ainda vai entrar, inclusive em meses seguintes.</div>`;
+
+  /* ---- meta ---- */
+  let metaHtml = '';
+  if(m){
+    const dv = m.pct_venda - m.ritmo_pct;
+    metaHtml = `<div class="rel-sec">Meta do mês</div>
+      <div class="rel-meta">
+        <div class="rel-meta-cab"><b>Meta de venda</b><span>${pct(m.pct_venda)}</span></div>
+        <div class="rel-meta-t"><i style="width:${Math.min(m.pct_venda, 100)}%"></i><u style="left:${Math.min(m.ritmo_pct, 100)}%"></u></div>
+        <div class="rel-meta-b"><span>realizado ${brl(m.venda_realizada)}</span><span>meta ${brl(m.meta_venda)}</span></div>
+        <div class="rel-meta-o ${dv >= 0 ? 'ok' : 'at'}">${dv >= 0 ? 'Acima' : 'Abaixo'} do ritmo em ${pct(Math.abs(dv))}
+          <small>· o traço marca onde a meta estaria em dia: ${m.dias_uteis_decorridos} de ${m.dias_uteis} dias úteis (${pct(m.ritmo_pct)})</small></div>
+      </div>`;
+  }else{
+    metaHtml = `<div class="rel-sec">Meta do mês</div><div class="rel-nota">Sem meta cadastrada para este mês.</div>`;
+  }
+
+  /* ---- ranking de procedimentos ---- */
+  const rk = r.ranking_procedimentos || [];
+  const maxR = rk.length ? Math.max.apply(null, rk.map(function(x){ return x.valor; })) : 0;
+  const rkHtml = rk.length ? `<table class="rel-t">
+      <thead><tr><th class="n" style="width:22px">#</th><th>Procedimento</th><th style="width:30%"></th><th class="n">Qtd.</th><th class="n">Valor</th></tr></thead><tbody>
+      ${rk.map(function(x, i){
+        return `<tr><td class="n pos">${i + 1}</td><td>${relE(x.procedimento)}</td>
+          <td><div class="rel-bar"><i style="width:${maxR ? (x.valor / maxR * 100).toFixed(1) : 0}%"></i></div></td>
+          <td class="n">${relNum(x.qtd)}x</td><td class="n">${brl(x.valor)}</td></tr>`;
+      }).join('')}</tbody></table>`
+    : '<div class="rel-nota">Sem procedimentos no mês.</div>';
+
+  /* ---- ranking de pacientes ---- */
+  let acum = 0;
+  const rotTipo = {N: 'Nova', R: 'Recorrente', '': '—'};
+  const rankHtml = rank.length ? `<table class="rel-t">
+      <thead><tr><th class="n" style="width:22px">#</th><th>Paciente</th><th>Perfil</th><th class="n">Orç.</th>
+        <th class="n">Valor</th><th class="n">% da venda</th><th class="n">% acum.</th></tr></thead><tbody>
+      ${rank.map(function(p, i){
+        acum += p.valor;
+        return `<tr><td class="n pos">${i + 1}</td><td>${relE(p.nome)}</td>
+          <td><span class="rel-tag ${p.tipo === 'N' ? 'n' : (p.tipo === 'R' ? 'r' : '')}">${rotTipo[p.tipo]}</span></td>
+          <td class="n">${p.orc}</td><td class="n">${brl(p.valor)}</td>
+          <td class="n">${relPct(p.valor, somaRank)}</td><td class="n">${relPct(acum, somaRank)}</td></tr>`;
+      }).join('')}
+      <tr class="tot"><td></td><td>Total</td><td></td><td class="n">${vendas.length}</td>
+        <td class="n">${brl(somaRank)}</td><td class="n">100%</td><td class="n"></td></tr>
+      </tbody></table>
+      <div class="rel-nota">As 5 maiores pacientes somam <b>${relPct(top5, somaRank)}</b> da venda do mês.</div>`
+    : '<div class="rel-nota">Sem vendas no mês.</div>';
+
+  /* ---- listas de novas e recorrentes ---- */
+  const tabLista = function(arr, vazio){
+    if(!arr.length) return `<div class="rel-nota">${vazio}</div>`;
+    const soma = somaL(arr);
+    return `<table class="rel-t">
+      <thead><tr><th class="n" style="width:22px">#</th><th>Paciente</th><th class="n">Orç.</th><th class="n">Valor no mês</th>
+        <th class="n">% da venda</th></tr></thead><tbody>
+      ${arr.map(function(p, i){
+        return `<tr><td class="n pos">${i + 1}</td><td>${relE(p.nome)}</td><td class="n">${p.orc || '—'}</td>
+          <td class="n">${p.orc ? brl(p.valor) : '—'}</td><td class="n">${p.orc ? relPct(p.valor, somaRank) : '—'}</td></tr>`;
+      }).join('')}
+      <tr class="tot"><td></td><td>${arr.length} paciente(s)</td><td class="n"></td><td class="n">${brl(soma)}</td>
+        <td class="n">${relPct(soma, somaRank)}</td></tr></tbody></table>`;
+  };
+
+  /* ---- notas de conferência ---- */
+  const dif = somaRank - relNum(c.venda_comercial);
+  let notas = `<b>Base:</b> orçamentos fechados no mês, mesma origem dos números da aba Mês. Venda do comercial = total dos
+    procedimentos − crediário − permuta; descontos e cortesias não alteram essa conta. Pacientes novas e recorrentes seguem a
+    classificação do app (recorrente: compra anterior em até 99 dias).`;
+  if(Math.abs(dif) > 0.5){
+    notas += `<br><b>Conferência:</b> a soma por paciente (${brl(somaRank)}) difere da venda do comercial (${brl(c.venda_comercial)})
+      em ${brl(Math.abs(dif))}.`;
+  }
+  if(semClasse){
+    notas += `<br><b>Atenção:</b> ${semClasse} paciente(s) com venda no mês sem classificação de novas/recorrentes
+      (marcadas com “—” no ranking).`;
+  }
+
+  return `<style>@page{size:A4 portrait}</style>
+    ${cab}${kpis}
+    <div class="rel-2col"><div>${composicao}</div><div>${contas}</div></div>
+    ${metaHtml}
+    <div class="rel-sec">Ranking de procedimentos <small>no mês</small></div>${rkHtml}
+    <div class="rel-sec">Ranking de pacientes por valor</div>${rankHtml}
+    <div class="rel-sec">Pacientes novas <small>${LN.length}</small></div>${tabLista(LN, 'Nenhuma paciente nova no mês.')}
+    <div class="rel-sec">Pacientes recorrentes <small>${LR.length}</small></div>${tabLista(LR, 'Nenhuma paciente recorrente no mês.')}
+    <div class="rel-nota">${notas}</div>
+    ${relRodape()}`;
 }
 
 /* ---------- 2. AUDITORIA ---------- */
