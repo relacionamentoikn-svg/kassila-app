@@ -2891,7 +2891,7 @@ function abrirModalCarregando(titulo){
      - Auditoria, por mês ou período, com a ficha completa de cada orçamento
    O PDF sai pelo "Salvar como PDF" do próprio navegador. O nome sugerido do
    arquivo vem do título da página, trocado só durante a impressão. */
-const VERSAO_TELA = 'V8.4.4';
+const VERSAO_TELA = 'V8.4.6';
 const REL_CORES = ['#5C1A2B','#B8894A','#4F6B58','#7A5C99','#3E5C76','#A8442F','#8A7F76','#C79A9E'];
 const REL_LIMITE_DIAS = 92;      // período maior que isso vira dezenas de páginas e minutos de espera
 const relE = v => (v === null || v === undefined) ? '' : tEsc(v);
@@ -3556,7 +3556,11 @@ function loginResolver(texto){
   if(inicio.length === 1) return {u: inicio[0]};
   if(porNome.length > 1 || inicio.length > 1)
     return {erro: 'Mais de um usuário combina com "' + texto.trim() + '". Digite o nome completo ou o e-mail.'};
-  return {erro: 'Usuário não encontrado. Escolha na lista ou digite o nome como aparece nela.'};
+  /* Acesso oculto (SUPORTE): o servidor não põe esse usuário na lista e o
+     reconhece só pelo código. Então, nome fora da lista não barra aqui: vai
+     ao servidor assim mesmo; se o código não for de um acesso oculto, ele
+     recusa e a mensagem de "não encontrado" aparece depois. */
+  return {u: {id: '', nome: texto.trim(), oculto: true, tentativa: true}};
 }
 
 function mostrarLogin(erro){
@@ -3577,7 +3581,7 @@ function mostrarLogin(erro){
   const bt = document.getElementById('lg-bt');
   bt.disabled = false; bt.textContent = 'Entrar';
   const lem = lgLer();
-  const valido = lem && (tUsuarios || []).some(function(u){ return String(u.id) === String(lem.id); });
+  const valido = lem && (lem.oculto || (tUsuarios || []).some(function(u){ return String(u.id) === String(lem.id); }));
   if(lem && !valido) lgApagar();
   if(valido && !usr.value){
     usr.value = lem.nome; cod.value = lem.codigo || '';
@@ -3617,7 +3621,7 @@ async function loginEntrar(){
     USUARIO_ID = r.id; PASSE = r.passe || null;
     tSel = achou.u.id;
     tPessoa = {id: r.id, nome: r.nome, papel: r.papel, codigo: cod};
-    if(document.getElementById('lg-lembrar').checked) lgGravar({id: r.id, nome: r.nome || achou.u.nome, codigo: cod});
+    if(document.getElementById('lg-lembrar').checked) lgGravar({id: r.id, nome: r.nome || achou.u.nome, codigo: cod, oculto: !!achou.u.oculto});
     else lgApagar();
     document.getElementById('login-tela').classList.remove('on');
     if(r.aceitou){ iniciar(r.painel); return; }
@@ -3627,6 +3631,11 @@ async function loginEntrar(){
     tPasso = 2; tPintar();
   }catch(err){
     const m = String(err && err.message || err);
+    if(achou.u.tentativa){
+      loginErro('Usuário não encontrado ou código inválido. Escolha o nome na lista ou digite-o como aparece nela.');
+      bt.disabled = false; bt.textContent = 'Entrar';
+      document.getElementById('lg-usr').focus(); return;
+    }
     loginErro(/c[oó]digo|senha|inativ|inv[aá]lid/i.test(m) ? 'Código de acesso inválido ou usuário inativo.' : m);
     bt.disabled = false; bt.textContent = 'Entrar';
     document.getElementById('lg-cod').select();
