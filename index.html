@@ -814,7 +814,7 @@ let MES = null, DIA = null, R = null;
    com o código de senha e o app parava no login. */
 let USUARIO_ID = null, PASSE = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V8.4';
+const VERSAO_ESPERADA = 'V8.5';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -1687,6 +1687,7 @@ function htmlOrcamento(d, compacto){
     <h2 style="font-family:'Fraunces',Georgia,serif;font-size:${compacto?18:21}px;margin:6px 0 4px;line-height:1.15">${o.paciente}</h2>
     <div style="font-size:11px;color:rgba(36,30,28,.6)">${o.data_venda} · ${o.responsavel||''}</div>
     <div style="font-size:11px;margin-top:5px;font-family:'IBM Plex Mono',monospace">${recorrencia}</div>
+    ${o.campanha ? `<div style="display:inline-block;margin-top:7px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:#F5EEDF;color:#6E5320;border:1px solid #E2CFA5">◆ Campanha: ${o.campanha}</div>` : ''}
     <div class="sec">Procedimentos</div>${itens}
     <div class="item-l" style="border-top:1px solid var(--linha-forte);font-weight:600">
       <div class="nm">Total dos procedimentos</div><div class="vt">${brl(o.total_procedimentos)}</div></div>
