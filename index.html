@@ -822,6 +822,99 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 
 .aud-ok .orc2{border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
 .aud-ok .selo-aud{margin-bottom:10px}
+
+/* ===== V9.1 — Indicadores ===== */
+#ind-corpo{position:relative}
+.ix-ctl{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;background:#fff;border:1px solid var(--linha);border-radius:12px;padding:12px 16px;margin-bottom:14px}
+.ix-grp label{display:block;font:600 9px 'IBM Plex Mono',monospace;letter-spacing:.13em;text-transform:uppercase;color:rgba(36,30,28,.5);margin-bottom:5px}
+.ix-seg{display:inline-flex;border:1px solid var(--linha-forte);border-radius:8px;overflow:hidden;background:#fff}
+.ix-seg button{border:0;background:transparent;padding:7px 12px;font:500 12px 'Inter',system-ui,sans-serif;color:rgba(36,30,28,.7);cursor:pointer}
+.ix-seg button+button{border-left:1px solid var(--linha-forte)}
+.ix-seg button.on{background:var(--vinho);color:#fff}
+.ix-seg button:not(.on):hover{background:rgba(92,26,43,.06)}
+.ix-sel{padding:7px 10px;border:1px solid var(--linha-forte);border-radius:8px;font:500 12px 'Inter',system-ui,sans-serif;background:#fff;color:var(--tinta)}
+.ix-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:10px;margin-bottom:18px}
+.ix-kpis.sm{margin:12px 0 14px}
+.ix-k{position:relative;background:#fff;border:1px solid var(--linha);border-radius:12px;padding:13px 14px 12px;overflow:hidden;min-width:0}
+.ix-k.dest{background:var(--vinho);border-color:var(--vinho);color:#fff}
+.ix-kr{font:600 9px 'IBM Plex Mono',monospace;letter-spacing:.13em;text-transform:uppercase;color:rgba(36,30,28,.5)}
+.ix-k.dest .ix-kr{color:rgba(255,255,255,.7)}
+.ix-kv{font:600 21px/1.15 'Fraunces',Georgia,serif;margin:6px 0 4px;color:var(--vinho);white-space:nowrap;font-variant-numeric:tabular-nums}
+.ix-k.dest .ix-kv{color:#fff}
+.ix-ks{font-size:11px;color:rgba(36,30,28,.55);line-height:1.5}
+.ix-k.dest .ix-ks{color:rgba(255,255,255,.75)}
+.ix-d{display:block;font-weight:600;font-size:11px}.ix-d i{font-style:normal;font-weight:400;opacity:.75}
+.ix-d.up{color:#3F6B52}.ix-d.dn{color:#A8442F}
+.ix-k.dest .ix-d.up{color:#BFE3C9}.ix-k.dest .ix-d.dn{color:#F2B8A8}
+.ix-spark{display:block;width:100%;height:30px;margin-top:8px}
+.ix-prog{height:6px;border-radius:4px;background:rgba(36,30,28,.1);margin-top:10px;overflow:hidden}.ix-prog i{display:block;height:100%;border-radius:4px}
+.ix-sec{margin-bottom:24px}
+.ix-sec h3{font:600 17px 'Fraunces',Georgia,serif;color:var(--vinho);margin:0 0 3px}
+.ix-sub{font-size:12px;color:rgba(36,30,28,.58);margin:0 0 12px;line-height:1.55;max-width:880px}
+.ix-card{background:#fff;border:1px solid var(--linha);border-radius:12px;padding:14px 16px 10px;margin-bottom:12px}
+.ix-ch{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.ix-ch h4{margin:0;font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:rgba(36,30,28,.6)}
+.ix-meta{font:500 11px 'IBM Plex Mono',monospace;color:rgba(36,30,28,.5)}
+.ix-2col{display:grid;gap:12px}
+@media(min-width:1100px){.ix-2col{grid-template-columns:1fr 1fr}}
+.ix-svg{width:100%;height:auto;display:block}
+.ix-grade{stroke:rgba(36,30,28,.08);stroke-width:1}
+.ix-eix{font:400 10px 'IBM Plex Mono',monospace;fill:rgba(36,30,28,.5)}
+.ix-eix.sel{fill:var(--vinho);font-weight:700}
+.ix-val{font:600 10px 'IBM Plex Mono',monospace;fill:rgba(36,30,28,.6)}.ix-val.sel{fill:var(--vinho);font-size:11px}
+.ix-b{cursor:pointer}.ix-b:hover .ix-bar{filter:brightness(1.12)}.ix-b.sel .ix-bar{stroke:var(--ouro);stroke-width:2}
+.ix-ref{stroke:#B8894A;stroke-width:1.4;stroke-dasharray:5 4}.ix-reft{font:600 10px 'IBM Plex Mono',monospace;fill:#8A6A33}
+.ix-linha{stroke:#241E1C;stroke-width:1.8;stroke-linejoin:round}.ix-pt{fill:#fff;stroke:#241E1C;stroke-width:1.6}
+.ix-leg{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:rgba(36,30,28,.65);padding:6px 0 4px}
+.ix-leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.ix-leg i.ln{width:16px;height:0;border-top:2px solid #241E1C;border-radius:0;vertical-align:3px}
+.ix-leg i.tr{width:16px;height:0;border-top:2px dashed #B8894A;border-radius:0;vertical-align:3px}
+.ix-leg .dir{margin-left:auto;color:rgba(36,30,28,.45)}
+.ix-tip{position:absolute;display:none;pointer-events:none;z-index:30;background:#241E1C;color:#fff;border-radius:9px;padding:9px 12px;font-size:11.5px;line-height:1.5;box-shadow:0 6px 22px rgba(0,0,0,.25);min-width:150px;max-width:260px}
+.ix-tip b{display:block;font:600 12px 'IBM Plex Mono',monospace;margin-bottom:3px;color:#F1D9A8}
+.ix-mix{display:flex;height:22px;border-radius:7px;overflow:hidden;gap:2px;margin:6px 0 12px}.ix-mix i{display:block;height:100%;min-width:2px}
+.ix-mixl{display:grid;gap:2px}
+.ix-mixl>div{display:grid;grid-template-columns:14px 1fr auto 62px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--linha);font-size:12.5px}
+.ix-mixl i{width:10px;height:10px;border-radius:3px}.ix-mixl b{font:600 12.5px 'IBM Plex Mono',monospace}.ix-mixl em{font:normal 500 11.5px 'IBM Plex Mono',monospace;color:rgba(36,30,28,.55);text-align:right}
+.ix-tabbox{overflow-x:auto;padding:0}
+.ix-tab{width:100%;border-collapse:collapse;font-size:12.5px;white-space:nowrap}
+.ix-tab th{position:sticky;top:0;background:#F7F2EC;text-align:right;font:600 9.5px 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(36,30,28,.6);padding:10px 12px;border-bottom:1px solid var(--linha-forte)}
+.ix-tab th.ord{cursor:pointer}.ix-tab th.ord:hover,.ix-tab th.on{color:var(--vinho)}
+.ix-tab th:first-child,.ix-tab td:first-child{text-align:left}
+.ix-tab td{padding:9px 12px;text-align:right;border-bottom:1px solid #F0EAE4;font-variant-numeric:tabular-nums}
+.ix-tab tr{cursor:pointer}.ix-tab tbody tr:hover{background:rgba(92,26,43,.04)}
+.ix-tab tr.foco{background:rgba(184,137,74,.14)}.ix-tab tr.foco td:first-child{font-weight:700;color:var(--vinho)}
+.ix-tab td.up{color:#3F6B52}.ix-tab td.dn{color:#A8442F}
+.ix-tab td.vb{position:relative;min-width:140px}.ix-tab td.vb b{position:relative;font-weight:600}.vbar{position:absolute;left:0;top:6px;bottom:6px;background:rgba(92,26,43,.09);border-radius:0 4px 4px 0}
+
+/* ===== V9.1 — cartão suspenso (aba Dia) ===== */
+.orc2.susp{padding:0;cursor:default}
+.os-head{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:13px 14px 12px 14px;cursor:pointer}
+.os-head .o2-pac{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.os-head .o2-val{font-size:16px}
+.os-chev{width:22px;height:22px;border-radius:50%;background:rgba(92,26,43,.08);color:var(--vinho);display:grid;place-items:center;font-size:11px;transition:transform .18s}
+.orc2.susp.aberto .os-chev{transform:rotate(180deg);background:var(--vinho);color:#fff}
+.os-body{display:none;padding:0 16px 14px;border-top:1px dashed var(--linha-forte)}
+.orc2.susp.aberto .os-body{display:block}
+.os-body .o2-head{margin:12px 0 0}
+.os-abrir{margin-top:12px;width:100%;padding:10px;border:1px solid var(--vinho);background:#fff;color:var(--vinho);border-radius:9px;font:600 12.5px 'Inter',system-ui,sans-serif;cursor:pointer}
+.os-abrir:hover{background:var(--vinho);color:#fff}
+.os-bar{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px;font:500 11px 'IBM Plex Mono',monospace;color:rgba(36,30,28,.55)}
+.os-bar button{border:0;background:none;color:var(--vinho);font:600 11px 'IBM Plex Mono',monospace;cursor:pointer;text-decoration:underline}
+
+/* ===== V9.1 — cascata, arquivos ===== */
+.cascata .info{display:flex;justify-content:space-between;gap:10px;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,.25);font-size:11px;color:rgba(255,255,255,.62)}
+.c-desconto{border-left-color:var(--latao)}
+.arq-ant{margin-top:14px;border:1px solid var(--linha);border-radius:10px;background:#fff}
+.arq-ant>summary{cursor:pointer;padding:11px 14px;font:600 12px 'Inter',system-ui,sans-serif;color:var(--vinho);list-style:none}
+.arq-ant>summary::-webkit-details-marker{display:none}
+.arq-ant>summary::before{content:"▸ ";display:inline-block;transition:transform .15s}
+.arq-ant[open]>summary::before{transform:rotate(90deg)}
+.arq-ant .arq-tab-box{padding:0 6px 8px}
+.arq-dia{font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:rgba(36,30,28,.5);margin:2px 0 6px}
+@media(max-width:999px){nav.tabs button[data-tela=arquivos],#tela-arquivos{display:none!important}}
+.emailprev{width:100%;height:440px;border:1px solid var(--linha);border-radius:10px;background:#FAF7F3}
+.ep-meta{font-size:12px;line-height:1.6;margin:0 0 10px;color:rgba(36,30,28,.75)}.ep-meta b{color:var(--tinta)}
 </style>
 </head>
 <body>
@@ -1065,7 +1158,7 @@ let MES = null, DIA = null, R = null;
    com o código de senha e o app parava no login. */
 let USUARIO_ID = null, PASSE = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V9.0';
+const VERSAO_ESPERADA = 'V9.1';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -1676,12 +1769,6 @@ function conferirVersao(){
 
 /* ---------------- DIA ---------------- */
 
-async function carregarListaDia(pronta){
-  const lista = pronta || await api('lista',{conta:'venda',periodo:'dia',mes:MES,dia:DIA||R.hoje});
-  const el = document.getElementById('lista-dia');
-  if(!lista.length){ el.innerHTML='<div class="vazio">Nenhum orçamento fechado neste dia.</div>'; return; }
-  el.innerHTML = lista.map(cartaoOrc).join('');
-}
 
 
 /* ---------------- MÊS ---------------- */
@@ -1693,17 +1780,16 @@ function renderMes(){
     <div class="grande"><small>R$</small>${brl0(c.venda_comercial)}</div>
     <div class="cascata">
       <div><span>Total dos procedimentos</span><span>${brl(c.total_procedimentos)}</span></div>
-      <div class="menos"><span>Descontos</span><span>−${brl(c.desconto)}</span></div>
-      <div><span>Total dos orçamentos</span><span>${brl(c.total)}</span></div>
       <div class="menos"><span>Crediário</span><span>−${brl(c.valor_duplicata)}</span></div>
       <div class="menos"><span>Permuta</span><span>−${brl(c.valor_permuta)}</span></div>
       <div class="tot"><span>Venda do comercial</span><span>${brl(c.venda_comercial)}</span></div>
       <div class="sub2"><span>caixa das vendas do mês</span><span>${brl(c.caixa_imediato)}</span></div>
       <div class="sub2"><span>parcelado gerado pelas vendas do mês</span><span>${brl(c.a_receber)}</span></div>
+      <div class="info"><span>Descontos concedidos (não abatem a venda) · ${c.total_procedimentos ? (c.desconto / c.total_procedimentos * 100).toFixed(1).replace('.', ',') : '0,0'}%</span><span>${brl(c.desconto)}</span></div>
     </div>`;
 
-  const nomes={venda:'Venda',caixa:'Caixa recebido',a_receber:'Parcelado',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
-  const cls={venda:'c-venda',caixa:'c-caixa',a_receber:'c-receber',permuta:'c-permuta',duplicata:'c-duplicata',cortesia:'c-cortesia'};
+  const nomes={venda:'Venda',caixa:'Caixa recebido',a_receber:'Parcelado',desconto:'Descontos concedidos',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
+  const cls={venda:'c-venda',caixa:'c-caixa',a_receber:'c-receber',desconto:'c-desconto',permuta:'c-permuta',duplicata:'c-duplicata',cortesia:'c-cortesia'};
   document.getElementById('contas-grid').innerHTML = Object.keys(R.contas).map(k=>{
     const x=R.contas[k];
     return `<button class="conta-btn ${cls[k]}" onclick="abrirConta('${k}')">
@@ -1799,8 +1885,8 @@ function renderResumoMesLateral(){
     <div class="card"><h3>Metas</h3>${metaHtml}</div>
     <div class="card"><h3>Contas do mês</h3><div class="contas-grid">${
       Object.keys(R.contas).map(k=>{
-        const nomes={venda:'Venda',caixa:'Caixa',a_receber:'Parcelado',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
-        const cls={venda:'c-venda',caixa:'c-caixa',a_receber:'c-receber',permuta:'c-permuta',duplicata:'c-duplicata',cortesia:'c-cortesia'};
+        const nomes={venda:'Venda',caixa:'Caixa',a_receber:'Parcelado',desconto:'Descontos',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
+        const cls={venda:'c-venda',caixa:'c-caixa',a_receber:'c-receber',desconto:'c-desconto',permuta:'c-permuta',duplicata:'c-duplicata',cortesia:'c-cortesia'};
         const x=R.contas[k];
         return `<button class="conta-btn ${cls[k]}" onclick="abrirConta('${k}')">
           <div class="nome">${nomes[k]}</div><div class="val" style="font-size:14px">${brl0(x.valor)}</div>
@@ -1811,18 +1897,20 @@ function renderResumoMesLateral(){
 /* ---------------- CONTAS ---------------- */
 async function abrirConta(conta){
   const lista = await api('lista',{conta,periodo:'mes',mes:MES});
-  const nomes={venda:'Venda do comercial',caixa:'Caixa recebido no mês',a_receber:'Parcelado',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia concedida'};
+  const nomes={venda:'Venda do comercial',caixa:'Caixa recebido no mês',a_receber:'Parcelado',desconto:'Descontos concedidos (não abatem a venda)',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia concedida'};
   let html=`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 4px;color:var(--vinho)">${nomes[conta]}</h2>
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(36,30,28,.5);margin-bottom:14px">${rotuloMes(MES)} · ${lista.length} registro(s)</div>`;
   if(!lista.length) html+='<div class="vazio">Nenhum registro neste mês.</div>';
   else html += lista.map(i=>{
     const v = i.valor!==undefined ? i.valor : i.valor_estimado;
-    const sub = conta==='cortesia' ? i.descricao
+    const sub = conta==='desconto' ? `${i.desconto_pct}% de desconto · procedimentos ${brl(i.total_procedimentos)} → venda ${brl(i.venda)}${i.descricao ? ' · ' + i.descricao : ''}`
+              : conta==='permuta' ? `${i.descricao || ''} · procedimentos ${brl(i.total_procedimentos)} · venda ${brl(i.venda)}`
+              : conta==='cortesia' ? i.descricao
               : conta==='caixa'||conta==='a_receber' ? `${i.forma} · parcela ${i.parcela}`
               : (i.procedimentos||i.descricao||i.forma_original||'');
     const idOrc = i.id.split('-')[0];
     return `<div class="orc" onclick="abrirOrcamento('${idOrc}')">
-      <div class="l1"><span class="pac">${i.paciente}</span><span class="val">${brl(v)}</span></div>
+      <div class="l1"><span class="pac">${NP(i.paciente)}</span><span class="val">${brl(v)}</span></div>
       <div class="l2"><span class="cod">ORÇ ${i.num} · ${i.data}</span></div>
       ${sub?`<div class="procs">${sub}</div>`:''}</div>`;
   }).join('');
@@ -2396,97 +2484,6 @@ function svgDuplas(dados, W, cores, r1, r2){
     <span><span style="display:inline-block;width:9px;height:9px;background:${c2};border-radius:2px"></span> ${r2}</span></div>`;
 }
 
-function pintarIndicadores(){
-  const S = IND.serie || [];
-  if(!S.length){ document.getElementById('ind-corpo').innerHTML='<div class="vazio">Sem dados.</div>'; return; }
-  const u = S[S.length-1];
-  const ant = S.length>1 ? S[S.length-2] : null;
-  // mesmo mês do ano anterior, que é a comparação que interessa na sazonalidade
-  const p = String(u.mes).split('-');
-  const anoAnt = S.filter(x => x.mes === (Number(p[0])-1)+'-'+p[1])[0];
-
-  const delta = (a,b,suf) => (b===null||b===undefined||!b) ? ''
-    : `<div class="d ${a>=b?'up':'dn'}">${a>=b?'▲':'▼'} ${Math.abs(Math.round((a/b-1)*100))}% ${suf}</div>`;
-
-  const ult12 = S.slice(-12);
-  const comPdf = S.filter(x=>x.tem_pdf);
-  const fmtR = v => 'R$ '+kbrl(v);
-  const fmtI = v => Math.round(v);
-  const fmtP = v => Math.round(v)+'%';
-
-  const formasTot = {};
-  comPdf.forEach(x=>{ Object.keys(x.formas||{}).forEach(f=>{ formasTot[f]=(formasTot[f]||0)+x.formas[f]; }); });
-  const formasOrd = Object.keys(formasTot).sort((a,b)=>formasTot[b]-formasTot[a]);
-  const totForma = formasOrd.reduce((t,f)=>t+formasTot[f],0)||1;
-
-  document.getElementById('ind-corpo').innerHTML = `
-  <div class="ind-bloco">
-    <h3 class="ind-tit">Evolução</h3>
-    <p class="ind-sub">Série completa desde ${mesCurto(S[0].mes)}. Vem do histórico de orçamentos aprovados.</p>
-    <div class="ind-cards">
-      <div class="ind-card"><div class="r">Venda ${mesCurto(u.mes)}</div><div class="v">${brl(u.venda)}</div>
-        ${delta(u.venda, ant?ant.venda:null,'vs mês anterior')}
-        ${anoAnt?delta(u.venda, anoAnt.venda,'vs '+mesCurto(anoAnt.mes)):''}</div>
-      <div class="ind-card"><div class="r">Ticket médio</div><div class="v">${brl(u.ticket)}</div>
-        ${delta(u.ticket, ant?ant.ticket:null,'vs mês anterior')}</div>
-      <div class="ind-card"><div class="r">Orçamentos</div><div class="v">${u.qtd}</div>
-        ${delta(u.qtd, ant?ant.qtd:null,'vs mês anterior')}</div>
-      <div class="ind-card"><div class="r">Taxa de retenção</div>
-        <div class="v">${u.retencao!==null?Math.round(u.retencao)+'%':'—'}</div>
-        <div class="d">${u.recorrentes} recorrentes de ${u.novas+u.recorrentes}</div></div>
-      ${u.atingimento!==null?`<div class="ind-card"><div class="r">Meta</div>
-        <div class="v">${Math.round(u.atingimento)}%</div><div class="d">de ${brl(u.meta)}</div></div>`:''}
-    </div>
-    <div class="ind-graf"><h4>Venda por mês — últimos 12</h4>${regGrafico('g-venda','barras',ult12.map(x=>({m:x.mes,v:x.venda})),'#5C1A2B',fmtR)}</div>
-    <div class="ind-graf"><h4>Ticket médio por mês</h4>${regGrafico('g-ticket','barras',ult12.map(x=>({m:x.mes,v:x.ticket})),'#B8894A',fmtR)}</div>
-    <div class="ind-graf"><h4>Pacientes novas x recorrentes</h4>
-      ${regGrafico('g-pac','duplas',ult12.map(x=>({m:x.mes,a:x.novas,b:x.recorrentes})),['#B8894A','#5C1A2B'],null,'novas','recorrentes')}</div>
-  </div>
-
-  <div class="ind-bloco">
-    <h3 class="ind-tit">Qualidade da venda</h3>
-    <p class="ind-sub">Desconto, formas de pagamento, prazo e recebimento.</p>
-    <div class="ind-aviso"><b>Cobre apenas ${comPdf.length} mês(es):</b> ${comPdf.map(x=>mesCurto(x.mes)).join(', ')}.
-      Esses números só existem para os meses cujos PDFs passaram pelo extrator — o histórico antigo traz paciente,
-      data e valor, e mais nada. A cobertura cresce a cada mês que você processa.</div>
-    ${comPdf.length?`
-    <div class="ind-cards">
-      <div class="ind-card"><div class="r">% recebido no mês</div>
-        <div class="v">${u.recebido_pct!==null?Math.round(u.recebido_pct)+'%':'—'}</div>
-        <div class="d">${brl(u.caixa||0)} de ${brl(u.venda)}</div></div>
-      <div class="ind-card"><div class="r">Desconto global</div>
-        <div class="v">${u.desconto_pct!==null?u.desconto_pct.toFixed(1).replace('.',',')+'%':'—'}</div></div>
-      <div class="ind-card"><div class="r">Prazo médio</div>
-        <div class="v">${u.prazo_medio!==null?u.prazo_medio+' d':'—'}</div>
-        <div class="d">até o recebimento</div></div>
-      <div class="ind-card"><div class="r">Parcelado</div><div class="v">${brl(u.a_receber||0)}</div></div>
-      <div class="ind-card"><div class="r">Permuta</div><div class="v">${brl(u.permuta||0)}</div></div>
-      <div class="ind-card"><div class="r">Cortesia</div><div class="v">${brl(u.cortesia||0)}</div></div>
-    </div>
-    <div class="ind-graf"><h4>% recebido sobre o vendido</h4>
-      ${regGrafico('g-receb','barras',comPdf.map(x=>({m:x.mes,v:x.recebido_pct||0})),'#7E8F7C',fmtP)}</div>
-    <div class="ind-graf"><h4>Desconto global %</h4>
-      ${regGrafico('g-desc','barras',comPdf.map(x=>({m:x.mes,v:x.desconto_pct||0})),'#A8442F',v=>v.toFixed(1).replace('.',',')+'%')}</div>
-    <div class="ind-graf"><h4>Formas de pagamento</h4>
-      <table class="ind-tab"><tr><th>Forma</th><th>Valor</th><th>%</th></tr>
-      ${formasOrd.map(f=>`<tr><td>${tEsc(f)}</td><td>${brl(formasTot[f])}</td>
-        <td>${(formasTot[f]/totForma*100).toFixed(1).replace('.',',')}%</td></tr>`).join('')}</table></div>
-    `:'<div class="vazio">Nenhum mês processado por PDF ainda.</div>'}
-  </div>
-
-  <div class="ind-bloco">
-    <h3 class="ind-tit">Série completa</h3>
-    <p class="ind-sub">Todos os meses, do primeiro registro até hoje.</p>
-    <div class="ind-graf" style="overflow-x:auto">
-      <table class="ind-tab">
-        <tr><th>Mês</th><th>Venda</th><th>Orç.</th><th>Ticket</th><th>Novas</th><th>Recor.</th><th>Retenção</th></tr>
-        ${S.slice().reverse().map(x=>`<tr><td>${mesCurto(x.mes)}</td><td>${brl(x.venda)}</td><td>${x.qtd}</td>
-          <td>${brl(x.ticket)}</td><td>${x.novas}</td><td>${x.recorrentes}</td>
-          <td>${x.retencao!==null?Math.round(x.retencao)+'%':'—'}</td></tr>`).join('')}
-      </table></div>
-  </div>`;
-  desenharGraficos();
-}
 
 
 /* ============ EDIÇÃO NA AUDITORIA ============
@@ -2508,7 +2505,7 @@ function pintarEdicao(){
   const v = k => (o[k] === '' || o[k] === undefined || o[k] === null) ? 0 : Number(o[k]);
   abrirModal(`
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--vinho-2);letter-spacing:.1em">AUDITORIA · ORÇ ${tEsc(o.num_orcamento)}</div>
-    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:6px 0 4px;color:var(--vinho)">${tEsc(o.paciente)}</h2>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:6px 0 4px;color:var(--vinho)">${tEsc(NP(o.paciente))}</h2>
     <div class="lanc-antes">Corrija aqui o que o PDF não reflete. A venda é recalculada na hora:
       <b>total dos procedimentos − duplicata − permuta</b>. O desconto não abate a venda.
       ${o.auditado_por?`<br><span style="color:var(--ouro)">◆ já auditado por ${tEsc(o.auditado_por)} em ${tEsc(o.auditado_em)}</span>`:''}
@@ -2634,7 +2631,7 @@ function pintarPlano(){
   const dif = Math.round((alvo-soma)*100)/100;
   abrirModal(`
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--vinho-2);letter-spacing:.1em">COMO FOI PAGO · ORÇ ${tEsc(o.num_orcamento)}</div>
-    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:6px 0 4px;color:var(--vinho)">${tEsc(o.paciente)}</h2>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:6px 0 4px;color:var(--vinho)">${tEsc(NP(o.paciente))}</h2>
     <div class="lanc-antes">Total do orçamento: <b>${brl(alvo)}</b>. Monte aqui como a paciente
       <b>realmente pagou</b> — pode ser diferente do que foi combinado no PDF.</div>
 
@@ -2811,13 +2808,23 @@ function escolherPaciente(nome){
 /* Envio manual do fechamento do dia. O gatilho manda sozinho no horário
    configurado; este botão serve para quando a clínica fecha mais cedo ou
    mais tarde que o normal. */
+
 async function abrirEnvioResumo(){
   if(!USUARIO_ID){ abrirModal('<div class="vazio">Sessão sem identificação.</div>'); return; }
-  abrirModal(`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 10px;color:var(--vinho)">Enviar fechamento</h2>
-    <div class="lanc-antes">Manda agora o fechamento do dia para os e-mails cadastrados na
-      aba <b>Config</b>, no parâmetro <b>emails_diretoria</b>.</div>
+  abrirModalCarregando('montando o e-mail');
+  let p;
+  try{ p = await api('previa_resumo', {usuario_id: USUARIO_ID}); }
+  catch(e){ abrirModal(`<div class="vazio">Não consegui montar a prévia: ${tEsc(e.message)}<br>Atualize a implantação do Apps Script para a V9.1.</div>`); return; }
+  const dest = (p.destinatarios || []);
+  const pode = p.qtd > 0 && dest.length > 0;
+  abrirModal(`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 10px;color:var(--vinho)">Enviar fechamento do dia</h2>
+    <div class="ep-meta"><b>Assunto:</b> ${tEsc(p.assunto)}<br>
+      <b>Para:</b> ${dest.length ? tEsc(dest.join(', ')) : '<span style="color:#A8442F">nenhum e-mail em Config → emails_diretoria</span>'}<br>
+      <b>Conteúdo:</b> fechamento de ${tEsc(p.data)} · ${p.qtd} orçamento(s). Esta é a prévia exata do que será enviado.</div>
+    ${p.qtd ? `<iframe class="emailprev" id="ep-frame" sandbox></iframe>` : '<div class="lanc-antes">Nenhum orçamento fechado hoje — não há e-mail para enviar.</div>'}
     <div id="er-erro"></div>
-    <button class="lanc-bt" id="er-bt" onclick="enviarResumo()">Enviar agora</button>`);
+    <button class="lanc-bt" id="er-bt" ${pode ? '' : 'disabled'} onclick="enviarResumo()">${pode ? 'Enviar agora para ' + dest.length + ' destinatário(s)' : 'Sem o que enviar'}</button>`);
+  const f = document.getElementById('ep-frame'); if(f) f.srcdoc = p.html;
 }
 
 async function enviarResumo(){
@@ -2865,7 +2872,7 @@ function pintarAddItens(){
   const o = ADDI_ORC, f = faltaFechar();
   abrirModal(`
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--vinho-2);letter-spacing:.1em">LANÇAR VENDA · ORÇ ${tEsc(o.num_orcamento)}</div>
-    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:6px 0 4px;color:var(--vinho)">${tEsc(o.paciente)}</h2>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:6px 0 4px;color:var(--vinho)">${tEsc(NP(o.paciente))}</h2>
     <div class="lanc-antes">
       Procedimentos: <b>${brl(f.tp)}</b><br>
       A paciente pagou: <b>${brl(f.pago)}</b><br>
@@ -3006,7 +3013,7 @@ function abrirModalCarregando(titulo){
      - Auditoria, por mês ou período, com a ficha completa de cada orçamento
    O PDF sai pelo "Salvar como PDF" do próprio navegador. O nome sugerido do
    arquivo vem do título da página, trocado só durante a impressão. */
-const VERSAO_TELA = 'V9.0';
+const VERSAO_TELA = 'V9.1';
 const REL_CORES = ['#5C1A2B','#B8894A','#4F6B58','#7A5C99','#3E5C76','#A8442F','#8A7F76','#C79A9E'];
 const REL_LIMITE_DIAS = 92;      // período maior que isso vira dezenas de páginas e minutos de espera
 const relE = v => (v === null || v === undefined) ? '' : tEsc(v);
@@ -3209,15 +3216,19 @@ async function gerarRelFechamento(){
   const bt = document.getElementById('rfe-bt');
   erro.textContent = '';
   bt.disabled = true; bt.textContent = 'Reunindo os dados…';
-  let r, vendas, novas, recs;
+  let r, vendas, novas, recs, extra = {desc: [], perm: [], dup: []};
   try{
     r = (R && R.mes === mes) ? R : await api('resumo', {mes: mes});
     const lotes = await Promise.all([
       api('lista', {conta: 'venda', periodo: 'mes', mes: mes}),
       api('lista', {conta: 'pacientes_novas', mes: mes}),
-      api('lista', {conta: 'pacientes_recorrentes', mes: mes})
+      api('lista', {conta: 'pacientes_recorrentes', mes: mes}),
+      api('lista', {conta: 'desconto', periodo: 'mes', mes: mes}).catch(function(){ return []; }),
+      api('lista', {conta: 'permuta', periodo: 'mes', mes: mes}).catch(function(){ return []; }),
+      api('lista', {conta: 'duplicata', periodo: 'mes', mes: mes}).catch(function(){ return []; })
     ]);
     vendas = lotes[0] || []; novas = lotes[1] || []; recs = lotes[2] || [];
+    extra = {desc: lotes[3] || [], perm: lotes[4] || [], dup: lotes[5] || []};
   }catch(e){
     erro.textContent = 'Não consegui reunir os dados: ' + e.message;
     bt.disabled = false; bt.textContent = 'Gerar PDF'; return;
@@ -3226,10 +3237,11 @@ async function gerarRelFechamento(){
     erro.textContent = 'Sem dados de venda para este mês.';
     bt.disabled = false; bt.textContent = 'Gerar PDF'; return;
   }
-  relImprimir(relHtmlFechamento(mes, r, vendas, novas, recs), 'Fechamento_Vendas_' + mes);
+  relImprimir(relHtmlFechamento(mes, r, vendas, novas, recs, extra), 'Fechamento_Vendas_' + mes);
 }
 
-function relHtmlFechamento(mes, r, vendas, novas, recs){
+function relHtmlFechamento(mes, r, vendas, novas, recs, extra){
+  extra = extra || {desc: [], perm: [], dup: []};
   const c = r.mes_cascata, m = r.meta;
   const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
   const mesTxt = cap(relMesExtenso(mes));
@@ -3242,7 +3254,7 @@ function relHtmlFechamento(mes, r, vendas, novas, recs){
   vendas.forEach(function(i){
     const k = relNorm(i.paciente); if(!k) return;
     const v = i.valor !== undefined ? i.valor : i.valor_estimado;
-    if(!pac[k]) pac[k] = {nome: String(i.paciente).trim(), orc: 0, valor: 0};
+    if(!pac[k]) pac[k] = {nome: NP(i.paciente), orc: 0, valor: 0};
     pac[k].orc += 1; pac[k].valor += relNum(v);
   });
   const tipoDe = k => setN[k] ? 'N' : (setR[k] ? 'R' : '');
@@ -3258,7 +3270,7 @@ function relHtmlFechamento(mes, r, vendas, novas, recs){
     arr.forEach(function(p){
       const k = relNorm(p.paciente); if(!k || vistos[k]) return; vistos[k] = 1;
       const x = pac[k];
-      out.push({nome: x ? x.nome : String(p.paciente).trim(), orc: x ? x.orc : 0, valor: x ? x.valor : 0});
+      out.push({nome: x ? x.nome : NP(p.paciente), orc: x ? x.orc : 0, valor: x ? x.valor : 0});
     });
     return out.sort(function(a, b){ return b.valor - a.valor || a.nome.localeCompare(b.nome, 'pt-BR'); });
   };
@@ -3288,15 +3300,14 @@ function relHtmlFechamento(mes, r, vendas, novas, recs){
     </div>`;
 
   /* ---- composição da venda + contas ---- */
-  const nomesConta = {venda:'Venda', caixa:'Caixa recebido', a_receber:'Parcelado', permuta:'Permuta', duplicata:'Crediário', cortesia:'Cortesia'};
+  const nomesConta = {venda:'Venda', caixa:'Caixa recebido', a_receber:'Parcelado', desconto:'Descontos concedidos', permuta:'Permuta', duplicata:'Crediário', cortesia:'Cortesia'};
   const composicao = `<table class="rel-t">
       <thead><tr><th>Composição da venda</th><th class="n">Valor</th></tr></thead><tbody>
       <tr><td>Total dos procedimentos</td><td class="n">${brl(c.total_procedimentos)}</td></tr>
-      <tr class="mute"><td>Descontos concedidos <small>informativo</small></td><td class="n">−${brl(c.desconto)}</td></tr>
-      <tr class="mute"><td>Total dos orçamentos <small>informativo</small></td><td class="n">${brl(c.total)}</td></tr>
       <tr><td>Crediário</td><td class="n">−${brl(c.valor_duplicata)}</td></tr>
       <tr><td>Permuta</td><td class="n">−${brl(c.valor_permuta)}</td></tr>
       <tr class="tot"><td>Venda do comercial</td><td class="n">${brl(c.venda_comercial)}</td></tr>
+      <tr class="mute"><td>Descontos concedidos <small>informativo — não abate a venda</small></td><td class="n">${brl(c.desconto)}</td></tr>
       <tr><td class="sub">caixa das vendas do mês</td><td class="n">${brl(c.caixa_imediato)}</td></tr>
       <tr><td class="sub">parcelado gerado pelas vendas do mês</td><td class="n">${brl(c.a_receber)}</td></tr>
       </tbody></table>`;
@@ -3386,9 +3397,37 @@ function relHtmlFechamento(mes, r, vendas, novas, recs){
       (marcadas com “—” no ranking).`;
   }
 
+  /* ---- pacientes com desconto, permuta e crediário ---- */
+  const grp = function(arr){            // junta parcelas do mesmo orçamento
+    const m = {}, out = [];
+    arr.forEach(function(x){ const k = x.num; if(!m[k]){ m[k] = {num: x.num, paciente: x.paciente, data: x.data, valor: 0, det: [], x: x}; out.push(m[k]); }
+      m[k].valor += relNum(x.valor); if(x.forma_original) m[k].det.push(x.forma_original); });
+    return out.sort(function(a, b){ return b.valor - a.valor; });
+  };
+  const tabEx = function(titulo, arr, colunas, linha, totRot, vazio){
+    if(!arr.length) return `<div class="rel-sec">${titulo} <small>0</small></div><div class="rel-nota">${vazio}</div>`;
+    const tot = arr.reduce(function(t, x){ return t + relNum(x.valor); }, 0);
+    return `<div class="rel-sec">${titulo} <small>${arr.length} paciente(s) · ${brl(tot)}</small></div><table class="rel-t">
+      <thead><tr><th class="n" style="width:22px">#</th>${colunas}</tr></thead><tbody>
+      ${arr.map(function(x, i){ return `<tr><td class="n pos">${i + 1}</td>${linha(x)}</tr>`; }).join('')}
+      <tr class="tot"><td></td><td>${totRot}</td>${colunas.split('</th>').length > 4 ? '<td></td>'.repeat(colunas.split('</th>').length - 4) : ''}<td class="n">${brl(tot)}</td></tr></tbody></table>`;
+  };
+  const LD = extra.desc, LP = extra.perm, LC = grp(extra.dup);
+  const exHtml =
+    tabEx('Descontos concedidos', LD, '<th>Paciente</th><th class="n">Orç.</th><th class="n">Procedimentos</th><th class="n">%</th><th class="n">Venda</th><th class="n">Desconto</th>',
+      function(x){ return `<td>${relE(NP(x.paciente))}</td><td class="n">${relE(x.num)}</td><td class="n">${brl(x.total_procedimentos)}</td><td class="n">${relNum(x.desconto_pct).toFixed(1).replace('.', ',')}%</td><td class="n">${brl(x.venda)}</td><td class="n">${brl(x.valor)}</td>`; },
+      'Total de descontos', 'Nenhum desconto concedido no mês.')
+    + tabEx('Permuta', LP, '<th>Paciente</th><th class="n">Orç.</th><th>Descrição</th><th class="n">Venda do comercial</th><th class="n">Permuta</th>',
+      function(x){ return `<td>${relE(NP(x.paciente))}</td><td class="n">${relE(x.num)}</td><td>${relE(x.descricao || '')}</td><td class="n">${brl(x.venda)}</td><td class="n">${brl(x.valor)}</td>`; },
+      'Total de permuta', 'Nenhuma permuta no mês.')
+    + tabEx('Crediário', LC, '<th>Paciente</th><th class="n">Orç.</th><th>Forma</th><th class="n">Data</th><th class="n">Crediário</th>',
+      function(x){ return `<td>${relE(NP(x.paciente))}</td><td class="n">${relE(x.num)}</td><td>${relE(x.det.filter(function(f, i, a){ return a.indexOf(f) === i; }).join(' · '))}</td><td class="n">${relE(x.data || '')}</td><td class="n">${brl(x.valor)}</td>`; },
+      'Total de crediário', 'Nenhum crediário no mês.');
+
   return `<style>@page{size:A4 portrait}</style>
     ${cab}${kpis}
     <div class="rel-2col"><div>${composicao}</div><div>${contas}</div></div>
+    ${exHtml}
     ${metaHtml}
     <div class="rel-sec">Ranking de procedimentos <small>no mês</small></div>${rkHtml}
     <div class="rel-sec">Ranking de pacientes por valor</div>${rankHtml}
@@ -3894,54 +3933,6 @@ const kmil = v => { v = Number(v) || 0; return v >= 1000 ? (v / 1000).toLocaleSt
 const dmCurto = br => String(br || '').slice(0, 5);
 
 /* ---------------- cartão de orçamento (listas) ---------------- */
-function cartaoOrc(o){
-  const canc = o.cancelado === 'SIM';
-  let cls = 'orc2';
-  if(canc) cls += ' cancelado';
-  else {
-    if(o.tem_duplicata === 'SIM') cls += ' parcial';
-    if(o.faixa === 'AUTORIZAR' || o.faixa === 'VERMELHO' || o.tem_cortesia === 'SIM') cls += ' alerta';
-  }
-  const procs = (o.procs && o.procs.length) ? o.procs : String(o.procedimentos || '').split(' · ').filter(Boolean);
-  const MAXP = 3;
-  const lis = procs.slice(0, MAXP).map(p => `<li>${tEsc(p)}</li>`).join('')
-    + (procs.length > MAXP ? `<li class="mais">+ ${procs.length - MAXP} procedimento(s)</li>` : '');
-  const fl = (o.formas_lista && o.formas_lista.length) ? o.formas_lista : String(o.formas || '').split(' · ').filter(Boolean);
-  const formas = fl.filter((f, i) => fl.indexOf(f) === i);
-
-  let rec = '';
-  if(o.classificacao === 'NOVA') rec = `<span class="o2-rec nova">Paciente nova</span>`;
-  else if(o.dias_desde_anterior != null){
-    const rg = o.dias_desde_anterior > 194;
-    rec = `<span class="o2-rec ${rg ? 'resgate' : 'rec2'}">${rg ? 'Resgate' : 'Recorrente'} · ${o.dias_desde_anterior} dias</span>`;
-  }
-  const badges = [];
-  if(canc) badges.push(`<span class="tag canc">cancelado</span>`);
-  if(o.tem_cortesia === 'SIM') badges.push(`<span class="tag flag">cortesia</span>`);
-  if(o.tem_duplicata === 'SIM') badges.push(`<span class="tag">crediário</span>`);
-  const desc = Number(o.desconto) > 0;
-  const cel = (rot, val, cl) => `<div class="o2-c ${cl || ''}"><small>${rot}</small><b>${val}</b></div>`;
-
-  return `<div class="${cls}" onclick="abrirOrcamento('${o.id}')">
-    <div class="o2-head">
-      <span class="o2-num"><small>ORÇ</small><b>${tEsc(o.num)}</b></span>
-      <span class="o2-desc">${tEsc(o.descricao || '')}</span>
-      ${rec}${badges.join('')}
-    </div>
-    <div class="o2-main">
-      <div class="o2-pac">${tEsc(o.paciente)}</div>
-      <div class="o2-val">${brl(o.valor)}${desc ? `<span class="o2-risco">${brl(o.total_procedimentos)}</span>` : ''}</div>
-    </div>
-    ${lis ? `<ul class="o2-procs">${lis}</ul>` : ''}
-    <div class="o2-foot">
-      ${cel('Caixa na hora', brl0(o.caixa) === '0' ? '—' : 'R$ ' + brl0(o.caixa))}
-      ${cel('Parcelado', brl0(o.a_receber) === '0' ? '—' : 'R$ ' + brl0(o.a_receber))}
-      ${cel('Desconto', desc ? o.desconto_pct + '%' : '—', desc ? 'neg' : '')}
-    </div>
-    ${formas.length ? `<div class="o2-pg"><i>pago em</i>${formas.map(f => `<span>${tEsc(f)}</span>`).join('')}</div>` : ''}
-    ${canc && o.motivo ? `<div class="o2-canc"><b>Cancelado${o.por ? ' por ' + tEsc(o.por) : ''}${o.em ? ' em ' + tEsc(o.em) : ''}:</b> ${tEsc(o.motivo)}</div>` : ''}
-  </div>`;
-}
 
 /* ---------------- orçamento aberto ---------------- */
 function htmlOrcamento(d, compacto){
@@ -4003,7 +3994,7 @@ function htmlOrcamento(d, compacto){
       <div class="om-num"><small>ORÇAMENTO Nº</small><b>${tEsc(o.num_orcamento)}</b></div>
       <div class="om-chips">${chips.join('')}</div>
     </div>
-    <h2 class="om-pac">${tEsc(o.paciente)}</h2>
+    <h2 class="om-pac">${tEsc(NP(o.paciente))}</h2>
     <div class="om-meta">${tEsc(o.data_venda)}${o.responsavel ? ' · ' + tEsc(o.responsavel) : ''}${o.descricao_orcamento ? ' · ' + tEsc(o.descricao_orcamento) : ''}</div>
     ${cancBox}
     <div class="om-kpis">
@@ -4035,7 +4026,7 @@ function abrirCancelamento(id){
   if(!USUARIO_ID){ abrirModal('<div class="vazio">Sessão sem identificação. Recarregue e entre de novo.</div>'); return; }
   abrirModal(`
     <div style="font:500 10px 'IBM Plex Mono',monospace;color:#A8442F;letter-spacing:.14em">CANCELAR ORÇAMENTO</div>
-    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:21px;margin:6px 0 4px">Nº ${tEsc(o.num_orcamento)} · ${tEsc(o.paciente)}</h2>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:21px;margin:6px 0 4px">Nº ${tEsc(o.num_orcamento)} · ${tEsc(NP(o.paciente))}</h2>
     <div class="lanc-antes">Venda do comercial <b>${brl(o.venda_comercial)}</b> em ${tEsc(o.data_venda)}.<br>
       Ao cancelar, o orçamento <b>sai da venda do dia e do mês, do caixa, do parcelado e dos rankings</b>.
       Ele continua guardado, aparece em <i>Cancelados</i> na Auditoria e pode ser reativado. Fica registrado quem cancelou e quando.</div>
@@ -4069,7 +4060,7 @@ function abrirReativacao(id){
   const o = ORC_MAP[id]; if(!o) return;
   abrirModal(`
     <div style="font:500 10px 'IBM Plex Mono',monospace;color:var(--salvia);letter-spacing:.14em">REATIVAR ORÇAMENTO</div>
-    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:21px;margin:6px 0 4px">Nº ${tEsc(o.num_orcamento)} · ${tEsc(o.paciente)}</h2>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:21px;margin:6px 0 4px">Nº ${tEsc(o.num_orcamento)} · ${tEsc(NP(o.paciente))}</h2>
     <div class="lanc-antes">Cancelado por ${tEsc(o.cancel_por || '—')} em ${tEsc(o.cancel_em || '—')}:<br><i>${tEsc(o.cancel_motivo || '')}</i><br><br>
       Ao reativar, ele <b>volta a somar</b> na venda de ${tEsc(o.data_venda)}, no caixa e nos rankings.</div>
     <div id="cn-erro"></div>
@@ -4166,9 +4157,12 @@ function renderDia(){
     <div class="sub">${d.qtd_orcamentos} orçamento(s)</div>
     <div class="cascata">
       <div><span>Total dos procedimentos</span><span>${brl(d.total_procedimentos)}</span></div>
-      <div class="menos"><span>Descontos</span><span>−${brl(d.desconto)}</span></div>
-      <div><span>Total dos orçamentos</span><span>${brl(d.total)}</span></div>
+      ${d.valor_duplicata !== undefined
+        ? `<div class="menos"><span>Crediário</span><span>−${brl(d.valor_duplicata)}</span></div>
+           <div class="menos"><span>Permuta</span><span>−${brl(d.valor_permuta)}</span></div>`
+        : `<div class="menos"><span>Crediário e permuta</span><span>−${brl(Math.max(0, d.total_procedimentos - d.venda_comercial))}</span></div>`}
       <div class="tot"><span>Venda do comercial</span><span>${brl(d.venda_comercial)}</span></div>
+      <div class="info"><span>Descontos concedidos (não abatem a venda)</span><span>${brl(d.desconto)}</span></div>
     </div>`;
 
   const s = R.split_dia || {a_vista: 0, parcelado: 0};
@@ -4213,7 +4207,7 @@ function renderMetaDia(){
       <div class="md-tiles"><div class="md-t"><small>Vendido hoje</small>${mv(vend)}</div>
         <div class="md-t"><small>Meta por dia útil</small>${mv(dg.meta_dia_hoje)}</div></div>
       <span class="md-sel md-neutro">${x && x.tipo === 'feriado' ? 'FERIADO — ' + tEsc(x.feriado) : 'SEM META · FIM DE SEMANA'}</span>
-      ${linhas([['Faltam no mês', mv(dg.falta)], ['Dias úteis restantes', dg.uteis_restantes + ' de ' + dg.uteis_total]])}`;
+      ${linhas([['Faltam no mês', mv(dg.falta)], ['Dias úteis restantes', dg.uteis_restantes + ' de ' + dg.uteis_total + ' <small style="font-weight:400;opacity:.6">(' + ixRest(dg).split(' · ')[0] + ')</small>']])}`;
     return;
   }
   const meta = x.meta, pc = meta ? vend / meta * 100 : 0, bateu = vend + 0.005 >= meta;
@@ -4227,7 +4221,7 @@ function renderMetaDia(){
     </div>
     <div class="md-barra"><i style="width:${Math.min(pc, 100)}%;background:${bateu ? 'var(--salvia)' : (x.estado === 'hoje' ? 'var(--latao)' : '#A8442F')}"></i></div>
     <span class="md-sel ${futuro ? 'md-neutro' : bateu ? 'md-ok' : (x.estado === 'hoje' ? 'md-hoje' : 'md-baixo')}">${futuro ? 'DIA FUTURO' : bateu ? 'META DO DIA BATIDA · ' + pct(pc) : (x.estado === 'hoje' ? 'EM ANDAMENTO · ' + pct(pc) : 'ABAIXO DA META · ' + pct(pc))}</span>
-    ${linhas([['Meta do mês', mv(m.meta_venda)], ['Faltam no mês', mv(dg.falta)], ['Dias úteis restantes', dg.uteis_restantes + ' de ' + dg.uteis_total]])}`;
+    ${linhas([['Meta do mês', mv(m.meta_venda)], ['Faltam no mês', mv(dg.falta)], ['Dias úteis restantes', dg.uteis_restantes + ' de ' + dg.uteis_total + ' <small style="font-weight:400;opacity:.6">(' + ixRest(dg).split(' · ')[0] + ')</small>']])}`;
 }
 
 /* gráfico dos últimos dias úteis — barras finas, eixo, média e rótulo do dia */
@@ -4325,7 +4319,7 @@ function renderMetaDiaria(){
       <div class="mdd-kpi"><small>Meta do mês</small><b>${brl(m.meta_venda)}</b><em>${dg.uteis_total} dias úteis · ${brl(dg.meta_dia_original)}/dia</em></div>
       <div class="mdd-kpi"><small>Vendido</small><b>${brl(dg.vendido)}</b><em>${pct(pcVend)} da meta</em></div>
       <div class="mdd-kpi"><small>Falta vender</small><b>${brl(dg.falta)}</b><em>${dg.falta <= 0 ? 'meta do mês batida' : 'para bater a meta'}</em></div>
-      <div class="mdd-kpi"><small>Dias úteis restantes</small><b>${dg.uteis_restantes}</b><em>de ${dg.uteis_total} no mês</em></div>
+      <div class="mdd-kpi"><small>Dias úteis restantes</small><b>${dg.uteis_restantes}</b><em>${ixRest(dg)}</em></div>
       <div class="mdd-kpi dest"><small>Meta por dia útil agora</small><b>${brl(dg.meta_dia_hoje)}</b><em>${dg.meta_dia_hoje > dg.meta_dia_original ? 'acima' : 'abaixo'} dos ${brl(dg.meta_dia_original)} originais</em></div>
     </div>
     <div class="mdd-corpo">
@@ -4349,7 +4343,7 @@ function renderMetaDiaria(){
    orçamento, nunca no dia do upload. */
 let ARQ_FILA = [], ARQ_HIST = null, ARQ_FILTRO = '', ARQ_OCUPADO = false, ARQ_SEQ = 0;
 
-function irParaArquivos(){ irPara('arquivos'); pintarArquivos(); carregarArquivos(); }
+function irParaArquivos(){ if(window.innerWidth < 1000) return; irPara('arquivos'); pintarArquivos(); carregarArquivos(); }
 
 function pintarArquivos(){
   const el = document.getElementById('arq-corpo'); if(!el) return;
@@ -4516,26 +4510,404 @@ async function carregarArquivos(){
   catch(e){ if(box) box.innerHTML = `<div class="vazio">Não consegui carregar o histórico: ${tEsc(e.message)}<br>Confira se a implantação foi atualizada para a V9.0.</div>`; return; }
   arqPintarHist();
 }
-function arqFiltro(f){ ARQ_FILTRO = f; arqPintarHist(); }
 function arqPintarHist(){
   const box = document.getElementById('arq-hist'); if(!box || !ARQ_HIST) return;
   const it = ARQ_HIST.itens, rs = ARQ_HIST.resumo || {};
-  document.getElementById('arq-qtd').textContent = 'últimas ' + it.length + ' de ' + ARQ_HIST.total;
+  const _d = new Date(), hoje = String(_d.getDate()).padStart(2, '0') + '/' + String(_d.getMonth() + 1).padStart(2, '0') + '/' + _d.getFullYear();
+  const doDia = x => String(x.quando || '').slice(0, 10) === hoje;
+  document.getElementById('arq-qtd').textContent = it.filter(doDia).length + ' hoje · ' + it.filter(x => !doDia(x)).length + ' anteriores';
   const fl = [['', 'Todos ' + it.length], ['OK', 'Carga OK ' + (rs.ok || 0)], ['ERRO', 'Erros ' + (rs.erro || 0)], ['DUPLICADO', 'Já existiam ' + (rs.duplicado || 0)], ['REVISAR', 'A revisar ' + (rs.revisar || 0)]];
   document.getElementById('arq-filtros').innerHTML = fl.map(([v, t]) => `<button class="${ARQ_FILTRO === v ? 'on' : ''}" onclick="arqFiltro('${v}')">${t}</button>`).join('');
   const lista = it.filter(x => !ARQ_FILTRO || x.status === ARQ_FILTRO);
   const cls = {OK: ['st-ok', 'Carga OK'], ERRO: ['st-erro', 'Erro'], DUPLICADO: ['st-dup', 'Já existia'], REVISAR: ['st-rev', 'Revisar'], DESCARTADO: ['st-dup', 'Descartado']};
-  box.innerHTML = lista.length ? `<table class="arq-tab"><thead><tr><th>Quando</th><th>Orç.</th><th>Paciente</th><th>Origem</th><th>Status</th><th>Mensagem</th></tr></thead><tbody>`
-    + lista.map(x => { const c = cls[x.status] || ['st-esp', x.status];
+  const tabela = arr => `<table class="arq-tab"><thead><tr><th>Quando</th><th>Orç.</th><th>Paciente</th><th>Origem</th><th>Status</th><th>Mensagem</th></tr></thead><tbody>`
+    + arr.map(x => { const c = cls[x.status] || ['st-esp', x.status];
       return `<tr class="${x.status === 'ERRO' ? 'erro' : ''}"><td class="q">${tEsc(x.quando)}</td>
         <td class="num">${x.num ? `<a style="color:inherit;cursor:pointer" onclick="abrirOrcamento('ORC${tEsc(x.num)}')">${tEsc(x.num)}</a>` : '—'}</td>
-        <td>${tEsc(x.paciente || (x.status === 'ERRO' ? '—' : ''))}<div style="font-size:11px;color:rgba(36,30,28,.5)">${tEsc(x.arquivo)}</div></td>
+        <td>${tEsc(NP(x.paciente || (x.status === 'ERRO' ? '—' : '')))}<div style="font-size:11px;color:rgba(36,30,28,.5)">${tEsc(x.arquivo)}</div></td>
         <td class="q">${x.origem === 'APP' ? 'App' + (x.usuario ? ' · ' + tEsc(x.usuario) : '') : 'Pasta'}</td>
         <td><span class="arq-st ${c[0]}">${c[1]}</span></td>
         <td class="msg">${tEsc(x.mensagem)}${x.cancelado === 'SIM' ? ' <b>(orçamento hoje cancelado)</b>' : ''}</td></tr>`; }).join('')
-    + `</tbody></table>` : '<div class="vazio">Nenhuma carga neste filtro.</div>';
+    + `</tbody></table>`;
+  const hojeL = lista.filter(doDia), antes = lista.filter(x => !doDia(x));
+  box.innerHTML = `<div class="arq-dia">Cargas de hoje · ${tEsc(hoje)}</div>`
+    + (hojeL.length ? tabela(hojeL) : '<div class="vazio">Nenhuma carga hoje.</div>')
+    + (antes.length ? `<details class="arq-ant"><summary>Cargas anteriores (${antes.length}) — para conferência</summary><div class="arq-tab-box">${tabela(antes)}</div></details>` : '');
+}
+function arqFiltro(f){ ARQ_FILTRO = f; arqPintarHist(); }
+
+
+
+/* nome em Nome Próprio (mesma regra do servidor): "ELIANE DA SILVA" -> "Eliane da Silva" */
+const NP_PART = {da:1,de:1,do:1,das:1,dos:1,e:1,di:1,du:1,del:1,della:1,van:1,von:1,la:1,le:1}, NP_ROM = {ii:1,iii:1,iv:1,vi:1,vii:1,viii:1,ix:1};
+function NP(t){
+  const b = String(t == null ? '' : t).replace(/\s+/g, ' ').trim(); if(!b) return '';
+  const cap = w => w.charAt(0).toUpperCase() + w.slice(1);
+  return b.toLowerCase().split(' ').map(function(w, i){
+    if(i > 0 && NP_PART[w]) return w;
+    if(NP_ROM[w]) return w.toUpperCase();
+    return w.split('-').map(h => h.split("'").map(cap).join("'")).join('-');
+  }).join(' ');
+}
+const hojeBR = () => { const d = new Date(); return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear(); };
+const ixRest = dg => {
+  const r = (dg.dias || []).filter(x => x.tipo === 'util' && (x.estado === 'futuro' || x.data === hojeBR()));
+  if(!r.length) return 'nenhum dia útil restante';
+  const d = r.map(x => x.data.slice(0, 5));
+  return (d.length <= 3 ? d.join(' e ').replace(/ e ([^e]*) e /, ', $1 e ') : d[0] + ' a ' + d[d.length - 1]) + ' · sábado, domingo e feriado não contam';
+};
+
+/* ---------------- cartões de orçamento ---------------- */
+function orcPecas(o){
+  const canc = o.cancelado === 'SIM';
+  let cls = 'orc2';
+  if(canc) cls += ' cancelado';
+  else {
+    if(o.tem_duplicata === 'SIM') cls += ' parcial';
+    if(o.faixa === 'AUTORIZAR' || o.faixa === 'VERMELHO' || o.tem_cortesia === 'SIM') cls += ' alerta';
+  }
+  const procs = (o.procs && o.procs.length) ? o.procs : String(o.procedimentos || '').split(' · ').filter(Boolean);
+  const MAXP = 3;
+  const lis = procs.slice(0, MAXP).map(p => `<li>${tEsc(p)}</li>`).join('')
+    + (procs.length > MAXP ? `<li class="mais">+ ${procs.length - MAXP} procedimento(s)</li>` : '');
+  const fl = (o.formas_lista && o.formas_lista.length) ? o.formas_lista : String(o.formas || '').split(' · ').filter(Boolean);
+  const formas = fl.filter((f, i) => fl.indexOf(f) === i);
+  let rec = '';
+  if(o.classificacao === 'NOVA') rec = `<span class="o2-rec nova">Paciente nova</span>`;
+  else if(o.dias_desde_anterior != null){
+    const rg = o.dias_desde_anterior > 194;
+    rec = `<span class="o2-rec ${rg ? 'resgate' : 'rec2'}">${rg ? 'Resgate' : 'Recorrente'} · ${o.dias_desde_anterior} dias</span>`;
+  }
+  const badges = [];
+  if(canc) badges.push(`<span class="tag canc">cancelado</span>`);
+  if(o.tem_cortesia === 'SIM') badges.push(`<span class="tag flag">cortesia</span>`);
+  if(o.tem_duplicata === 'SIM') badges.push(`<span class="tag">crediário</span>`);
+  const desc = Number(o.desconto) > 0;
+  const cel = (rot, val, cl) => `<div class="o2-c ${cl || ''}"><small>${rot}</small><b>${val}</b></div>`;
+  const foot = `<div class="o2-foot">
+      ${cel('Caixa na hora', brl0(o.caixa) === '0' ? '—' : 'R$ ' + brl0(o.caixa))}
+      ${cel('Parcelado', brl0(o.a_receber) === '0' ? '—' : 'R$ ' + brl0(o.a_receber))}
+      ${cel('Desconto', desc ? o.desconto_pct + '%' : '—', desc ? 'neg' : '')}</div>`;
+  const pg = formas.length ? `<div class="o2-pg"><i>pago em</i>${formas.map(f => `<span>${tEsc(f)}</span>`).join('')}</div>` : '';
+  const cn = canc && o.motivo ? `<div class="o2-canc"><b>Cancelado${o.por ? ' por ' + tEsc(o.por) : ''}${o.em ? ' em ' + tEsc(o.em) : ''}:</b> ${tEsc(o.motivo)}</div>` : '';
+  const head = `<span class="o2-desc">${tEsc(o.descricao || '')}</span>${rec}${badges.join('')}`;
+  return {cls, lis, foot, pg, cn, head, desc, canc};
 }
 
+function cartaoOrc(o){
+  const p = orcPecas(o);
+  return `<div class="${p.cls}" onclick="abrirOrcamento('${o.id}')">
+    <div class="o2-head"><span class="o2-num"><small>ORÇ</small><b>${tEsc(o.num)}</b></span>${p.head}</div>
+    <div class="o2-main"><div class="o2-pac">${tEsc(NP(o.paciente))}</div>
+      <div class="o2-val">${brl(o.valor)}${p.desc ? `<span class="o2-risco">${brl(o.total_procedimentos)}</span>` : ''}</div></div>
+    ${p.lis ? `<ul class="o2-procs">${p.lis}</ul>` : ''}${p.foot}${p.pg}${p.cn}
+  </div>`;
+}
+
+/* aba Dia: só o quadro em destaque; clicar desce os detalhes */
+function cartaoOrcSusp(o){
+  const p = orcPecas(o);
+  return `<div class="${p.cls} susp" id="os-${o.id}">
+    <div class="os-head" onclick="toggleOrc('${o.id}')">
+      <span class="o2-num"><small>ORÇ</small><b>${tEsc(o.num)}</b></span>
+      <span class="o2-pac">${tEsc(NP(o.paciente))}</span>
+      <span class="o2-val">${brl(o.valor)}</span>
+      <span class="os-chev">▼</span></div>
+    <div class="os-body">
+      <div class="o2-head">${p.head}</div>
+      ${p.lis ? `<ul class="o2-procs">${p.lis}</ul>` : ''}${p.foot}${p.pg}${p.cn}
+      <button class="os-abrir" onclick="abrirOrcamento('${o.id}')">Abrir orçamento completo ›</button>
+    </div></div>`;
+}
+function toggleOrc(id){ const e = document.getElementById('os-' + id); if(e) e.classList.toggle('aberto'); }
+function orcTodos(abrir){ document.querySelectorAll('#lista-dia .orc2.susp').forEach(e => e.classList.toggle('aberto', !!abrir)); }
+async function carregarListaDia(pronta){
+  const lista = pronta || await api('lista',{conta:'venda',periodo:'dia',mes:MES,dia:DIA||R.hoje});
+  const el = document.getElementById('lista-dia');
+  if(!lista.length){ el.innerHTML='<div class="vazio">Nenhum orçamento fechado neste dia.</div>'; return; }
+  const soma = lista.reduce((t, x) => t + (Number(x.valor) || 0), 0);
+  el.innerHTML = `<div class="os-bar"><span>${lista.length} orçamento(s) · ${brl(soma)}</span>
+      <span><button onclick="orcTodos(true)">expandir todos</button> · <button onclick="orcTodos(false)">recolher</button></span></div>`
+    + lista.map(cartaoOrcSusp).join('');
+}
+/* ======================================================================
+   INDICADORES V9.1 — interativo: período, métrica, mês em foco, comparação,
+   tooltip, clique para focar, tabela ordenável e exportação CSV.
+   Uma única escala por gráfico (sem eixo duplo).
+   ====================================================================== */
+const IX = {per: 12, met: 'venda', cmp: 'meta', mes: null, ord: 'mes', dir: -1};
+const IX_MET = {
+  venda:     {rot: 'Venda do comercial', f: x => x.venda,     fmt: v => brl(v),  curto: v => 'R$ ' + kbrl(v)},
+  ticket:    {rot: 'Ticket médio',       f: x => x.ticket,    fmt: v => brl(v),  curto: v => 'R$ ' + kbrl(v)},
+  qtd:       {rot: 'Orçamentos',         f: x => x.qtd,       fmt: v => String(Math.round(v)), curto: v => String(Math.round(v))},
+  pacientes: {rot: 'Pacientes',          f: x => x.pacientes, fmt: v => String(Math.round(v)), curto: v => String(Math.round(v))}
+};
+const ixPct = (v, d) => (v === null || v === undefined) ? '—' : Number(v).toLocaleString('pt-BR', {minimumFractionDigits: d === undefined ? 0 : d, maximumFractionDigits: d === undefined ? 0 : d}) + '%';
+const ixMes = m => mesCurto(m);
+const ixVar = (a, b) => (!b || b === 0 || a === null || a === undefined) ? null : (a / b - 1) * 100;
+
+function ixSerie(){ return (IND && IND.serie) || []; }
+function ixPeriodo(){
+  const S = ixSerie();
+  return IX.per === 0 ? S : S.slice(-IX.per);
+}
+function ixFoco(){
+  const S = ixSerie();
+  return S.filter(x => x.mes === IX.mes)[0] || S[S.length - 1];
+}
+
+/* ---------- gráfico de barras (um conjunto de dados, uma escala) ---------- */
+function ixPasso(max, alvo){
+  const bruto = max / (alvo || 4), mag = Math.pow(10, Math.floor(Math.log10(Math.max(bruto, 1))));
+  const n = bruto / mag, p = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10;
+  return p * mag;
+}
+function ixBarras(serie, o){
+  // serie: [{mes, v, tip, cor?}], o: {fmt, linha:[{mes,v}], linhaRot, ref, refRot, sel, altura, empilha}
+  const W = o.largura || 560, H = o.altura || 230, L = 52, Rr = 12, T = 18, B = 30, iw = W - L - Rr, ih = H - T - B;
+  const vals = serie.map(x => x.v).concat((o.linha || []).map(x => x.v || 0)).concat(o.ref ? [o.ref] : []);
+  const max0 = Math.max(1, ...vals);
+  const passo = ixPasso(max0 * 1.06, 4), max = Math.ceil(max0 * 1.06 / passo) * passo;
+  const n = serie.length, slot = iw / Math.max(n, 1), bw = Math.min(34, slot * .66);
+  const y = v => T + ih - (v / max) * ih;
+  let g = '';
+  for(let v = 0; v <= max + 1e-9; v += passo){
+    g += `<line class="ix-grade" x1="${L}" x2="${W - Rr}" y1="${y(v)}" y2="${y(v)}"/><text class="ix-eix" x="${L - 8}" y="${y(v) + 3.5}" text-anchor="end">${v === 0 ? '0' : o.eixo(v)}</text>`;
+  }
+  const rotEvery = n > 30 ? 3 : n > 16 ? 2 : 1;
+  serie.forEach(function(x, i){
+    const cx = L + slot * i + slot / 2, h = Math.max(x.v > 0 ? 2 : 0, x.v / max * ih), sel = x.mes === o.sel;
+    g += `<g class="ix-b ${sel ? 'sel' : ''}" data-mes="${x.mes}" data-tip="${tEsc(x.tip)}">
+      <rect x="${cx - slot / 2}" y="${T}" width="${slot}" height="${ih + B}" fill="transparent"/>
+      <rect class="ix-bar" x="${cx - bw / 2}" y="${T + ih - h}" width="${bw}" height="${h}" rx="4" fill="${x.cor || o.cor}" opacity="${sel || !o.sel ? 1 : .55}"/>
+      ${n <= 14 || sel ? `<text class="ix-val ${sel ? 'sel' : ''}" x="${cx}" y="${T + ih - h - 6}" text-anchor="middle">${o.curto(x.v)}</text>` : ''}
+      ${i % rotEvery === 0 || sel ? `<text class="ix-eix ${sel ? 'sel' : ''}" x="${cx}" y="${H - 10}" text-anchor="middle">${ixMes(x.mes)}</text>` : ''}</g>`;
+  });
+  if(o.ref){
+    g += `<line class="ix-ref" x1="${L}" x2="${W - Rr}" y1="${y(o.ref)}" y2="${y(o.ref)}"/><text class="ix-reft" x="${W - Rr}" y="${y(o.ref) - 5}" text-anchor="end">${o.refRot}</text>`;
+  }
+  if(o.linha && o.linha.length){
+    const pts = [];
+    o.linha.forEach(function(p){
+      const i = serie.findIndex(x => x.mes === p.mes);
+      if(i >= 0 && p.v) pts.push([L + slot * i + slot / 2, y(p.v), p]);
+    });
+    if(pts.length){
+      g += `<polyline class="ix-linha" points="${pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ')}" fill="none"/>`;
+      pts.forEach(function(p){ g += `<circle class="ix-pt" cx="${p[0]}" cy="${p[1]}" r="3.4"/>`; });
+    }
+  }
+  return `<svg class="ix-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${tEsc(o.aria || 'gráfico')}">${g}</svg>`;
+}
+
+function ixEmpilhado(serie, o){
+  // serie: [{mes, a, b, tip}] — duas partes empilhadas (novas / recorrentes)
+  const W = o.largura || 560, H = 220, L = 36, Rr = 12, T = 16, B = 30, iw = W - L - Rr, ih = H - T - B;
+  const max0 = Math.max(1, ...serie.map(x => x.a + x.b));
+  const passo = ixPasso(max0 * 1.06, 4), max = Math.ceil(max0 * 1.06 / passo) * passo;
+  const n = serie.length, slot = iw / Math.max(n, 1), bw = Math.min(34, slot * .66);
+  const y = v => T + ih - (v / max) * ih;
+  let g = '';
+  for(let v = 0; v <= max + 1e-9; v += passo) g += `<line class="ix-grade" x1="${L}" x2="${W - Rr}" y1="${y(v)}" y2="${y(v)}"/><text class="ix-eix" x="${L - 8}" y="${y(v) + 3.5}" text-anchor="end">${Math.round(v)}</text>`;
+  const rotEvery = n > 30 ? 3 : n > 16 ? 2 : 1;
+  serie.forEach(function(x, i){
+    const cx = L + slot * i + slot / 2, sel = x.mes === o.sel;
+    const hb = x.b / max * ih, ha = x.a / max * ih;
+    g += `<g class="ix-b ${sel ? 'sel' : ''}" data-mes="${x.mes}" data-tip="${tEsc(x.tip)}">
+      <rect x="${cx - slot / 2}" y="${T}" width="${slot}" height="${ih + B}" fill="transparent"/>
+      <rect x="${cx - bw / 2}" y="${T + ih - hb}" width="${bw}" height="${hb}" fill="#5C1A2B" opacity="${sel || !o.sel ? 1 : .55}" rx="${ha ? 0 : 4}"/>
+      <rect x="${cx - bw / 2}" y="${T + ih - hb - ha - (hb && ha ? 2 : 0)}" width="${bw}" height="${ha}" fill="#B8894A" opacity="${sel || !o.sel ? 1 : .55}" rx="4"/>
+      ${i % rotEvery === 0 || sel ? `<text class="ix-eix ${sel ? 'sel' : ''}" x="${cx}" y="${H - 10}" text-anchor="middle">${ixMes(x.mes)}</text>` : ''}</g>`;
+  });
+  return `<svg class="ix-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Pacientes novas e recorrentes">${g}</svg>`;
+}
+
+/* ---------- minigráfico dos cartões ---------- */
+function ixSpark(serie, foco, cor){
+  const W = 120, H = 34, p = 3;
+  const v = serie.map(x => Number(x.v) || 0), max = Math.max(1, ...v), min = Math.min(0, ...v);
+  const X = i => p + (W - 2 * p) * (serie.length > 1 ? i / (serie.length - 1) : .5), Y = q => H - p - (H - 2 * p) * ((q - min) / (max - min || 1));
+  const pts = v.map((q, i) => X(i).toFixed(1) + ',' + Y(q).toFixed(1)).join(' ');
+  const fi = serie.findIndex(x => x.mes === foco);
+  return `<svg class="ix-spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${cor}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/>
+    ${fi >= 0 ? `<circle cx="${X(fi)}" cy="${Y(v[fi])}" r="3" fill="${cor}"/>` : ''}</svg>`;
+}
+
+function ixDelta(a, b, suf){
+  const d = ixVar(a, b);
+  if(d === null) return '';
+  return `<span class="ix-d ${d >= 0 ? 'up' : 'dn'}">${d >= 0 ? '▲' : '▼'} ${ixPct(Math.abs(d))} <i>${suf}</i></span>`;
+}
+
+function pintarIndicadores(){
+  const S = ixSerie(), box = document.getElementById('ind-corpo');
+  if(!S.length){ box.innerHTML = '<div class="vazio">Sem dados.</div>'; return; }
+  if(!IX.mes || !S.some(x => x.mes === IX.mes)) IX.mes = S[S.length - 1].mes;
+  const P = ixPeriodo(), F = ixFoco();
+  const idx = S.findIndex(x => x.mes === F.mes);
+  const ant = idx > 0 ? S[idx - 1] : null;
+  const pm = F.mes.split('-'); const anoAnt = S.filter(x => x.mes === (Number(pm[0]) - 1) + '-' + pm[1])[0];
+  const M = IX_MET[IX.met];
+  const comPdf = S.filter(x => x.tem_pdf);
+  const P12 = S.slice(Math.max(0, idx - 11), idx + 1);
+
+  /* ---- barra de controles ---- */
+  const seg = (grupo, atual, itens) => `<div class="ix-seg">${itens.map(i => `<button class="${String(atual) === String(i[0]) ? 'on' : ''}" onclick="ixSet('${grupo}','${i[0]}')">${i[1]}</button>`).join('')}</div>`;
+  const controles = `<div class="ix-ctl">
+      <div class="ix-grp"><label>Período</label>${seg('per', IX.per, [[6, '6 meses'], [12, '12 meses'], [24, '24 meses'], [0, 'Tudo']])}</div>
+      <div class="ix-grp"><label>Métrica</label>${seg('met', IX.met, [['venda', 'Venda'], ['ticket', 'Ticket'], ['qtd', 'Orçamentos'], ['pacientes', 'Pacientes']])}</div>
+      <div class="ix-grp"><label>Comparar com</label>${seg('cmp', IX.cmp, [['meta', 'Meta'], ['ano', 'Ano anterior'], ['nada', 'Nada']])}</div>
+      <div class="ix-grp"><label>Mês em foco</label><select class="ix-sel" onchange="ixSet('mes',this.value)">${S.slice().reverse().map(x => `<option value="${x.mes}" ${x.mes === F.mes ? 'selected' : ''}>${ixMes(x.mes)}</option>`).join('')}</select></div>
+    </div>`;
+
+  /* ---- cartões do mês em foco ---- */
+  const kpi = (rot, val, sub, spark, destaque) => `<div class="ix-k ${destaque || ''}"><div class="ix-kr">${rot}</div><div class="ix-kv">${val}</div><div class="ix-ks">${sub}</div>${spark || ''}</div>`;
+  const sp = (f, cor) => ixSpark(P12.map(x => ({mes: x.mes, v: f(x)})), F.mes, cor);
+  const barraMeta = F.atingimento !== null ? `<div class="ix-prog"><i style="width:${Math.min(F.atingimento, 100)}%;background:${F.atingimento >= 100 ? '#4F6B58' : '#B8894A'}"></i></div>` : '';
+  const kpis = `<div class="ix-kpis">
+      ${kpi('Venda ' + ixMes(F.mes), brl(F.venda), ixDelta(F.venda, ant && ant.venda, 'vs mês anterior') + ixDelta(F.venda, anoAnt && anoAnt.venda, 'vs ' + (anoAnt ? ixMes(anoAnt.mes) : 'ano ant.')), sp(x => x.venda, '#5C1A2B'), 'dest')}
+      ${kpi('Meta do mês', F.atingimento !== null ? ixPct(F.atingimento) : '—', F.meta ? 'de ' + brl(F.meta) : 'sem meta cadastrada', barraMeta)}
+      ${kpi('Ticket médio', brl(F.ticket), ixDelta(F.ticket, ant && ant.ticket, 'vs mês anterior'), sp(x => x.ticket, '#B8894A'))}
+      ${kpi('Orçamentos', String(F.qtd), ixDelta(F.qtd, ant && ant.qtd, 'vs mês anterior'), sp(x => x.qtd, '#5C1A2B'))}
+      ${kpi('Retenção', F.retencao !== null ? ixPct(F.retencao) : '—', `${F.recorrentes} recorrentes de ${F.novas + F.recorrentes}`, sp(x => x.retencao || 0, '#4F6B58'))}
+      ${kpi('% recebido no mês', F.tem_pdf && F.recebido_pct !== null ? ixPct(F.recebido_pct) : '—', F.tem_pdf ? brl(F.caixa || 0) + ' de ' + brl(F.venda) : 'mês sem PDF processado', F.tem_pdf ? sp(x => x.recebido_pct || 0, '#7E8F7C') : '')}
+    </div>`;
+
+  /* ---- gráfico principal ---- */
+  const dados = P.map(function(x){
+    const v = M.f(x) || 0;
+    const prev = (S[S.findIndex(q => q.mes === x.mes) - 1] || {});
+    const dv = ixVar(v, prev && M.f(prev));
+    return {mes: x.mes, v: v, tip: `${ixMes(x.mes)}|${M.rot}: ${M.fmt(v)}${dv !== null ? '|vs mês anterior: ' + (dv >= 0 ? '+' : '') + ixPct(dv, 1) : ''}${IX.met === 'venda' && x.meta ? '|meta: ' + brl(x.meta) + ' (' + ixPct(x.atingimento) + ')' : ''}|orçamentos: ${x.qtd} · ticket ${brl(x.ticket)}`};
+  });
+  let linha = null, ref = null, refRot = '', legLinha = '';
+  if(IX.cmp === 'meta' && IX.met === 'venda'){ linha = P.map(x => ({mes: x.mes, v: x.meta})); legLinha = 'meta do mês'; }
+  else if(IX.cmp === 'ano'){
+    linha = P.map(function(x){ const q = x.mes.split('-'); const a = S.filter(z => z.mes === (Number(q[0]) - 1) + '-' + q[1])[0]; return {mes: x.mes, v: a ? M.f(a) : null}; });
+    legLinha = 'mesmo mês do ano anterior';
+  }
+  const valsPer = P.map(x => M.f(x) || 0).filter(v => v > 0);
+  if(valsPer.length > 1){ ref = valsPer.reduce((t, v) => t + v, 0) / valsPer.length; refRot = 'média ' + M.curto(ref); }
+  const total = P.reduce((t, x) => t + (M.f(x) || 0), 0);
+  const principal = `<div class="ix-card"><div class="ix-ch"><h4>${M.rot} por mês</h4>
+      <span class="ix-meta">${P.length} meses · ${IX.met === 'venda' || IX.met === 'qtd' ? 'total ' + M.fmt(total) : 'média ' + M.fmt(ref || 0)}</span></div>
+      ${ixBarras(dados, {largura: 1100, altura: 270, cor: '#5C1A2B', fmt: M.fmt, curto: M.curto, eixo: M.curto, linha: linha, ref: ref, refRot: refRot, sel: F.mes, aria: M.rot + ' por mês'})}
+      <div class="ix-leg"><span><i style="background:#5C1A2B"></i>${M.rot.toLowerCase()}</span>${legLinha ? `<span><i class="ln"></i>${legLinha}</span>` : ''}${ref ? `<span><i class="tr"></i>média do período</span>` : ''}<span class="dir">toque numa barra para focar o mês</span></div></div>`;
+
+  /* ---- novas x recorrentes ---- */
+  const dp = P.map(x => ({mes: x.mes, a: x.novas, b: x.recorrentes, tip: `${ixMes(x.mes)}|novas: ${x.novas}|recorrentes: ${x.recorrentes}|retenção: ${ixPct(x.retencao)}`}));
+  const pacientes = `<div class="ix-card"><div class="ix-ch"><h4>Pacientes novas x recorrentes</h4><span class="ix-meta">retenção ${ixPct(F.retencao)} em ${ixMes(F.mes)}</span></div>
+      ${ixEmpilhado(dp, {sel: F.mes})}
+      <div class="ix-leg"><span><i style="background:#B8894A"></i>novas</span><span><i style="background:#5C1A2B"></i>recorrentes</span></div></div>`;
+
+  /* ---- atingimento da meta ---- */
+  const pm2 = P.filter(x => x.atingimento !== null);
+  const meta = pm2.length ? `<div class="ix-card"><div class="ix-ch"><h4>Atingimento da meta</h4><span class="ix-meta">${pm2.filter(x => x.atingimento >= 100).length} de ${pm2.length} meses batidos</span></div>
+      ${ixBarras(pm2.map(x => ({mes: x.mes, v: x.atingimento, cor: x.atingimento >= 100 ? '#4F6B58' : '#B8894A', tip: `${ixMes(x.mes)}|atingimento: ${ixPct(x.atingimento, 1)}|vendido ${brl(x.venda)}|meta ${brl(x.meta)}`})),
+        {cor: '#B8894A', fmt: v => ixPct(v), curto: v => ixPct(v), eixo: v => ixPct(v), ref: 100, refRot: 'meta 100%', sel: F.mes, altura: 220, aria: 'Atingimento da meta'})}
+      <div class="ix-leg"><span><i style="background:#4F6B58"></i>meta batida</span><span><i style="background:#B8894A"></i>abaixo da meta</span></div></div>` : '';
+
+  /* ---- qualidade da venda (só meses com PDF) ---- */
+  const PQ = P.filter(x => x.tem_pdf);
+  const formasFoco = F.tem_pdf && F.formas ? Object.keys(F.formas).sort((a, b) => F.formas[b] - F.formas[a]) : [];
+  const totFormas = formasFoco.reduce((t, f) => t + F.formas[f], 0) || 1;
+  const CORES = ['#5C1A2B', '#B8894A', '#4F6B58', '#A8442F', '#6E7B8B', '#8A6A33', '#7E8F7C', '#9C8F87'];
+  const qualidade = PQ.length ? `<div class="ix-sec"><h3>Qualidade da venda</h3>
+      <p class="ix-sub">Desconto, crediário, permuta, formas de pagamento e prazo. Só existe para os meses cujos PDFs passaram pelo extrator (${comPdf.length} mês(es): ${comPdf.map(x => ixMes(x.mes)).join(', ')}).</p>
+      <div class="ix-kpis sm">
+        ${kpi('Descontos concedidos', F.tem_pdf ? brl(F.desconto || 0) : '—', F.tem_pdf ? ixPct(F.desconto_pct, 1) + ' dos procedimentos · não abatem a venda' : 'sem PDF')}
+        ${kpi('Crediário', F.tem_pdf ? brl(F.crediario || 0) : '—', 'abate a venda do comercial')}
+        ${kpi('Permuta', F.tem_pdf ? brl(F.permuta || 0) : '—', 'abate a venda do comercial')}
+        ${kpi('Cortesia', F.tem_pdf ? brl(F.cortesia || 0) : '—', 'informativo')}
+        ${kpi('Parcelado', F.tem_pdf ? brl(F.a_receber || 0) : '—', 'entra nos meses seguintes')}
+        ${kpi('Prazo médio', F.tem_pdf && F.prazo_medio !== null ? F.prazo_medio + ' dias' : '—', 'até o recebimento')}
+      </div>
+      <div class="ix-2col">
+        <div class="ix-card"><div class="ix-ch"><h4>Desconto concedido (% dos procedimentos)</h4></div>
+          ${ixBarras(PQ.map(x => ({mes: x.mes, v: x.desconto_pct || 0, tip: `${ixMes(x.mes)}|desconto: ${ixPct(x.desconto_pct, 1)}|${brl(x.desconto || 0)}`})), {cor: '#A8442F', fmt: v => ixPct(v, 1), curto: v => ixPct(v, 1), eixo: v => ixPct(v), sel: F.mes, altura: 200, aria: 'Desconto %'})}</div>
+        <div class="ix-card"><div class="ix-ch"><h4>% recebido sobre o vendido</h4></div>
+          ${ixBarras(PQ.map(x => ({mes: x.mes, v: x.recebido_pct || 0, tip: `${ixMes(x.mes)}|recebido: ${ixPct(x.recebido_pct, 1)}|caixa ${brl(x.caixa || 0)}`})), {cor: '#7E8F7C', fmt: v => ixPct(v), curto: v => ixPct(v), eixo: v => ixPct(v), sel: F.mes, altura: 200, aria: '% recebido'})}</div>
+      </div>
+      <div class="ix-card"><div class="ix-ch"><h4>Formas de pagamento em ${ixMes(F.mes)}</h4><span class="ix-meta">${F.tem_pdf ? brl(totFormas) : ''}</span></div>
+        ${formasFoco.length ? `<div class="ix-mix">${formasFoco.map((f, i) => `<i style="width:${F.formas[f] / totFormas * 100}%;background:${CORES[i % CORES.length]}" data-tip="${tEsc(f + '|' + brl(F.formas[f]) + '|' + ixPct(F.formas[f] / totFormas * 100, 1))}"></i>`).join('')}</div>
+        <div class="ix-mixl">${formasFoco.map((f, i) => `<div><i style="background:${CORES[i % CORES.length]}"></i><span>${tEsc(f)}</span><b>${brl(F.formas[f])}</b><em>${ixPct(F.formas[f] / totFormas * 100, 1)}</em></div>`).join('')}</div>` : '<div class="vazio">Este mês não tem PDF processado.</div>'}</div>
+    </div>` : '';
+
+  /* ---- tabela ---- */
+  const cols = [['mes', 'Mês', x => x.mes, x => ixMes(x.mes)], ['venda', 'Venda', x => x.venda, x => brl(x.venda)],
+    ['var', 'vs mês ant.', null, null], ['meta', 'Meta', x => x.meta || 0, x => x.meta ? brl(x.meta) : '—'],
+    ['ating', 'Ating.', x => x.atingimento === null ? -1 : x.atingimento, x => ixPct(x.atingimento)],
+    ['qtd', 'Orç.', x => x.qtd, x => x.qtd], ['ticket', 'Ticket', x => x.ticket, x => brl(x.ticket)],
+    ['pac', 'Pacientes', x => x.pacientes, x => x.pacientes], ['nov', 'Novas', x => x.novas, x => x.novas],
+    ['rec', 'Recor.', x => x.recorrentes, x => x.recorrentes], ['ret', 'Retenção', x => x.retencao === null ? -1 : x.retencao, x => ixPct(x.retencao)],
+    ['desc', 'Desc. %', x => x.desconto_pct === null ? -1 : x.desconto_pct, x => x.tem_pdf ? ixPct(x.desconto_pct, 1) : '—']];
+  const prevDe = x => S[S.findIndex(q => q.mes === x.mes) - 1];
+  let linhas = S.slice();
+  const colOrd = cols.filter(c => c[0] === IX.ord)[0];
+  if(colOrd && colOrd[2]) linhas.sort((a, b) => (colOrd[2](a) > colOrd[2](b) ? 1 : colOrd[2](a) < colOrd[2](b) ? -1 : 0) * IX.dir);
+  const maxVenda = Math.max(1, ...S.map(x => x.venda));
+  const tabela = `<div class="ix-sec"><div class="ix-ch" style="margin-bottom:8px"><h3 style="margin:0">Série completa</h3>
+      <button class="bt-rel" onclick="ixCsv()">⇩ Exportar CSV</button></div>
+      <div class="ix-card ix-tabbox"><table class="ix-tab"><thead><tr>${cols.map(c => `<th class="${c[2] ? 'ord' : ''} ${IX.ord === c[0] ? 'on' : ''}" ${c[2] ? `onclick="ixOrd('${c[0]}')"` : ''}>${c[1]}${IX.ord === c[0] ? (IX.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('')}</tr></thead><tbody>
+      ${linhas.map(function(x){
+        const pv = prevDe(x), vv = pv ? ixVar(x.venda, pv.venda) : null;
+        return `<tr class="${x.mes === F.mes ? 'foco' : ''}" onclick="ixSet('mes','${x.mes}')"><td>${ixMes(x.mes)}</td>
+          <td class="vb"><span class="vbar" style="width:${x.venda / maxVenda * 100}%"></span><b>${brl(x.venda)}</b></td>
+          <td class="${vv === null ? '' : vv >= 0 ? 'up' : 'dn'}">${vv === null ? '—' : (vv >= 0 ? '+' : '') + ixPct(vv, 1)}</td>
+          <td>${x.meta ? brl(x.meta) : '—'}</td><td class="${x.atingimento === null ? '' : x.atingimento >= 100 ? 'up' : 'dn'}">${ixPct(x.atingimento)}</td>
+          <td>${x.qtd}</td><td>${brl(x.ticket)}</td><td>${x.pacientes}</td><td>${x.novas}</td><td>${x.recorrentes}</td>
+          <td>${ixPct(x.retencao)}</td><td>${x.tem_pdf ? ixPct(x.desconto_pct, 1) : '—'}</td></tr>`;
+      }).join('')}</tbody></table></div></div>`;
+
+  box.innerHTML = `${controles}${kpis}
+    <div class="ix-sec"><h3>Evolução</h3><p class="ix-sub">Série desde ${ixMes(S[0].mes)}. Histórico de orçamentos aprovados + meses processados pelo app. Clique em qualquer barra ou linha para focar o mês.</p>
+      ${principal}<div class="ix-2col">${pacientes}${meta}</div></div>
+    ${qualidade}${tabela}<div id="ix-tip" class="ix-tip"></div>`;
+  ixLigarTip();
+}
+
+function ixSet(k, v){
+  if(k === 'per' || k === 'ord') IX[k] = k === 'per' ? Number(v) : v;
+  else IX[k] = v;
+  pintarIndicadores();
+}
+function ixOrd(c){ if(IX.ord === c) IX.dir = -IX.dir; else { IX.ord = c; IX.dir = c === 'mes' ? -1 : -1; } pintarIndicadores(); }
+
+function ixCsv(){
+  const S = ixSerie();
+  const cab = ['mes', 'venda', 'meta', 'atingimento_pct', 'orcamentos', 'ticket', 'pacientes', 'novas', 'recorrentes', 'retencao_pct', 'desconto', 'desconto_pct', 'crediario', 'permuta', 'cortesia', 'caixa', 'a_receber', 'recebido_pct', 'prazo_medio_dias'];
+  const n = v => v === null || v === undefined ? '' : String(v).replace('.', ',');
+  const rows = S.map(x => [x.mes, x.venda, x.meta, x.atingimento, x.qtd, x.ticket, x.pacientes, x.novas, x.recorrentes, x.retencao, x.desconto, x.desconto_pct, x.crediario, x.permuta, x.cortesia, x.caixa, x.a_receber, x.recebido_pct, x.prazo_medio].map(n).join(';'));
+  const blob = new Blob(['﻿' + cab.join(';') + '\n' + rows.join('\n')], {type: 'text/csv;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Indicadores_Kassila.csv';
+  document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
+/* tooltip por delegação: serve a todas as barras e fatias */
+function ixLigarTip(){
+  const raiz = document.getElementById('ind-corpo'), tip = document.getElementById('ix-tip');
+  if(!raiz || !tip) return;
+  const mostra = function(el, ev){
+    const t = el.getAttribute('data-tip'); if(!t) return;
+    const p = t.split('|');
+    tip.innerHTML = `<b>${tEsc(p[0])}</b>` + p.slice(1).map(l => `<div>${tEsc(l)}</div>`).join('');
+    tip.style.display = 'block';
+    const r = raiz.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight;
+    let x = ev.clientX - r.left + 14, y = ev.clientY - r.top - th - 10;
+    if(x + tw > r.width) x = ev.clientX - r.left - tw - 14;
+    if(y < 0) y = ev.clientY - r.top + 18;
+    tip.style.left = Math.max(0, x) + 'px'; tip.style.top = y + 'px';
+  };
+  raiz.onmousemove = function(ev){
+    const el = ev.target.closest && ev.target.closest('[data-tip]');
+    if(el) mostra(el, ev); else tip.style.display = 'none';
+  };
+  raiz.onmouseleave = function(){ tip.style.display = 'none'; };
+  raiz.onclick = function(ev){
+    const el = ev.target.closest && ev.target.closest('[data-mes]');
+    if(el && el.getAttribute('data-mes')) ixSet('mes', el.getAttribute('data-mes'));
+  };
+}
 
 document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') fecharModal(); });
 /* Arranque: sem URL, pede a URL. Com URL, o termo vem ANTES do painel —
