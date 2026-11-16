@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="KN Vendas">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="description" content="Painel comercial de vendas e recebimentos — Instituto Kássila Nasser">
+<meta name="description" content="Painel comercial de vendas — Instituto Kássila Nasser">
 <meta name="theme-color" content="#5C1A2B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -887,6 +887,58 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 .ix-tab td.up{color:#3F6B52}.ix-tab td.dn{color:#A8442F}
 .ix-tab td.vb{position:relative;min-width:140px}.ix-tab td.vb b{position:relative;font-weight:600}.vbar{position:absolute;left:0;top:6px;bottom:6px;background:rgba(92,26,43,.09);border-radius:0 4px 4px 0}
 
+/* ===== V9.2 — Correção das bases / identificação no upload ===== */
+#modal .painel.larga{max-width:860px}
+.cor-sub{font-size:12px;line-height:1.55;color:rgba(36,30,28,.7);margin:0 0 14px}
+.cor-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 6px}
+.cor-kpi{background:#fff;border:1px solid var(--linha);border-radius:10px;padding:10px 12px}
+.cor-kpi .l{font:600 9px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:rgba(36,30,28,.55)}
+.cor-kpi .v{font:500 22px 'IBM Plex Mono',monospace;color:var(--vinho);margin-top:4px;font-variant-numeric:tabular-nums}
+.cor-kpi .v.ok{color:#3F6B4F}
+.cor-kpi small{display:block;font-size:10.5px;color:rgba(36,30,28,.55);margin-top:2px}
+@media(max-width:620px){.cor-kpis{grid-template-columns:repeat(2,1fr)}}
+.cor-tab{width:100%;border-collapse:collapse;font-size:12px}
+.cor-tab th{font:600 9px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:rgba(36,30,28,.55);text-align:left;padding:6px 8px;border-bottom:1px solid var(--linha-forte)}
+.cor-tab td{padding:7px 8px;border-bottom:1px solid var(--linha);vertical-align:top}
+.cor-tab td.n,.cor-tab th.n{text-align:right;font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+.cor-tab .zero{color:rgba(36,30,28,.35)}
+.cor-grp{border:1px solid var(--linha);border-left:3px solid var(--vinho);border-radius:8px;background:#fff;padding:9px 12px;margin-bottom:6px;font-size:12px}
+.cor-grp b{font-weight:600}
+.cor-grp .vs{color:rgba(36,30,28,.6);font-size:11.5px;margin-top:3px}
+.cor-par{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--linha);border-radius:8px;background:#fff;padding:10px 12px;margin-bottom:6px}
+.cor-par .nm{font-size:12.5px;line-height:1.45}
+.cor-par .nm small{display:block;font-size:10.5px;color:rgba(36,30,28,.55)}
+.cor-par .bts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media(max-width:620px){.cor-par{grid-template-columns:1fr}.cor-par .bts{justify-content:flex-start}}
+.cor-al{display:grid;grid-template-columns:14px 1fr auto;gap:8px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--linha);font-size:12px}
+.cor-al .pt{width:8px;height:8px;border-radius:50%;background:#3F6B4F;align-self:center}
+.cor-al.atencao .pt{background:#C28A1E}
+.cor-al.info .pt{background:rgba(36,30,28,.3)}
+.cor-al .q{font-family:'IBM Plex Mono',monospace;font-weight:600}
+.cor-al small{display:block;color:rgba(36,30,28,.55);font-size:10.5px;margin-top:2px}
+.cor-rod{position:sticky;bottom:-20px;background:var(--papel-2);padding:12px 0 20px;margin:14px 0 -20px;border-top:1px solid var(--linha-forte)}
+.cor-rod .bt-ap{display:block;width:100%;border:0;border-radius:9px;background:var(--vinho);color:#fff;padding:13px;font:600 13px 'Inter',sans-serif;cursor:pointer}
+.cor-rod .bt-ap[disabled]{opacity:.55;cursor:wait}
+.cor-rod p{font-size:10.8px;color:rgba(36,30,28,.6);margin:8px 0 0;line-height:1.5}
+.cor-ok{background:rgba(63,107,79,.1);border-left:3px solid #3F6B4F;border-radius:0 6px 6px 0;padding:12px 14px;font-size:12.5px;line-height:1.55;margin-bottom:10px}
+.arq-id{margin-top:8px;font-size:11.5px;line-height:1.5}
+.arq-id .tg{display:inline-block;font:600 9.5px 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:5px;margin-right:6px}
+.arq-id .tg.n{background:rgba(92,26,43,.1);color:var(--vinho)}
+.arq-id .tg.r{background:rgba(63,107,79,.14);color:#2F5B40}
+.arq-par{margin-top:6px;border:1px dashed #C28A1E;background:rgba(194,138,30,.08);border-radius:8px;padding:8px 10px;font-size:11.5px}
+.arq-par .bt-rel{padding:4px 8px;font-size:10px;margin:4px 6px 0 0}
+/* ===== V9.3 — formas de pagamento à vista x a prazo ===== */
+.fvp{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px;font-variant-numeric:tabular-nums}
+.fvp th{font:600 9px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:rgba(36,30,28,.55);text-align:right;padding:6px 8px;border-bottom:1px solid var(--linha-forte)}
+.fvp th:first-child{text-align:left}
+.fvp td{padding:7px 8px;border-bottom:1px solid var(--linha);text-align:right;font-family:'IBM Plex Mono',monospace}
+.fvp td:first-child{text-align:left;font-family:'Inter',sans-serif}
+.fvp td:first-child i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:8px;vertical-align:-1px}
+.fvp td.z{color:rgba(36,30,28,.3)}
+.fvp tr.t td{font-weight:700;border-top:1.5px solid var(--vinho);border-bottom:0;color:var(--vinho)}
+.fvp td em{font-style:normal;color:rgba(36,30,28,.5);font-size:11px;margin-left:6px}
+.arq-tent{color:#3E5C76;font-size:11px}
+
 /* ===== V9.1 — cartão suspenso (aba Dia) ===== */
 .orc2.susp{padding:0;cursor:default}
 .os-head{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:13px 14px 12px 14px;cursor:pointer}
@@ -930,7 +982,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
     <div class="lg-meio">
       <div class="lg-fio"></div>
       <h2 class="lg-tit">Gestão<br>Comercial<br>de Vendas</h2>
-      <p class="lg-desc">Vendas do dia e do mês, formas de pagamento, recebimentos e auditoria.</p>
+      <p class="lg-desc">Vendas do dia e do mês, formas de pagamento, indicadores e auditoria.</p>
     </div>
     <div class="lg-rod">Instituto Kássila Nasser<br>Uso interno e confidencial</div>
   </div>
@@ -1065,9 +1117,9 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
           <h3>Contas do mês <span class="aux">toque para ver os pacientes</span></h3>
           <div class="contas-grid" id="contas-grid"></div>
           <p style="font-size:10.5px;color:rgba(36,30,28,.55);line-height:1.5;margin:12px 0 0">
-            <b>Caixa recebido no mês</b> são as parcelas que caem neste mês, venham de qual venda vierem.
-            Na cascata, <b>caixa das vendas do mês</b> é só o que as vendas deste mês geraram.
-            <b>Parcelado</b> é tudo que ainda vai entrar, inclusive de meses seguintes.
+            Todos os valores são das <b>vendas deste mês</b>. <b>À vista</b> é o que foi pago no ato
+            (Pix, dinheiro, débito, boleto e cheque na data da venda); <b>a prazo</b> é o que as vendas do mês
+            parcelaram (cartão de crédito, boletos, cheques e Pix com vencimento futuro).
           </p>
         </div>
       </div>
@@ -1128,7 +1180,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
     <div class="grid-aud">
       <div class="col">
         <div class="card">
-          <h3>Orçamentos do mês <span class="aux" id="aud-qtd"></span><button class="bt-rel" onclick="abrirRelAuditoria()">⎙ Relatório PDF</button></h3>
+          <h3>Orçamentos do mês <span class="aux" id="aud-qtd"></span><button class="bt-rel" onclick="abrirRelAuditoria()">⎙ Relatório PDF</button><button class="bt-rel" style="margin-right:6px" onclick="abrirCorrecao()">⚙ Corrigir bases</button></h3>
           <div class="aud-busca"><input id="aud-busca" type="search" autocomplete="off" placeholder="Buscar neste mês: nome da paciente ou nº do orçamento" oninput="filtrarAuditoria(this.value)"></div>
           <div id="aud-busca-info" class="aud-busca-info"></div>
           <div id="lista-auditoria"><div class="carregando">Carregando…</div></div>
@@ -1158,7 +1210,7 @@ let MES = null, DIA = null, R = null;
    com o código de senha e o app parava no login. */
 let USUARIO_ID = null, PASSE = null;
 let VERSAO_API = null;
-const VERSAO_ESPERADA = 'V9.1';
+const VERSAO_ESPERADA = 'V9.3';
 
 const brl  = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => (Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
@@ -1638,7 +1690,7 @@ async function iniciar(pronto){
 
 function irPara(t){
   if(t === 'recebimentos' && document.getElementById('rec-lista')) carregarEmAberto().catch(function(){});
-  if(t === 'auditoria' && !document.querySelector('#lista-auditoria .orc2')) mostrarCarregando('abrindo auditoria');
+  if(t === 'auditoria' && !AUD_PRONTA && !document.querySelector('#lista-auditoria .orc2')) mostrarCarregando('abrindo auditoria');   // mês vazio não prende o aviso
   document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.tela===t));
   document.querySelectorAll('.tela').forEach(s=>s.classList.toggle('on', s.id==='tela-'+t));
 }
@@ -1783,12 +1835,12 @@ function renderMes(){
       <div class="menos"><span>Crediário</span><span>−${brl(c.valor_duplicata)}</span></div>
       <div class="menos"><span>Permuta</span><span>−${brl(c.valor_permuta)}</span></div>
       <div class="tot"><span>Venda do comercial</span><span>${brl(c.venda_comercial)}</span></div>
-      <div class="sub2"><span>caixa das vendas do mês</span><span>${brl(c.caixa_imediato)}</span></div>
-      <div class="sub2"><span>parcelado gerado pelas vendas do mês</span><span>${brl(c.a_receber)}</span></div>
+      <div class="sub2"><span>à vista</span><span>${brl(c.caixa_imediato)}</span></div>
+      <div class="sub2"><span>a prazo</span><span>${brl(c.a_receber)}</span></div>
       <div class="info"><span>Descontos concedidos (não abatem a venda) · ${c.total_procedimentos ? (c.desconto / c.total_procedimentos * 100).toFixed(1).replace('.', ',') : '0,0'}%</span><span>${brl(c.desconto)}</span></div>
     </div>`;
 
-  const nomes={venda:'Venda',caixa:'Caixa recebido',a_receber:'Parcelado',desconto:'Descontos concedidos',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
+  const nomes={venda:'Venda',caixa:'À vista',a_receber:'A prazo',desconto:'Descontos concedidos',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
   const cls={venda:'c-venda',caixa:'c-caixa',a_receber:'c-receber',desconto:'c-desconto',permuta:'c-permuta',duplicata:'c-duplicata',cortesia:'c-cortesia'};
   document.getElementById('contas-grid').innerHTML = Object.keys(R.contas).map(k=>{
     const x=R.contas[k];
@@ -1877,15 +1929,15 @@ function renderResumoMesLateral(){
       <div class="rot">Acumulado de ${rotuloMes(R.mes)}</div>
       <div class="grande"><small>R$</small>${brl0(c.venda_comercial)}</div>
       <div class="cascata">
-        <div><span>Caixa recebido</span><span>${brl(R.contas.caixa.valor)}</span></div>
-        <div><span>Parcelado</span><span>${brl(R.contas.a_receber.valor)}</span></div>
+        <div><span>À vista</span><span>${brl(R.contas.caixa.valor)}</span></div>
+        <div><span>A prazo</span><span>${brl(R.contas.a_receber.valor)}</span></div>
         <div class="menos"><span>Cortesia concedida</span><span>${brl(c.valor_cortesia)}</span></div>
       </div>
     </div>
     <div class="card"><h3>Metas</h3>${metaHtml}</div>
     <div class="card"><h3>Contas do mês</h3><div class="contas-grid">${
       Object.keys(R.contas).map(k=>{
-        const nomes={venda:'Venda',caixa:'Caixa',a_receber:'Parcelado',desconto:'Descontos',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
+        const nomes={venda:'Venda',caixa:'À vista',a_receber:'A prazo',desconto:'Descontos',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia'};
         const cls={venda:'c-venda',caixa:'c-caixa',a_receber:'c-receber',desconto:'c-desconto',permuta:'c-permuta',duplicata:'c-duplicata',cortesia:'c-cortesia'};
         const x=R.contas[k];
         return `<button class="conta-btn ${cls[k]}" onclick="abrirConta('${k}')">
@@ -1897,7 +1949,7 @@ function renderResumoMesLateral(){
 /* ---------------- CONTAS ---------------- */
 async function abrirConta(conta){
   const lista = await api('lista',{conta,periodo:'mes',mes:MES});
-  const nomes={venda:'Venda do comercial',caixa:'Caixa recebido no mês',a_receber:'Parcelado',desconto:'Descontos concedidos (não abatem a venda)',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia concedida'};
+  const nomes={venda:'Venda do comercial',caixa:'À vista — vendas do mês',a_receber:'A prazo — vendas do mês',desconto:'Descontos concedidos (não abatem a venda)',permuta:'Permuta',duplicata:'Crediário',cortesia:'Cortesia concedida'};
   let html=`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 4px;color:var(--vinho)">${nomes[conta]}</h2>
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(36,30,28,.5);margin-bottom:14px">${rotuloMes(MES)} · ${lista.length} registro(s)</div>`;
   if(!lista.length) html+='<div class="vazio">Nenhum registro neste mês.</div>';
@@ -1906,7 +1958,7 @@ async function abrirConta(conta){
     const sub = conta==='desconto' ? `${i.desconto_pct}% de desconto · procedimentos ${brl(i.total_procedimentos)} → venda ${brl(i.venda)}${i.descricao ? ' · ' + i.descricao : ''}`
               : conta==='permuta' ? `${i.descricao || ''} · procedimentos ${brl(i.total_procedimentos)} · venda ${brl(i.venda)}`
               : conta==='cortesia' ? i.descricao
-              : conta==='caixa'||conta==='a_receber' ? `${i.forma} · parcela ${i.parcela}`
+              : conta==='caixa'||conta==='a_receber' ? `${rotuloForma(i.forma)} · parcela ${i.parcela} · vence ${i.data}`
               : (i.procedimentos||i.descricao||i.forma_original||'');
     const idOrc = i.id.split('-')[0];
     return `<div class="orc" onclick="abrirOrcamento('${idOrc}')">
@@ -2814,7 +2866,7 @@ async function abrirEnvioResumo(){
   abrirModalCarregando('montando o e-mail');
   let p;
   try{ p = await api('previa_resumo', {usuario_id: USUARIO_ID}); }
-  catch(e){ abrirModal(`<div class="vazio">Não consegui montar a prévia: ${tEsc(e.message)}<br>Atualize a implantação do Apps Script para a V9.1.</div>`); return; }
+  catch(e){ abrirModal(`<div class="vazio">Não consegui montar a prévia: ${tEsc(e.message)}<br>Atualize a implantação do Apps Script para a V9.3.</div>`); return; }
   const dest = (p.destinatarios || []);
   const pode = p.qtd > 0 && dest.length > 0;
   abrirModal(`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0 10px;color:var(--vinho)">Enviar fechamento do dia</h2>
@@ -3013,7 +3065,7 @@ function abrirModalCarregando(titulo){
      - Auditoria, por mês ou período, com a ficha completa de cada orçamento
    O PDF sai pelo "Salvar como PDF" do próprio navegador. O nome sugerido do
    arquivo vem do título da página, trocado só durante a impressão. */
-const VERSAO_TELA = 'V9.1';
+const VERSAO_TELA = 'V9.3';
 const REL_CORES = ['#5C1A2B','#B8894A','#4F6B58','#7A5C99','#3E5C76','#A8442F','#8A7F76','#C79A9E'];
 const REL_LIMITE_DIAS = 92;      // período maior que isso vira dezenas de páginas e minutos de espera
 const relE = v => (v === null || v === undefined) ? '' : tEsc(v);
@@ -3300,7 +3352,7 @@ function relHtmlFechamento(mes, r, vendas, novas, recs, extra){
     </div>`;
 
   /* ---- composição da venda + contas ---- */
-  const nomesConta = {venda:'Venda', caixa:'Caixa recebido', a_receber:'Parcelado', desconto:'Descontos concedidos', permuta:'Permuta', duplicata:'Crediário', cortesia:'Cortesia'};
+  const nomesConta = {venda:'Venda', caixa:'À vista', a_receber:'A prazo', desconto:'Descontos concedidos', permuta:'Permuta', duplicata:'Crediário', cortesia:'Cortesia'};
   const composicao = `<table class="rel-t">
       <thead><tr><th>Composição da venda</th><th class="n">Valor</th></tr></thead><tbody>
       <tr><td>Total dos procedimentos</td><td class="n">${brl(c.total_procedimentos)}</td></tr>
@@ -3308,8 +3360,8 @@ function relHtmlFechamento(mes, r, vendas, novas, recs, extra){
       <tr><td>Permuta</td><td class="n">−${brl(c.valor_permuta)}</td></tr>
       <tr class="tot"><td>Venda do comercial</td><td class="n">${brl(c.venda_comercial)}</td></tr>
       <tr class="mute"><td>Descontos concedidos <small>informativo — não abate a venda</small></td><td class="n">${brl(c.desconto)}</td></tr>
-      <tr><td class="sub">caixa das vendas do mês</td><td class="n">${brl(c.caixa_imediato)}</td></tr>
-      <tr><td class="sub">parcelado gerado pelas vendas do mês</td><td class="n">${brl(c.a_receber)}</td></tr>
+      <tr><td class="sub">à vista</td><td class="n">${brl(c.caixa_imediato)}</td></tr>
+      <tr><td class="sub">a prazo</td><td class="n">${brl(c.a_receber)}</td></tr>
       </tbody></table>`;
   const contas = `<table class="rel-t">
       <thead><tr><th>Contas do mês</th><th class="n">Registros</th><th class="n">Valor</th></tr></thead><tbody>
@@ -3318,8 +3370,8 @@ function relHtmlFechamento(mes, r, vendas, novas, recs, extra){
         return `<tr><td>${relE(nomesConta[k] || k)}</td><td class="n">${relNum(x.qtd)}</td><td class="n">${brl(x.valor)}</td></tr>`;
       }).join('')}
       </tbody></table>
-      <div class="rel-nota"><b>Caixa recebido</b> reúne as parcelas que caem no mês, de qualquer venda.
-        <b>Parcelado</b> é tudo que ainda vai entrar, inclusive em meses seguintes.</div>`;
+      <div class="rel-nota">Valores gerados pelas vendas do mês. <b>À vista</b>: pago no ato.
+        <b>A prazo</b>: parcelado pelas vendas do mês.</div>`;
 
   /* ---- meta ---- */
   let metaHtml = '';
@@ -3818,8 +3870,150 @@ function monogramaSrc(){
   const alt = document.querySelector('header.topo .marca-img');
   return alt ? alt.src : '';
 }
+/* ============ V9.2 — CORREÇÃO DAS BASES ============
+   Uma paciente = uma identidade em todas as bases. O botão mostra, ANTES de
+   mexer, tudo o que será corrigido; só grava depois do "Aplicar". */
+let COR_DADOS = null;
+
+async function abrirCorrecao(){
+  abrirModalCarregando('conferindo todas as bases');
+  document.querySelector('#modal .painel').classList.add('larga');
+  await correcaoCarregar();
+}
+async function correcaoCarregar(){
+  try{ COR_DADOS = await api('corrigir_previa', {usuario_id: USUARIO_ID}); }
+  catch(e){
+    abrirModal(`<h2 class="rel-mtit">Corrigir bases</h2><div class="vazio">Não consegui conferir as bases: ${tEsc(e.message)}<br>Confira se a implantação foi atualizada para a V9.3.</div>`);
+    document.querySelector('#modal .painel').classList.add('larga'); return;
+  }
+  correcaoPintar();
+}
+function correcaoPintar(){
+  const d = COR_DADOS; if(!d) return;
+  const pend = (d.parecidas || []).length;
+  const linhas = d.por_aba.map(a => `<tr><td>${tEsc(a.aba)}</td><td class="n">${brl0(a.linhas)}</td><td class="n ${a.a_corrigir ? '' : 'zero'}">${brl0(a.a_corrigir)}</td>
+      <td>${a.exemplos.length ? a.exemplos.slice(0, 2).map(x => tEsc(x.de) + ' → <b>' + tEsc(x.para) + '</b>').join('<br>') : '<span class="zero">—</span>'}</td></tr>`).join('');
+  const grupos = (d.grupos || []).map(g => `<div class="cor-grp"><b>${tEsc(g.canonico)}</b>
+      <div class="vs">${g.variantes.map(v => tEsc(v.nome) + ' <span style="font-family:IBM Plex Mono,monospace">(' + v.qtd + ')</span>').join(' · ')}</div></div>`).join('');
+  const recl = (d.reclassificar || []).map(r => `<tr><td class="n">${tEsc(r.num)}</td><td>${tEsc(r.paciente)}</td><td>${tEsc(r.data)}</td>
+      <td>${tEsc(r.de)} → <b>${tEsc(r.para)}</b></td><td class="n">${r.anteriores}${r.anterior_data ? ' · últ. ' + tEsc(r.anterior_data) : ''}</td></tr>`).join('');
+  const pares = (d.parecidas || []).map((p, i) => `<div class="cor-par"><div class="nm"><b>${tEsc(p.a.nome)}</b>
+      <small>${p.a.compras} compra(s) · última ${tEsc(p.a.ultima)}</small>
+      <span style="color:rgba(36,30,28,.5)">parece com</span> <b>${tEsc(p.b.nome)}</b>
+      <small>${p.b.compras} compra(s) · última ${tEsc(p.b.ultima)} · semelhança ${Math.round(p.sim * 100)}%</small></div>
+      <div class="bts"><button class="bt-rel" onclick="correcaoDecidir(${i},'UNIR')">É a mesma paciente</button>
+      <button class="bt-rel" style="border-color:var(--linha-forte);color:rgba(36,30,28,.65)" onclick="correcaoDecidir(${i},'SEPARAR')">Não é a mesma</button></div></div>`).join('');
+  const alertas = (d.alertas || []).map(a => `<div class="cor-al ${a.nivel}"><span class="pt"></span><span>${tEsc(a.texto)}${a.itens && a.itens.length ? '<small>' + a.itens.map(tEsc).join(' · ') + '</small>' : ''}</span><span class="q">${brl0(a.qtd)}</span></div>`).join('');
+  const nada = !d.nomes_alterados && !d.reclassificar_total;
+  abrirModal(`<h2 class="rel-mtit">Corrigir bases</h2>
+    <p class="cor-sub">Garante <b>uma só identidade por paciente</b> em Orçamentos, Histórico, Itens, Parcelas, Recebimentos e Controle: nomes escritos de formas diferentes são unificados e <b>nova × recorrente</b> é recalculada. Nada é apagado e nenhum valor muda. Veja abaixo o que será feito e confirme no fim.</p>
+    <div class="cor-kpis">
+      <div class="cor-kpi"><div class="l">Pacientes</div><div class="v">${brl0(d.totais.pacientes)}</div><small>${brl0(d.totais.orcamentos)} orç. · ${brl0(d.totais.historico)} no histórico</small></div>
+      <div class="cor-kpi"><div class="l">Grafias a unificar</div><div class="v ${d.grupos_total ? '' : 'ok'}">${brl0(d.grupos_total)}</div><small>pacientes com mais de um nome</small></div>
+      <div class="cor-kpi"><div class="l">Células a corrigir</div><div class="v ${d.nomes_alterados ? '' : 'ok'}">${brl0(d.nomes_alterados)}</div><small>em todas as abas</small></div>
+      <div class="cor-kpi"><div class="l">Novas × recorrentes</div><div class="v ${d.reclassificar_total ? '' : 'ok'}">${brl0(d.reclassificar_total)}</div><small>mudam de classe (novas ${d.novas_antes} → ${d.novas_depois})</small></div>
+    </div>
+    <div class="sec">O que será corrigido, por aba</div>
+    <table class="cor-tab"><thead><tr><th>Aba</th><th class="n">Linhas</th><th class="n">A corrigir</th><th>Exemplo</th></tr></thead><tbody>${linhas}</tbody></table>
+    ${d.grupos_total ? `<div class="sec">Pacientes com mais de uma grafia (fica a mais usada)</div>${grupos}${d.grupos_total > d.grupos.length ? '<div class="vs" style="font-size:11px">…e mais ' + (d.grupos_total - d.grupos.length) + '.</div>' : ''}` : ''}
+    ${d.reclassificar_total ? `<div class="sec">Orçamentos que mudam de classificação</div>
+      <table class="cor-tab"><thead><tr><th class="n">Orç.</th><th>Paciente</th><th>Data</th><th>Classe</th><th class="n">Compras anteriores</th></tr></thead><tbody>${recl}</tbody></table>` : ''}
+    ${pend ? `<div class="sec">Nomes parecidos — você decide (${pend})</div>
+      <p class="cor-sub" style="margin-bottom:8px">O sistema não une sozinho nomes que só se parecem. Se for a mesma pessoa, a decisão vale para sempre; se não for, ele não pergunta de novo.</p>${pares}` : ''}
+    <div class="sec">Conferências</div>${alertas}
+    <div class="cor-rod"><button class="bt-ap" id="cor-ap" onclick="correcaoAplicar()">${nada ? 'Nada a corrigir — recalcular mesmo assim' : 'Aplicar correção em todas as bases'}</button>
+      <p>A correção leva alguns segundos e fica registrada na aba LogCorrecoes (quem, quando e o que mudou). Se houver nomes parecidos pendentes, eles continuam separados até você decidir.</p></div>`);
+  document.querySelector('#modal .painel').classList.add('larga');
+}
+async function correcaoDecidir(i, dec){
+  const p = (COR_DADOS.parecidas || [])[i]; if(!p) return;
+  abrirModalCarregando('registrando sua decisão');
+  document.querySelector('#modal .painel').classList.add('larga');
+  try{ await api('unificar_decisao', {usuario_id: USUARIO_ID, nome_a: p.a.nome, nome_b: p.b.nome, decisao: dec}); }
+  catch(e){ alert('Não consegui gravar a decisão: ' + e.message); }
+  await correcaoCarregar();
+}
+async function correcaoAplicar(){
+  const bt = document.getElementById('cor-ap'); if(bt){ bt.disabled = true; bt.textContent = 'Corrigindo as bases…'; }
+  let r;
+  try{ r = await api('corrigir_aplicar', {usuario_id: USUARIO_ID}); }
+  catch(e){ if(bt){ bt.disabled = false; bt.textContent = 'Aplicar correção em todas as bases'; } alert('A correção não foi concluída: ' + e.message + '\nNada foi perdido; confira e tente de novo.'); return; }
+  const linhas = r.por_aba.map(a => `<tr><td>${tEsc(a.aba)}</td><td class="n">${brl0(a.a_corrigir)}</td></tr>`).join('');
+  abrirModal(`<h2 class="rel-mtit">Bases corrigidas</h2>
+    <div class="cor-ok"><b>${brl0(r.nomes_alterados)}</b> célula(s) de nome padronizada(s) e <b>${brl0(r.reclassificar_total)}</b> orçamento(s) reclassificado(s).<br>
+      Pacientes novas: ${r.novas_antes} → <b>${r.novas_depois}</b>. Todas as telas foram atualizadas.</div>
+    <table class="cor-tab"><thead><tr><th>Aba</th><th class="n">Células corrigidas</th></tr></thead><tbody>${linhas}</tbody></table>
+    ${(r.reclassificar || []).length ? `<div class="sec">Reclassificados</div><table class="cor-tab"><tbody>${r.reclassificar.map(x => `<tr><td class="n">${tEsc(x.num)}</td><td>${tEsc(x.paciente)}</td><td>${tEsc(x.de)} → <b>${tEsc(x.para)}</b></td></tr>`).join('')}</tbody></table>` : ''}
+    <div class="cor-rod"><button class="bt-ap" onclick="fecharModal()">Fechar</button></div>`);
+  document.querySelector('#modal .painel').classList.add('larga');
+  carregar().catch(function(){});
+}
+
+/* identificação da paciente no upload: nova ou recorrente, e nomes parecidos */
+function arqIdentHtml(it){
+  const id = it.res && it.res.ident; if(!id) return '';
+  const tag = id.tipo === 'RECORRENTE'
+    ? `<span class="tg r">recorrente</span>${id.anteriores} compra(s) no histórico · última ${tEsc(id.ultima)}`
+    : `<span class="tg n">nova paciente</span>sem compra anterior no histórico`;
+  const base = id.nome_base ? `<br>No histórico ela consta como <b>${tEsc(id.nome_base)}</b> (mesma pessoa; o nome será padronizado).` : '';
+  let par = '';
+  if(!it.unir && (id.parecidas || []).length){
+    par = `<div class="arq-par">⚠ Existe paciente com nome parecido. É a mesma pessoa?` + id.parecidas.map((p, k) =>
+      `<div><b>${tEsc(p.nome)}</b> · ${p.compras} compra(s) · última ${tEsc(p.ultima)}<br>
+        <button class="bt-rel" onclick="arqUnir(${it.id},${k})">É a mesma paciente</button>
+        <button class="bt-rel" style="border-color:var(--linha-forte);color:rgba(36,30,28,.65)" onclick="arqNaoUnir(${it.id},${k})">Não é a mesma</button></div>`).join('') + `</div>`;
+  } else if(it.unir){
+    par = `<div class="arq-par" style="border-style:solid">Será unida a <b>${tEsc(it.unir)}</b> e contará como recorrente. <a style="color:var(--vinho);cursor:pointer;font-weight:600" onclick="arqDesfazUnir(${it.id})">desfazer</a></div>`;
+  }
+  return `<div class="arq-id">${tag}${base}</div>${par}`;
+}
+function arqUnir(id, k){ const it = ARQ_FILA.filter(x => x.id === id)[0]; if(!it) return; it.unir = it.res.ident.parecidas[k].nome; it.res.ident.tipo = 'RECORRENTE'; it.res.ident.anteriores = it.res.ident.parecidas[k].compras; it.res.ident.ultima = it.res.ident.parecidas[k].ultima; arqPintarFila(); }
+function arqDesfazUnir(id){ const it = ARQ_FILA.filter(x => x.id === id)[0]; if(!it) return; it.unir = ''; arqPintarFila(); }
+async function arqNaoUnir(id, k){
+  const it = ARQ_FILA.filter(x => x.id === id)[0]; if(!it) return;
+  const p = it.res.ident.parecidas[k];
+  try{ await api('unificar_decisao', {usuario_id: USUARIO_ID, nome_a: it.res.paciente, nome_b: p.nome, decisao: 'SEPARAR'}); }catch(e){}
+  it.res.ident.parecidas.splice(k, 1); arqPintarFila();
+}
+
+/* ============ V9.3 — UPLOAD: nova tentativa automática e reprocessar ============
+   As falhas de 13/11 foram de comunicação e de "sistema ocupado" (outra carga
+   consolidando ao mesmo tempo). O PDF continua no aparelho, então o app tenta de
+   novo sozinho (3 vezes, com espera crescente) antes de mostrar erro, e o botão
+   "Reprocessar" reenvia de uma vez tudo o que ficou com erro. */
+const ARQ_ESPERAS = [5000, 15000, 30000];
+function arqTransitorio(msg){ return /ocupado|comunica|timeout|tempo|network|failed to fetch|servidor|server error|500|502|503/i.test(String(msg || '')); }
+function arqDormir(ms){ return new Promise(function(ok){ setTimeout(ok, ms); }); }
+function arqReprocessar(){
+  ARQ_FILA.filter(x => x.estado === 'erro' && x.file && /\.pdf$/i.test(x.file.name)).forEach(function(it){ it.estado = 'espera'; it.msg = ''; it.rede = false; it.tent = 0; });
+  arqPintarFila(); arqAnalisarPendentes();
+}
+
+/* V9.3: formas de pagamento do mês em foco, separadas em à vista e a prazo.
+   Mesma base da aba Mês: só as parcelas geradas pelas vendas do mês. */
+function ixFormasVP(F, CORES){
+  if(!F.tem_pdf || !F.formas) return '<div class="vazio">Este mês não tem PDF processado.</div>';
+  const vp = F.formas_vp || {};
+  const base = {};
+  Object.keys(F.formas).forEach(function(k){
+    base[k] = vp[k] ? {vista: Number(vp[k].vista) || 0, prazo: Number(vp[k].prazo) || 0} : {vista: 0, prazo: Number(F.formas[k]) || 0};
+  });
+  const ks = Object.keys(base).sort((a, b) => (base[b].vista + base[b].prazo) - (base[a].vista + base[a].prazo));
+  if(!ks.length) return '<div class="vazio">Nenhuma forma de pagamento neste mês.</div>';
+  const tv = ks.reduce((t, k) => t + base[k].vista, 0), tp = ks.reduce((t, k) => t + base[k].prazo, 0), tt = (tv + tp) || 1;
+  const nome = k => tEsc(typeof rotuloForma === 'function' ? rotuloForma(k) : k);
+  const cel = v => v ? brl(v) : '<span>—</span>';
+  const barra = `<div class="ix-mix">${ks.map((k, i) => { const t = base[k].vista + base[k].prazo;
+      return `<i style="width:${t / tt * 100}%;background:${CORES[i % CORES.length]}" data-tip="${tEsc(rotuloForma(k) + '|à vista ' + brl(base[k].vista) + '|a prazo ' + brl(base[k].prazo) + '|' + ixPct(t / tt * 100, 1) + ' do total')}"></i>`; }).join('')}</div>`;
+  const linhas = ks.map((k, i) => { const t = base[k].vista + base[k].prazo;
+    return `<tr><td><i style="background:${CORES[i % CORES.length]}"></i>${nome(k)}</td><td class="${base[k].vista ? '' : 'z'}">${cel(base[k].vista)}</td><td class="${base[k].prazo ? '' : 'z'}">${cel(base[k].prazo)}</td><td><b>${brl(t)}</b><em>${ixPct(t / tt * 100, 1)}</em></td></tr>`; }).join('');
+  return barra + `<table class="fvp"><thead><tr><th>Forma</th><th>À vista</th><th>A prazo</th><th>Total</th></tr></thead><tbody>${linhas}
+    <tr class="t"><td>Total</td><td>${brl(tv)}</td><td>${brl(tp)}</td><td>${brl(tv + tp)}<em>100%</em></td></tr></tbody></table>`;
+}
+
 function fecharModal(){
   document.getElementById('modal').style.display='none';
+  const pn = document.querySelector('#modal .painel'); if(pn) pn.classList.remove('larga');
   document.body.style.overflow='';
   if(window.__pts){ clearInterval(window.__pts); window.__pts=null; }
 }
@@ -4001,13 +4195,13 @@ function htmlOrcamento(d, compacto){
       <div class="om-kpi dest"><small>Venda do comercial</small><b>${brl(o.venda_comercial)}</b></div>
       <div class="om-kpi"><small>Total dos procedimentos</small><b>${brl(o.total_procedimentos)}</b></div>
       <div class="om-kpi ${Number(o.desconto) > 0 ? 'neg' : ''}"><small>Descontos${Number(o.desconto) > 0 ? ' (' + o.desconto_pct + '%)' : ''}</small><b>${Number(o.desconto) > 0 ? '−' + brl(o.desconto) : '—'}</b></div>
-      <div class="om-kpi"><small>Caixa na hora</small><b>${brl(o.caixa_imediato)}</b></div>
-      <div class="om-kpi"><small>Parcelado</small><b>${brl(o.a_receber)}</b></div>
+      <div class="om-kpi"><small>À vista</small><b>${brl(o.caixa_imediato)}</b></div>
+      <div class="om-kpi"><small>A prazo</small><b>${brl(o.a_receber)}</b></div>
     </div>
     ${acoes}
     <div class="sec">Procedimentos</div>${itens}
     <div class="sec">Como foi pago</div>${parcelas || '<div class="vazio">Sem parcelas.</div>'}
-    <div class="sec">Quando entra no caixa</div>${recs || '<div class="vazio">Nenhum recebimento previsto (crediário).</div>'}
+    <div class="sec">Plano de pagamento</div>${recs || '<div class="vazio">Nenhum recebimento previsto (crediário).</div>'}
     ${avisos}`;
 }
 
@@ -4081,13 +4275,13 @@ async function confirmarReativacao(id){
 }
 
 /* ---------------- Auditoria: lista com busca e cancelados ---------------- */
-let AUD_LISTA = [], AUD_CANC = [], AUD_Q = '';
+let AUD_LISTA = [], AUD_CANC = [], AUD_Q = '', AUD_PRONTA = false;
 
 async function carregarAuditoria(){
   const lista = await api('lista', {conta: 'venda', periodo: 'mes', mes: MES});
   let canc = [];
   try{ canc = await api('lista', {conta: 'cancelados', periodo: 'mes', mes: MES}); }catch(e){ canc = []; }
-  AUD_LISTA = lista; AUD_CANC = Array.isArray(canc) ? canc : [];
+  AUD_LISTA = lista; AUD_CANC = Array.isArray(canc) ? canc : []; AUD_PRONTA = true;
   AUD_MAPA = {};
   lista.forEach(function(x){ AUD_MAPA[x.id] = x; });
   esconderCarregando();
@@ -4171,10 +4365,10 @@ function renderDia(){
     <h3>Como foi pago</h3>
     <div class="split"><i class="vista" style="width:${tot ? s.a_vista / tot * 100 : 0}%"></i><i class="parc" style="width:${tot ? s.parcelado / tot * 100 : 0}%"></i></div>
     <div class="split-leg">
-      <div><div class="r"><i class="pip" style="background:var(--salvia)"></i>Caixa na hora</div>
-        <div class="v num">${brl(s.a_vista)}</div><div class="n">dinheiro, pix e débito · ${tot ? Math.round(s.a_vista / tot * 100) : 0}%</div></div>
-      <div><div class="r"><i class="pip" style="background:var(--latao)"></i>Parcelado</div>
-        <div class="v num">${brl(s.parcelado)}</div><div class="n">entra em D+30 · ${tot ? Math.round(s.parcelado / tot * 100) : 0}%</div></div>
+      <div><div class="r"><i class="pip" style="background:var(--salvia)"></i>À vista</div>
+        <div class="v num">${brl(s.a_vista)}</div><div class="n">pago no ato · ${tot ? Math.round(s.a_vista / tot * 100) : 0}%</div></div>
+      <div><div class="r"><i class="pip" style="background:var(--latao)"></i>A prazo</div>
+        <div class="v num">${brl(s.parcelado)}</div><div class="n">cartão e parcelas futuras · ${tot ? Math.round(s.parcelado / tot * 100) : 0}%</div></div>
     </div>` : `<h3>Como foi pago</h3><div class="vazio">Sem pagamento neste dia.</div>`;
 
   const f = R.formas_pagamento_dia || [];
@@ -4400,14 +4594,20 @@ async function arqAnalisarPendentes(){
     let it;
     while((it = ARQ_FILA.filter(x => x.estado === 'espera')[0])){
       it.estado = 'analisando'; arqPintarFila();
-      try{
-        const b64 = await arqLerBase64(it.file);
-        const r = await api('upload_previa', {usuario_id: USUARIO_ID, nome: it.file.name, dados: b64});
-        it.res = r;
-        if(r.status === 'PREVIA'){ it.estado = 'previa'; it.data = brParaIso(r.data_pdf); }
-        else if(r.status === 'DUPLICADO'){ it.estado = 'dup'; it.msg = r.mensagem; }
-        else { it.estado = 'erro'; it.msg = r.mensagem || 'Falha ao ler o PDF.'; }
-      }catch(e){ it.estado = 'erro'; it.msg = 'Falha de comunicação: ' + e.message; it.rede = true; }
+      let r = null, falhaMsg = '', b64 = null;
+      try{ b64 = await arqLerBase64(it.file); }catch(e){ falhaMsg = e.message; }
+      for(let t = 0; b64 !== null && t <= ARQ_ESPERAS.length; t++){
+        if(t){ it.msg = 'Sistema ocupado ou conexão instável — tentando de novo (' + t + ' de ' + ARQ_ESPERAS.length + ')…'; arqPintarFila(); await arqDormir(ARQ_ESPERAS[t - 1]); }
+        try{ r = await api('upload_previa', {usuario_id: USUARIO_ID, nome: it.file.name, dados: b64}); }
+        catch(e){ r = null; falhaMsg = 'Falha de comunicação: ' + e.message; }
+        if(r && r.status === 'ERRO' && arqTransitorio(r.mensagem)){ falhaMsg = r.mensagem; r = null; }
+        if(r) break;
+      }
+      it.res = r; it.msg = '';
+      if(r && r.status === 'PREVIA'){ it.estado = 'previa'; it.data = brParaIso(r.data_pdf); }
+      else if(r && r.status === 'DUPLICADO'){ it.estado = 'dup'; it.msg = 'Já está na base — nada a fazer. ' + (r.mensagem || ''); }
+      else if(r){ it.estado = 'erro'; it.msg = r.mensagem || 'Falha ao ler o PDF.'; }
+      else { it.estado = 'erro'; it.msg = (falhaMsg || 'Falha de comunicação.') + ' Toque em “Reprocessar”.'; it.rede = true; }
       arqPintarFila();
     }
   } finally { ARQ_OCUPADO = false; arqPintarFila(); }
@@ -4441,6 +4641,7 @@ function arqPintarFila(){
       const r = it.res;
       corpo = `<div class="m"><b style="font-family:'IBM Plex Mono',monospace;color:var(--vinho)">Orç ${tEsc(r.num)}</b> · ${tEsc(r.paciente)} · ${brl(r.venda)}
           ${r.revisar ? `<br><span style="color:#8A6A33">⚠ conferir depois: ${tEsc(r.motivo)}</span>` : ''}
+          ${arqIdentHtml(it)}
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px">
             <label style="font-size:11px;font-weight:600">Data do orçamento</label>
             <input type="date" value="${it.data}" onchange="arqData(${it.id}, this.value)" style="padding:7px 9px;border:1px solid var(--linha-forte);border-radius:7px;font:500 13px 'IBM Plex Mono',monospace">
@@ -4449,13 +4650,15 @@ function arqPintarFila(){
           </div>
           <div id="arq-av-${it.id}" style="margin-top:6px;font-size:11.5px">${arqTextoData(it)}</div></div>`;
     } else if(it.msg){
-      corpo = `<div class="m">${tEsc(it.msg)}${it.estado === 'erro' && it.rede ? ` <a style="color:var(--vinho);cursor:pointer;font-weight:600" onclick="arqRepetir(${it.id})">tentar de novo</a>` : ''}</div>`;
+      corpo = `<div class="m">${tEsc(it.msg)}${it.estado === 'erro' && it.file && /\.pdf$/i.test(it.file.name) ? ` <a style="color:var(--vinho);cursor:pointer;font-weight:600" onclick="arqRepetir(${it.id})">reprocessar este</a>` : ''}</div>`;
     }
     return `<div class="arq-item ${caixa}"><div class="n">${tEsc(it.file.name)}</div><span class="arq-st ${cl}">${tx}</span>${corpo}</div>`;
   }).join('');
   const previas = ARQ_FILA.filter(x => x.estado === 'previa');
   const fechaveis = ARQ_FILA.filter(x => ['ok', 'rev', 'dup', 'erro', 'desc'].indexOf(x.estado) >= 0);
+  const comErro = ARQ_FILA.filter(x => x.estado === 'erro' && x.file && /\.pdf$/i.test(x.file.name)).length;
   ac.innerHTML = (previas.length > 1 ? `<button class="arq-bt" onclick="arqConfirmarTodas()">Confirmar e gravar as ${previas.length} cargas</button>` : '')
+    + (comErro && !ARQ_OCUPADO ? `<button class="arq-bt" onclick="arqReprocessar()">↻ Reprocessar ${comErro === 1 ? 'o arquivo' : 'os ' + comErro + ' arquivos'} com erro</button>` : '')
     + (fechaveis.length && !previas.length && !ARQ_OCUPADO ? `<button class="arq-bt sec2" onclick="arqLimpar()">Limpar lista</button>` : '');
 }
 
@@ -4467,11 +4670,18 @@ async function arqConfirmar(id){
   const it = ARQ_FILA.filter(x => x.id === id)[0]; if(!it || it.estado !== 'previa') return false;
   if(!it.data || new Date(it.data + 'T12:00:00') > new Date()){ arqAvisoData(it); return false; }
   it.estado = 'gravando'; arqPintarFila();
-  try{
-    const r = await api('upload_confirmar', {usuario_id: USUARIO_ID, file_id: it.res.file_id, nome: it.file.name, data_venda: isoParaBr(it.data)});
+  let r = null, falhaMsg = '';
+  for(let t = 0; t <= ARQ_ESPERAS.length; t++){
+    if(t){ await arqDormir(ARQ_ESPERAS[t - 1]); }
+    try{ r = await api('upload_confirmar', {usuario_id: USUARIO_ID, file_id: it.res.file_id, nome: it.file.name, data_venda: isoParaBr(it.data), unir_com: it.unir || ''}); }
+    catch(e){ r = null; falhaMsg = e.message; }
+    if(r && r.status === 'ERRO' && arqTransitorio(r.mensagem)){ falhaMsg = r.mensagem; r = null; }
+    if(r) break;
+  }
+  if(r){
     it.estado = r.status === 'OK' ? 'ok' : r.status === 'REVISAR' ? 'rev' : r.status === 'DUPLICADO' ? 'dup' : 'erro';
-    it.msg = r.mensagem || '';
-  }catch(e){ it.estado = 'previa'; it.msg = ''; alertaArq('erro', 'Falha de comunicação ao gravar ' + it.file.name + ': ' + e.message + '. Confirme de novo.'); }
+    it.msg = r.status === 'DUPLICADO' ? 'Já está na base — nada a fazer.' : (r.mensagem || '');
+  } else { it.estado = 'previa'; it.msg = ''; alertaArq('erro', 'Não consegui gravar ' + it.file.name + ' (' + falhaMsg + '). Nada foi perdido: toque em “Confirmar e gravar” de novo.'); }
   arqPintarFila();
   return true;
 }
@@ -4491,10 +4701,12 @@ function arqFechar(){
   clearTimeout(ARQ_FECHAR_T);
   if(ARQ_FILA.some(x => x.estado === 'previa' || x.estado === 'gravando')) return;
   const gravou = ARQ_FILA.filter(x => x.estado === 'ok' || x.estado === 'rev');
-  if(!gravou.length){ carregarArquivos(); return; }
-  alertaArq('ok', `${gravou.length} orçamento(s) gravado(s). Consolidando recorrência e preços…`);
+  const nDup = ARQ_FILA.filter(x => x.estado === 'dup').length, nErro = ARQ_FILA.filter(x => x.estado === 'erro').length;
+  const extra = (nDup ? ` · ${nDup} já estava(m) na base (nada a fazer)` : '') + (nErro ? ` · ${nErro} com erro — toque em “Reprocessar”` : '');
+  if(!gravou.length){ if(nDup || nErro) alertaArq(nErro ? 'erro' : 'ok', `Nenhum orçamento novo gravado${extra}.`); carregarArquivos(); return; }
+  alertaArq('ok', `${gravou.length} orçamento(s) gravado(s)${extra}. Consolidando recorrência e preços…`);
   api('arquivos_fechar', {usuario_id: USUARIO_ID}).catch(function(){}).then(function(){
-    alertaArq('ok', `${gravou.length} orçamento(s) gravado(s) e consolidados. As telas já estão atualizadas.`);
+    alertaArq(nErro ? 'erro' : 'ok', `${gravou.length} orçamento(s) gravado(s) e consolidados${extra}. As telas já estão atualizadas.`);
     carregar().catch(function(){}); carregarArquivos();
   });
 }
@@ -4770,7 +4982,7 @@ function pintarIndicadores(){
       ${kpi('Ticket médio', brl(F.ticket), ixDelta(F.ticket, ant && ant.ticket, 'vs mês anterior'), sp(x => x.ticket, '#B8894A'))}
       ${kpi('Orçamentos', String(F.qtd), ixDelta(F.qtd, ant && ant.qtd, 'vs mês anterior'), sp(x => x.qtd, '#5C1A2B'))}
       ${kpi('Retenção', F.retencao !== null ? ixPct(F.retencao) : '—', `${F.recorrentes} recorrentes de ${F.novas + F.recorrentes}`, sp(x => x.retencao || 0, '#4F6B58'))}
-      ${kpi('% recebido no mês', F.tem_pdf && F.recebido_pct !== null ? ixPct(F.recebido_pct) : '—', F.tem_pdf ? brl(F.caixa || 0) + ' de ' + brl(F.venda) : 'mês sem PDF processado', F.tem_pdf ? sp(x => x.recebido_pct || 0, '#7E8F7C') : '')}
+      ${kpi('À vista no mês', F.tem_pdf && F.recebido_pct !== null ? ixPct(F.recebido_pct) : '—', F.tem_pdf ? brl(F.caixa || 0) + ' pagos no ato, de ' + brl(F.venda) : 'mês sem PDF processado', F.tem_pdf ? sp(x => x.recebido_pct || 0, '#7E8F7C') : '')}
     </div>`;
 
   /* ---- gráfico principal ---- */
@@ -4819,18 +5031,17 @@ function pintarIndicadores(){
         ${kpi('Crediário', F.tem_pdf ? brl(F.crediario || 0) : '—', 'abate a venda do comercial')}
         ${kpi('Permuta', F.tem_pdf ? brl(F.permuta || 0) : '—', 'abate a venda do comercial')}
         ${kpi('Cortesia', F.tem_pdf ? brl(F.cortesia || 0) : '—', 'informativo')}
-        ${kpi('Parcelado', F.tem_pdf ? brl(F.a_receber || 0) : '—', 'entra nos meses seguintes')}
-        ${kpi('Prazo médio', F.tem_pdf && F.prazo_medio !== null ? F.prazo_medio + ' dias' : '—', 'até o recebimento')}
+        ${kpi('A prazo', F.tem_pdf ? brl(F.a_receber || 0) : '—', 'parcelado pelas vendas do mês')}
+        ${kpi('Prazo médio', F.tem_pdf && F.prazo_medio !== null ? F.prazo_medio + ' dias' : '—', 'condição de pagamento das vendas')}
       </div>
       <div class="ix-2col">
         <div class="ix-card"><div class="ix-ch"><h4>Desconto concedido (% dos procedimentos)</h4></div>
           ${ixBarras(PQ.map(x => ({mes: x.mes, v: x.desconto_pct || 0, tip: `${ixMes(x.mes)}|desconto: ${ixPct(x.desconto_pct, 1)}|${brl(x.desconto || 0)}`})), {cor: '#A8442F', fmt: v => ixPct(v, 1), curto: v => ixPct(v, 1), eixo: v => ixPct(v), sel: F.mes, altura: 200, aria: 'Desconto %'})}</div>
-        <div class="ix-card"><div class="ix-ch"><h4>% recebido sobre o vendido</h4></div>
-          ${ixBarras(PQ.map(x => ({mes: x.mes, v: x.recebido_pct || 0, tip: `${ixMes(x.mes)}|recebido: ${ixPct(x.recebido_pct, 1)}|caixa ${brl(x.caixa || 0)}`})), {cor: '#7E8F7C', fmt: v => ixPct(v), curto: v => ixPct(v), eixo: v => ixPct(v), sel: F.mes, altura: 200, aria: '% recebido'})}</div>
+        <div class="ix-card"><div class="ix-ch"><h4>% à vista sobre o vendido</h4></div>
+          ${ixBarras(PQ.map(x => ({mes: x.mes, v: x.recebido_pct || 0, tip: `${ixMes(x.mes)}|à vista: ${ixPct(x.recebido_pct, 1)}|${brl(x.caixa || 0)}`})), {cor: '#7E8F7C', fmt: v => ixPct(v), curto: v => ixPct(v), eixo: v => ixPct(v), sel: F.mes, altura: 200, aria: '% à vista'})}</div>
       </div>
-      <div class="ix-card"><div class="ix-ch"><h4>Formas de pagamento em ${ixMes(F.mes)}</h4><span class="ix-meta">${F.tem_pdf ? brl(totFormas) : ''}</span></div>
-        ${formasFoco.length ? `<div class="ix-mix">${formasFoco.map((f, i) => `<i style="width:${F.formas[f] / totFormas * 100}%;background:${CORES[i % CORES.length]}" data-tip="${tEsc(f + '|' + brl(F.formas[f]) + '|' + ixPct(F.formas[f] / totFormas * 100, 1))}"></i>`).join('')}</div>
-        <div class="ix-mixl">${formasFoco.map((f, i) => `<div><i style="background:${CORES[i % CORES.length]}"></i><span>${tEsc(f)}</span><b>${brl(F.formas[f])}</b><em>${ixPct(F.formas[f] / totFormas * 100, 1)}</em></div>`).join('')}</div>` : '<div class="vazio">Este mês não tem PDF processado.</div>'}</div>
+      <div class="ix-card"><div class="ix-ch"><h4>Formas de pagamento das vendas de ${ixMes(F.mes)}</h4><span class="ix-meta">${F.tem_pdf ? 'à vista + a prazo = ' + brl(totFormas) : ''}</span></div>
+        ${ixFormasVP(F, CORES)}</div>
     </div>` : '';
 
   /* ---- tabela ---- */
