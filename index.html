@@ -426,8 +426,8 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
   -webkit-print-color-adjust:exact;print-color-adjust:exact;font-variant-numeric:tabular-nums}
 #relatorio .rel-cab{display:flex;align-items:center;gap:14px;background:#5C1A2B;color:#FAF7F3;
   padding:13px 16px;border-bottom:3px solid #B8894A}
-#relatorio .rel-logo{width:48px;height:48px;border-radius:50%;background:#FAF7F3;object-fit:cover;flex:none;
-  border:1.5px solid #B8894A}
+#relatorio .rel-logo{width:48px;height:48px;border-radius:50%;background:#5C1A2B;object-fit:contain;flex:none;
+  padding:5px;box-sizing:border-box;border:1.5px solid #B8894A}
 #relatorio .rel-clin{font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:500;letter-spacing:.01em}
 #relatorio .rel-tit{font:600 9px 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;
   color:#E3C58F;margin-top:3px}
@@ -3999,6 +3999,10 @@ document.addEventListener('keydown', function(e){
 });
 
 function monogramaSrc(){
+  // V9.3.2: a marca da clínica (o "K" do cabeçalho) vem embutida no app: sai igual no
+  // GitHub e no Apps Script, com ou sem internet
+  const marca = document.querySelector('header.topo .marca-img');
+  if(marca && marca.getAttribute('src')) return marca.getAttribute('src');
   const ico = document.querySelector('link[rel="icon"][sizes="192x192"]')
            || document.querySelector('link[rel="apple-touch-icon"]')
            || document.querySelector('link[rel="icon"]');
