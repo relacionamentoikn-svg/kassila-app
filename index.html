@@ -940,6 +940,36 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 .fvp td em{font-style:normal;color:rgba(36,30,28,.5);font-size:11px;margin-left:6px}
 .arq-tent{color:#3E5C76;font-size:11px}
 
+/* ===== V9.3.2 — PDF de uma folha: quanto falta vender ===== */
+#relatorio .rm-hero{display:grid;grid-template-columns:1.25fr 1fr;gap:8px;margin:10px 0 7px}
+#relatorio .rm-falta{background:#5C1A2B;color:#FAF7F3;padding:12px 14px;border-bottom:3px solid #B8894A}
+#relatorio .rm-falta .r{font:600 8px 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#E3C58F}
+#relatorio .rm-falta .v{font:500 34px 'Fraunces',Georgia,serif;line-height:1.05;margin-top:5px;letter-spacing:-.005em}
+#relatorio .rm-falta .s{font-size:9px;opacity:.85;margin-top:4px}
+#relatorio .rm-dia{border:1px solid #E4DAD1;border-top:3px solid #B8894A;background:#FAF7F3;padding:12px 14px}
+#relatorio .rm-dia .r{font:600 8px 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#6B6259}
+#relatorio .rm-dia .v{font:500 26px 'Fraunces',Georgia,serif;line-height:1.05;margin-top:5px;color:#241E1C}
+#relatorio .rm-dia .s{font-size:9px;color:#6B6259;margin-top:4px}
+#relatorio .rm-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:0 0 8px}
+#relatorio .rm-kpi{border:1px solid #E4DAD1;padding:7px 9px}
+#relatorio .rm-kpi .r{font:500 7.5px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6B6259}
+#relatorio .rm-kpi .v{font:500 15px 'Fraunces',Georgia,serif;margin-top:3px;color:#241E1C}
+#relatorio .rm-kpi .s{font-size:8px;color:#6B6259;margin-top:1px}
+#relatorio .rm-barra{position:relative;height:12px;background:#EDE5DC;margin:2px 0 3px}
+#relatorio .rm-barra i{position:absolute;left:0;top:0;bottom:0;background:#5C1A2B}
+#relatorio .rm-barra b{position:absolute;top:-3px;bottom:-3px;width:2px;background:#241E1C}
+#relatorio .rm-barra-leg{display:flex;justify-content:space-between;font:400 7.5px 'IBM Plex Mono',monospace;color:#6B6259}
+#relatorio .rm-graf svg{width:100%;height:auto;display:block}
+#relatorio .rm-t td,#relatorio .rm-t th{padding:2.6px 6px}
+#relatorio .rm-t tr.futuro td{color:#8A7F76}
+#relatorio .rm-t tr.futuro td.mt{color:#241E1C;font-weight:600}
+#relatorio .rm-t tr.hoje td{background:#F6EBD8;font-weight:600}
+#relatorio .rm-t td.pos{color:#3F6B4F} #relatorio .rm-t td.neg{color:#A8442F}
+#relatorio .rm-folha .rel-sec{margin:9px 0 4px}
+#relatorio .rm-folha .rel-rod{margin-top:8px}
+#relatorio .rm-folha .rel-nota{margin-top:6px}
+#relatorio .rm-folha{width:190mm;break-inside:avoid;overflow:hidden}
+
 /* ===== V9.1 — cartão suspenso (aba Dia) ===== */
 .orc2.susp{padding:0;cursor:default}
 .os-head{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:13px 14px 12px 14px;cursor:pointer}
@@ -1110,7 +1140,7 @@ nav.tabs button.on{color:var(--vinho);border-bottom-color:var(--vinho);font-weig
 
   <!-- ================= MÊS ================= -->
   <section class="tela" id="tela-mes">
-    <div class="rel-barra"><button class="bt-rel" onclick="abrirRelFechamento()">⎙ Relatório de fechamento de vendas (PDF)</button></div>
+    <div class="rel-barra"><button class="bt-rel" onclick="abrirRelMeta()" style="margin-right:8px">⎙ Quanto falta vender (PDF)</button><button class="bt-rel" onclick="abrirRelFechamento()">⎙ Relatório de fechamento de vendas (PDF)</button></div>
     <div class="grid-mes">
       <div class="col">
         <div class="hero" id="hero-mes"><div class="carregando" style="color:rgba(255,255,255,.7)">Carregando…</div></div>
@@ -3066,7 +3096,7 @@ function abrirModalCarregando(titulo){
      - Auditoria, por mês ou período, com a ficha completa de cada orçamento
    O PDF sai pelo "Salvar como PDF" do próprio navegador. O nome sugerido do
    arquivo vem do título da página, trocado só durante a impressão. */
-const VERSAO_TELA = 'V9.3.1';
+const VERSAO_TELA = 'V9.3.2';
 const REL_CORES = ['#5C1A2B','#B8894A','#4F6B58','#7A5C99','#3E5C76','#A8442F','#8A7F76','#C79A9E'];
 const REL_LIMITE_DIAS = 92;      // período maior que isso vira dezenas de páginas e minutos de espera
 const relE = v => (v === null || v === undefined) ? '' : tEsc(v);
@@ -3103,7 +3133,7 @@ function relRodape(){
 /* Põe o relatório na página e chama a impressão. Não limpa sozinho no
    "afterprint": no Chrome do Android esse evento dispara antes de o PDF ser
    gerado, e o arquivo sairia em branco. Limpa no próximo toque no app. */
-async function relImprimir(html, nomeArquivo){
+async function relImprimir(html, nomeArquivo, ajustar){
   let r = document.getElementById('relatorio');
   if(!r){ r = document.createElement('div'); r.id = 'relatorio'; document.body.appendChild(r); }
   r.innerHTML = html;
@@ -3111,6 +3141,11 @@ async function relImprimir(html, nomeArquivo){
     return i.complete ? null : new Promise(function(ok){ i.onload = i.onerror = ok; });
   }));
   if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+  if(typeof ajustar === 'function'){   // V9.3.2: mede fora da tela, com a largura do A4, antes de imprimir
+    r.style.cssText = 'display:block;position:absolute;left:-10000px;top:0;width:190mm';
+    try{ ajustar(r); }catch(e){}
+    r.style.cssText = '';
+  }
   fecharModal();
   if(!window.__relTitulo) window.__relTitulo = document.title;
   document.title = nomeArquivo;
@@ -3249,6 +3284,106 @@ function relNorm(s){
   return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim().toUpperCase();
 }
 const relNum = v => Number(v) || 0;
+
+/* ============ V9.3.2 — PDF DE UMA FOLHA: QUANTO FALTA VENDER ============
+   Para enviar à diretoria: falta vender, meta por dia útil, gráfico e tabela dia a dia.
+   Mesma base do quadro "Meta diária de vendas" da aba Mês. */
+function abrirRelMeta(){
+  const opts = Array.from(document.querySelectorAll('#sel-mes option'));
+  if(!opts.length){ abrirModal('<div class="vazio">Nenhum mês disponível.</div>'); return; }
+  const op = opts.map(function(o){ return `<option value="${relE(o.value)}">${relE(o.textContent)}</option>`; }).join('');
+  abrirModal(`<h2 class="rel-mtit">Posição da meta</h2>
+    <p class="rel-mdesc">Folha única para a diretoria: quanto falta vender, meta por dia útil, dias úteis restantes,
+      gráfico e tabela dia a dia. Mesma base do quadro "Meta diária de vendas".</p>
+    <div class="rel-campos"><label>Mês<select id="rme-mes">${op}</select></label></div>
+    <div id="rme-erro" class="rel-erro"></div>
+    <button class="lanc-bt" id="rme-bt" onclick="gerarRelMeta()">Gerar PDF</button>`);
+  document.getElementById('rme-mes').value = MES;
+}
+
+async function gerarRelMeta(){
+  const mes = document.getElementById('rme-mes').value;
+  const erro = document.getElementById('rme-erro'), bt = document.getElementById('rme-bt');
+  erro.textContent = ''; bt.disabled = true; bt.textContent = 'Reunindo os dados…';
+  let r;
+  try{ r = (R && R.mes === mes) ? R : await api('resumo', {mes: mes}); }
+  catch(e){ erro.textContent = 'Não consegui ler os dados: ' + e.message; bt.disabled = false; bt.textContent = 'Gerar PDF'; return; }
+  const m = r.meta, dg = m && m.diaria;
+  if(!m || !dg){ erro.textContent = 'Este mês não tem meta cadastrada (aba Metas).'; bt.disabled = false; bt.textContent = 'Gerar PDF'; return; }
+  const util = dg.dias.filter(x => x.tipo === 'util');
+  const pcV = m.meta_venda ? dg.vendido / m.meta_venda * 100 : 0;
+  const pcT = dg.uteis_total ? dg.uteis_decorridos / dg.uteis_total * 100 : 0;
+  const batida = dg.falta <= 0;
+  const hojeU = util.filter(x => x.estado === 'hoje')[0];
+  const restTxt = (function(){
+    const f = util.filter(x => x.estado === 'futuro' || x.estado === 'hoje');
+    return f.length ? dmCurto(f[0].data) + ' a ' + dmCurto(f[f.length - 1].data) : 'mês encerrado';
+  })();
+
+  /* gráfico: vendido por dia útil x meta do dia */
+  const W = 760, H = 175, L = 50, Rr = 8, T = 10, B = 24, iw = W - L - Rr, ih = H - T - B;
+  const max0 = Math.max(1, ...util.map(x => Math.max(x.vendido, x.meta)));
+  const passo = [5000, 10000, 20000, 25000, 50000, 100000, 200000, 250000, 500000].filter(p => max0 * 1.08 / p <= 5)[0] || 500000;
+  const max = Math.ceil(max0 * 1.08 / passo) * passo;
+  const n = util.length, slot = iw / Math.max(n, 1), bw = Math.min(22, slot * .6);
+  const y = v => T + ih - (v / max) * ih;
+  let g = '', pts = '', rot = '';
+  for(let v = 0; v <= max; v += passo) g += `<line x1="${L}" x2="${W - Rr}" y1="${y(v)}" y2="${y(v)}" stroke="#EDE5DC" stroke-width="1"/><text x="${L - 6}" y="${y(v) + 3}" text-anchor="end" font-size="8" fill="#8A7F76" font-family="IBM Plex Mono,monospace">${v === 0 ? '0' : kmil(v)}</text>`;
+  util.forEach(function(x, i){
+    const cx = L + slot * i + slot / 2;
+    const cor = x.estado === 'ok' ? '#4F6B58' : x.estado === 'abaixo' ? '#A8442F' : x.estado === 'hoje' ? '#B8894A' : '#E4DAD1';
+    const h = Math.max(x.vendido > 0 ? 2 : 0, x.vendido / max * ih);
+    g += `<rect x="${cx - bw / 2}" y="${T + ih - h}" width="${bw}" height="${h}" rx="2.5" fill="${cor}"/>
+      <text x="${cx}" y="${H - 9}" text-anchor="middle" font-size="8" font-family="IBM Plex Mono,monospace" fill="${x.estado === 'hoje' ? '#5C1A2B' : '#6B6259'}" font-weight="${x.estado === 'hoje' ? 700 : 400}">${x.dia}</text>`;
+    pts += `${i ? ' ' : ''}${cx - slot / 2 + 2},${y(x.meta)} ${cx + slot / 2 - 2},${y(x.meta)}`;
+  });
+  g += `<polyline points="${pts}" fill="none" stroke="#241E1C" stroke-width="1.5" stroke-dasharray="5 3"/>` + rot;
+  const graf = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${g}</svg>
+    <div class="rel-leg" style="margin-left:0"><span><i style="background:#4F6B58"></i>meta batida</span><span><i style="background:#A8442F"></i>abaixo da meta</span><span><i style="background:#B8894A"></i>hoje</span><span><i style="background:#E4DAD1"></i>a vender</span><span><i style="background:transparent;border-top:1.5px dashed #241E1C;height:0;border-radius:0;vertical-align:2px;width:14px"></i>meta do dia</span></div>`;
+
+  /* tabela dia a dia */
+  const sem = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+  const linhas = util.map(function(x){
+    const passou = x.estado !== 'futuro', dif = x.vendido - x.meta;
+    return `<tr class="${x.estado}"><td>${dmCurto(x.data)} <span style="opacity:.55">${sem[x.dow]}</span></td>
+      <td class="n mt">${brl(x.meta)}</td><td class="n">${passou ? brl(x.vendido) : '—'}</td>
+      <td class="n ${passou ? (dif >= 0 ? 'pos' : 'neg') : ''}">${passou ? (dif >= 0 ? '+' : '−') + brl(Math.abs(dif)) : '—'}</td>
+      <td class="n">${passou ? brl(x.acum) : '—'}</td></tr>`;
+  }).join('');
+
+  const html = '<div class="rm-folha">' + relCabecalho('Posição da meta de vendas', relMesExtenso(mes) + (hojeU ? ' · posição em ' + dmCurto(hojeU.data) : ''))
+    + `<div class="rm-hero">
+        <div class="rm-falta"><div class="r">${batida ? 'Meta do mês' : 'Falta vender'}</div>
+          <div class="v">${batida ? 'Batida' : brl(dg.falta)}</div>
+          <div class="s">${batida ? 'vendido ' + brl(dg.vendido) + ' · ' + pct(pcV) + ' da meta' : 'para atingir a meta de ' + brl(m.meta_venda)}</div></div>
+        <div class="rm-dia"><div class="r">Meta por dia útil</div>
+          <div class="v">${batida ? '—' : brl(dg.meta_dia_hoje)}</div>
+          <div class="s">${dg.uteis_restantes} dia(s) úteis restantes · ${restTxt}</div></div>
+      </div>
+      <div class="rm-kpis">
+        <div class="rm-kpi"><div class="r">Meta do mês</div><div class="v">${brl(m.meta_venda)}</div><div class="s">${dg.uteis_total} dias úteis · ${brl(dg.meta_dia_original)}/dia</div></div>
+        <div class="rm-kpi"><div class="r">Vendido</div><div class="v">${brl(dg.vendido)}</div><div class="s">${pct(pcV)} da meta</div></div>
+        <div class="rm-kpi"><div class="r">Dias úteis decorridos</div><div class="v">${dg.uteis_decorridos} de ${dg.uteis_total}</div><div class="s">${pct(pcT)} do mês útil</div></div>
+        <div class="rm-kpi"><div class="r">Ritmo</div><div class="v">${pcV >= pcT ? 'Acima' : 'Abaixo'}</div><div class="s">${pct(Math.abs(pcV - pcT))} ${pcV >= pcT ? 'à frente' : 'atrás'} do esperado</div></div>
+      </div>
+      <div class="rm-barra"><i style="width:${Math.min(100, pcV)}%"></i><b style="left:${Math.min(100, pcT)}%"></b></div>
+      <div class="rm-barra-leg"><span>vendido ${pct(pcV)}</span><span>traço = onde a meta estaria hoje (${pct(pcT)})</span><span>meta 100%</span></div>
+      <div class="rel-sec">Vendido por dia útil × meta do dia</div><div class="rm-graf">${graf}</div>
+      <div class="rel-sec">Dia a dia</div>
+      <table class="rel-t rm-t"><thead><tr><th>Dia útil</th><th class="n">Meta do dia</th><th class="n">Vendido</th><th class="n">Diferença</th><th class="n">Acumulado</th></tr></thead><tbody>${linhas}
+        <tr class="tot"><td>Total</td><td class="n">${brl(m.meta_venda)}</td><td class="n">${brl(dg.vendido)}</td><td class="n ${dg.vendido >= m.meta_venda ? 'pos' : 'neg'}">${dg.vendido >= m.meta_venda ? '+' : '−'}${brl(Math.abs(dg.vendido - m.meta_venda))}</td><td class="n">${brl(dg.vendido)}</td></tr></tbody></table>
+      <div class="rel-nota"><b>Meta do dia:</b> o que falta vender ÷ dias úteis que faltam. Dias úteis = segunda a sexta, exceto feriados${dg.feriados.length ? ' (' + dg.feriados.map(f => dmCurto(f.data) + ' ' + relE(f.nome)).join(', ') + ')' : ''}.
+        Venda do comercial = total dos procedimentos − crediário − permuta; orçamentos cancelados não entram.</div>`
+    + relRodape() + '</div>';
+  // sempre UMA folha: mede a folha montada e reduz a escala se passar da altura útil do A4
+  await relImprimir(html, 'Posicao_Meta_' + mes, function(r){
+    const f = r.querySelector('.rm-folha'); if(!f) return;
+    f.style.zoom = '';
+    const mm = 96 / 25.4, alturaUtil = (297 - 23) * mm * 0.985, larguraUtil = (210 - 20) * mm;
+    const esc = Math.min(1, alturaUtil / f.scrollHeight, larguraUtil / f.scrollWidth);
+    if(esc < 1) f.style.zoom = esc.toFixed(3);
+  });
+}
 
 function abrirRelFechamento(){
   const opts = Array.from(document.querySelectorAll('#sel-mes option'));
